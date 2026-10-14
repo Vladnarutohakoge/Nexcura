@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b5d5e">
+  <meta name="description" content="Explore NexCura care specialties and find the right clinician for your needs.">
+  <title>Care Specialties & Doctors — NexCura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Page-level overrides ───────────────────────────────── */
+    .spec-hero{background:var(--deep);color:white;padding:72px 10% 60px;text-align:center}
+    .spec-hero .eyebrow{justify-content:center;color:#b7d9c9}
+    .spec-hero h1{font-size:clamp(38px,5vw,60px);color:#fff;margin:18px auto 14px;max-width:680px}
+    .spec-hero p{color:#c4d8d1;font-size:13px;max-width:500px;margin:0 auto 30px;line-height:1.75}
+
+    /* ── Search bar ─────────────────────────────────────────── */
+    .search-bar{background:white;max-width:680px;margin:-28px auto 0;border-radius:8px;box-shadow:0 12px 44px #123e3018;display:flex;padding:8px 8px 8px 18px;gap:10px;position:relative;z-index:5}
+    .search-bar input{flex:1;border:none;outline:none;font:14px 'DM Sans',sans-serif;color:#1a4040}
+    .search-bar input::placeholder{color:#9aada8}
+    .search-bar button{background:var(--teal);color:white;border:none;border-radius:5px;padding:11px 22px;font:700 12px 'DM Sans',sans-serif;cursor:pointer}
+    .search-bar button:focus-visible{outline:3px solid #b7d9c9;outline-offset:2px}
+
+    /* ── Quick filters ──────────────────────────────────────── */
+    .filter-strip{padding:32px 10% 0;display:flex;gap:9px;flex-wrap:wrap}
+    .filter-chip{border:1px solid #d5e5e0;border-radius:20px;padding:7px 14px;font-size:11px;font-weight:600;color:#3d6b62;background:white;cursor:pointer;transition:all .15s}
+    .filter-chip:hover,.filter-chip.active{background:var(--teal);color:white;border-color:var(--teal)}
+    .filter-chip:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+    /* ── Section layout ─────────────────────────────────────── */
+    .spec-section{padding:60px 10%}
+    .spec-section h2{font:700 28px Manrope;color:var(--deep);margin:0 0 6px}
+    .spec-section>.subtitle{color:var(--muted);font-size:13px;margin:0 0 36px}
+    .spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+
+    /* ── Specialty card ─────────────────────────────────────── */
+    .spec-card{background:white;border:1px solid #e4ebe5;border-radius:8px;overflow:hidden;transition:transform .18s,box-shadow .18s}
+    .spec-card:hover{transform:translateY(-3px);box-shadow:0 14px 40px #123e3014}
+    .spec-card-head{padding:24px 22px 18px;border-bottom:1px solid #edf2ed;display:flex;align-items:center;gap:14px}
+    .spec-icon{width:46px;height:46px;border-radius:50%;background:var(--mint);color:var(--teal);display:grid;place-items:center;font-size:22px;flex-shrink:0}
+    .spec-card-head h3{font:700 15px Manrope;color:var(--deep);margin:0 0 4px}
+    .spec-card-head p{font-size:10px;color:var(--muted);margin:0;line-height:1.5}
+    .spec-card-body{padding:16px 22px}
+    .condition-list{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+    .condition-list li{background:#f0f5f0;border-radius:12px;padding:4px 10px;font-size:9px;color:#456a5f}
+    .spec-card-actions{display:flex;gap:8px}
+    .spec-btn{border:0;border-radius:4px;padding:9px 14px;font:700 10px 'DM Sans',sans-serif;cursor:pointer}
+    .spec-btn-primary{background:var(--teal);color:white}
+    .spec-btn-secondary{background:#e8f1eb;color:#235c51}
+    .spec-btn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+    .doctor-count{font-size:9px;color:#7e9990;margin-bottom:13px}
+
+    /* ── Doctor directory ───────────────────────────────────── */
+    .doctor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+    .doctor-card{background:white;border:1px solid #e4ebe5;border-radius:8px;overflow:hidden;transition:transform .18s,box-shadow .18s}
+    .doctor-card:hover{transform:translateY(-2px);box-shadow:0 12px 35px #123e3012}
+    .doctor-photo{height:180px;overflow:hidden;background:#dfe9e0}
+    .doctor-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:saturate(.85)}
+    .doctor-info{padding:16px 16px 14px}
+    .doctor-role{font-size:9px;letter-spacing:.1em;color:#59877b;margin:0 0 4px}
+    .doctor-name{font:700 14px Manrope;color:var(--deep);margin:0 0 6px}
+    .doctor-spec{font-size:10px;color:var(--muted);margin:0 0 10px}
+    .doctor-badge-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+    .doc-badge{background:#f0f5f0;border-radius:10px;padding:3px 8px;font-size:8px;color:#456a5f}
+    .doc-lang{background:#f0f0f8;border-radius:10px;padding:3px 8px;font-size:8px;color:#5a5a8a}
+    .doctor-action{display:flex;gap:7px}
+    .doctor-action a{flex:1;text-align:center;padding:9px;border-radius:4px;font:700 10px 'DM Sans',sans-serif;text-decoration:none}
+    .da-primary{background:var(--teal);color:white}
+    .da-secondary{background:#e8f1eb;color:#235c51}
+    .doctor-action a:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+    /* ── Location strip ─────────────────────────────────────── */
+    .locations-strip{background:#f0f5f0;padding:48px 10%}
+    .locations-strip h2{font:700 24px Manrope;color:var(--deep);margin:0 0 22px}
+    .location-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .loc-card{background:white;border-radius:6px;padding:18px;border:1px solid #e4ebe5}
+    .loc-name{font:700 13px Manrope;color:var(--deep);margin:0 0 5px}
+    .loc-addr{font-size:10px;color:var(--muted);line-height:1.55;margin:0 0 10px}
+    .loc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+    .loc-tag{background:#e8f4ec;padding:3px 8px;border-radius:10px;font-size:8px;color:#3d7060}
+    .loc-link{font-size:10px;color:var(--teal);font-weight:700;text-decoration:none}
+    .loc-link:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+    /* ── Emergency banner ───────────────────────────────────── */
+    .emergency-bar{background:#fff5f5;border:1px solid #f1a0a0;border-radius:6px;padding:14px 20px;margin:0 10% 0;display:flex;align-items:center;gap:12px;font-size:11px;color:#7a2020}
+    .emergency-bar strong{color:#B42318}
+    .emergency-bar a{color:#B42318;font-weight:700}
+
+    /* ── Sample data notice ─────────────────────────────────── */
+    .sample-notice{background:#fff8eb;border-left:3px solid #d4a451;padding:12px 18px;margin:0 10% 28px;color:#735a31;font-size:11px;border-radius:0 5px 5px 0}
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media(max-width:760px){
+      .spec-hero{padding:55px 7% 48px}
+      .search-bar{margin:16px 7% 0;max-width:none}
+      .filter-strip{padding:24px 7% 0}
+      .spec-section{padding:44px 7%}
+      .locations-strip{padding:40px 7%}
+      .emergency-bar,.sample-notice{margin:0 7% 20px}
+    }
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+  </style>
+</head>
+<body>
+  <!-- ── Skip link ──────────────────────────────────────────── -->
+  <a href="#main-content" class="sr-only" style="position:absolute;top:-999px;left:0;z-index:100;background:var(--teal);color:white;padding:12px 20px;border-radius:0 0 6px 0;font-weight:700" onfocus="this.style.top='0'">Skip to main content</a>
+
+  <!-- ── Announcement bar ───────────────────────────────────── -->
+  <div class="announcement" role="banner" aria-label="Site announcement">
+    <span>Care that moves with you</span>
+    <a href="index.html#care">Explore our services <span aria-hidden="true">↗</span></a>
+  </div>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header class="site-header" role="banner">
+    <a class="brand" href="index.html" aria-label="NexCura home">
+      <img src="logo.svg" alt="NexCura" height="40" style="height:40px;width:auto;display:block;">
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="specialties.html" aria-current="page">Care &amp; services</a>
+      <a href="index.html#hospitals">Hospitals</a>
+      <a href="about.html">About</a>
+      <a href="clinical-trials.html">Clinical trials</a>
+      <a href="ai-assistant.html">NexCura AI</a>
+      <a href="pages.html">All pages</a>
+    </nav>
+    <div class="header-actions">
+      <label class="language">
+        <span class="sr-only">Language</span>
+        <select id="language" aria-label="Choose language">
+          <option value="en">English</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="hi">हिन्दी</option>
+          <option value="te">తెలుగు</option>
+        </select>
+      </label>
+      <a class="login-link" href="login.html">Sign in</a>
+      <a class="button button-small" href="login.html">Get started <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ── Hero ─────────────────────────────────────────────── -->
+    <section class="spec-hero" aria-labelledby="hero-heading">
+      <div class="eyebrow"><span class="pulse" aria-hidden="true"></span> CARE &amp; SERVICES</div>
+      <h1 id="hero-heading">Find the right care,<br>with the right team.</h1>
+      <p>Browse specialties, meet clinicians, and find the facility closest to you. Booking is through your patient portal or by contacting the facility directly.</p>
+      <!-- Search -->
+      <div class="search-bar" role="search">
+        <label for="doctor-search" class="sr-only">Search specialties or doctors</label>
+        <input id="doctor-search" type="search" placeholder="Search specialties, conditions, or doctor names…" autocomplete="off">
+        <button type="button" onclick="filterCards()">Search</button>
+      </div>
+    </section>
+
+    <!-- ── Quick filters ──────────────────────────────────────── -->
+    <div class="filter-strip" role="group" aria-label="Filter by specialty area">
+      <button class="filter-chip active" data-filter="all" onclick="setFilter(this,'all')">All specialties</button>
+      <button class="filter-chip" data-filter="cardiology" onclick="setFilter(this,'cardiology')">Cardiology</button>
+      <button class="filter-chip" data-filter="neurology" onclick="setFilter(this,'neurology')">Neurology</button>
+      <button class="filter-chip" data-filter="oncology" onclick="setFilter(this,'oncology')">Oncology</button>
+      <button class="filter-chip" data-filter="endocrinology" onclick="setFilter(this,'endocrinology')">Endocrinology</button>
+      <button class="filter-chip" data-filter="pulmonology" onclick="setFilter(this,'pulmonology')">Pulmonology</button>
+      <button class="filter-chip" data-filter="mental-health" onclick="setFilter(this,'mental-health')">Mental health</button>
+      <button class="filter-chip" data-filter="orthopaedics" onclick="setFilter(this,'orthopaedics')">Orthopaedics</button>
+    </div>
+
+    <!-- ── Emergency notice ─────────────────────────────────── -->
+    <div style="height:36px"></div>
+    <div class="emergency-bar" role="note" aria-label="Emergency information">
+      <span aria-hidden="true" style="font-size:18px">⚠</span>
+      <span><strong>Medical emergency?</strong> Do not use this website. Call your local emergency number (112 in India, 911 in US, 999 in UK) or go to the nearest emergency department immediately. <a href="pages.html?page=contact-and-support">Find emergency contacts →</a></span>
+    </div>
+    <div style="height:20px"></div>
+
+    <!-- ── Sample data notice ────────────────────────────────── -->
+    <div class="sample-notice" role="note">
+      <strong>Illustrative sample only.</strong> The specialties, clinician profiles, and facilities shown below are fictional examples for demonstration purposes. No real clinicians, facilities, or patient records are represented.
+    </div>
+
+    <!-- ── Specialties grid ──────────────────────────────────── -->
+    <section class="spec-section" aria-labelledby="specialties-heading">
+      <h2 id="specialties-heading">Care specialties</h2>
+      <p class="subtitle">Select a specialty to learn more or find a clinician.</p>
+      <div class="spec-grid" id="spec-grid">
+
+        <!-- Cardiology -->
+        <article class="spec-card" data-specialty="cardiology">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">♥</div>
+            <div>
+              <h3>Cardiology</h3>
+              <p>Heart and cardiovascular system</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">6 clinicians available at 3 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Hypertension</li><li>Heart failure</li><li>Arrhythmia</li><li>Coronary artery disease</li><li>Valve disorders</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('cardiology')">Find a cardiologist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Neurology -->
+        <article class="spec-card" data-specialty="neurology">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">🧠</div>
+            <div>
+              <h3>Neurology</h3>
+              <p>Brain, spine, and nervous system</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">4 clinicians available at 2 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Epilepsy</li><li>Migraine</li><li>Parkinson's disease</li><li>Multiple sclerosis</li><li>Neuropathy</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('neurology')">Find a neurologist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Oncology -->
+        <article class="spec-card" data-specialty="oncology">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">⚕</div>
+            <div>
+              <h3>Oncology</h3>
+              <p>Cancer diagnosis and treatment</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">5 clinicians available at 2 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Breast cancer</li><li>Lung cancer</li><li>Colon cancer</li><li>Lymphoma</li><li>Leukaemia</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('oncology')">Find an oncologist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Endocrinology -->
+        <article class="spec-card" data-specialty="endocrinology">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">⚗</div>
+            <div>
+              <h3>Endocrinology</h3>
+              <p>Hormones, metabolism, and diabetes</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">4 clinicians available at 3 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Type 2 Diabetes</li><li>Thyroid disorders</li><li>PCOS</li><li>Adrenal disorders</li><li>Osteoporosis</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('endocrinology')">Find an endocrinologist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Pulmonology -->
+        <article class="spec-card" data-specialty="pulmonology">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">🫁</div>
+            <div>
+              <h3>Pulmonology</h3>
+              <p>Lungs, airways, and respiratory health</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">3 clinicians available at 2 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Asthma</li><li>COPD</li><li>Sleep apnoea</li><li>Interstitial lung disease</li><li>Pulmonary hypertension</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('pulmonology')">Find a pulmonologist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Mental Health -->
+        <article class="spec-card" data-specialty="mental-health">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">🤝</div>
+            <div>
+              <h3>Mental Health</h3>
+              <p>Psychiatry, psychology, and counselling</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">5 clinicians available at 3 locations + virtual</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Anxiety disorders</li><li>Depression</li><li>PTSD</li><li>Bipolar disorder</li><li>OCD</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('mental-health')">Find a specialist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Orthopaedics -->
+        <article class="spec-card" data-specialty="orthopaedics">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">🦴</div>
+            <div>
+              <h3>Orthopaedics</h3>
+              <p>Bones, joints, muscles, and spine</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">4 clinicians available at 2 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Osteoarthritis</li><li>Fractures</li><li>Back pain</li><li>Knee replacement</li><li>Sports injuries</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('mental-health')">Find a specialist</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- General Practice -->
+        <article class="spec-card" data-specialty="general">
+          <div class="spec-card-head">
+            <div class="spec-icon" aria-hidden="true">✚</div>
+            <div>
+              <h3>General Practice</h3>
+              <p>Primary care for all ages</p>
+            </div>
+          </div>
+          <div class="spec-card-body">
+            <p class="doctor-count">8 clinicians available at 4 locations</p>
+            <ul class="condition-list" aria-label="Conditions treated">
+              <li>Preventive care</li><li>Chronic disease management</li><li>Acute illness</li><li>Vaccination</li><li>Health check-ups</li>
+            </ul>
+            <div class="spec-card-actions">
+              <button class="spec-btn spec-btn-primary" onclick="filterBySpecialty('all')">Find a GP</button>
+              <button class="spec-btn spec-btn-secondary" onclick=\"openSpecialtyModal('cardiology')\">Learn more</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── Doctor directory ─────────────────────────────────── -->
+    <section class="spec-section" id="doctors" aria-labelledby="doctors-heading" style="background:#f7faf5;border-top:1px solid #e4ebe5">
+      <h2 id="doctors-heading">Meet our clinicians</h2>
+      <p class="subtitle">Illustrative sample profiles. In a live deployment, clinician information is provided by the organisation and kept current.</p>
+      <div class="doctor-grid" id="doctor-grid">
+        <!-- Dr. Priya Sharma -->
+        <article class="doctor-card" data-specialty="cardiology general-practice" id="doc-priya-sharma">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=500&q=80" alt="Dr. Priya Sharma" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">PRIMARY CARE & CARDIAC HEALTH · MBBS, MD</p>
+            <h3 class="doctor-name">Dr. Priya Sharma</h3>
+            <p class="doctor-spec">Primary Care — City Health Centre, Bengaluru</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Preventive care</span>
+              <span class="doc-badge">Hypertension</span>
+              <span class="doc-lang">🌐 English, Kannada, Hindi</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('priya-sharma')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Arjun Mehta -->
+        <article class="doctor-card" data-specialty="cardiology" id="doc-arjun-mehta">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=500&q=80" alt="Dr. Arjun Mehta" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">CARDIOLOGY · DM Cardiology, FACC</p>
+            <h3 class="doctor-name">Dr. Arjun Mehta</h3>
+            <p class="doctor-spec">Interventional Cardiology — Whitefield Clinic, Bengaluru</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Heart failure</span>
+              <span class="doc-badge">Angioplasty</span>
+              <span class="doc-lang">🌐 English, Hindi</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('arjun-mehta')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Lakshmi Nair -->
+        <article class="doctor-card" data-specialty="neurology" id="doc-lakshmi-nair">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=500&q=80" alt="Dr. Lakshmi Nair" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">NEUROLOGY · DM Neurology, FRCP</p>
+            <h3 class="doctor-name">Dr. Lakshmi Nair</h3>
+            <p class="doctor-spec">Neurology & Stroke — Indiranagar Diagnostic Centre, Bengaluru</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Epilepsy</span>
+              <span class="doc-badge">Movement disorders</span>
+              <span class="doc-lang">🌐 English, Malayalam, Tamil</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('lakshmi-nair')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Sanjay Rao -->
+        <article class="doctor-card" data-specialty="endocrinology" id="doc-sanjay-rao">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" alt="Dr. Sanjay Rao" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">ENDOCRINOLOGY · DM Endocrinology</p>
+            <h3 class="doctor-name">Dr. Sanjay Rao</h3>
+            <p class="doctor-spec">Endocrinology & Diabetes — Electronic City Unit, Bengaluru</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Type 2 Diabetes</span>
+              <span class="doc-badge">Thyroid</span>
+              <span class="doc-lang">🌐 English, Kannada, Telugu</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('sanjay-rao')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Kavitha Reddy -->
+        <article class="doctor-card" data-specialty="oncology" id="doc-kavitha-reddy">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=500&q=80" alt="Dr. Kavitha Reddy" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">ONCOLOGY · DNB Medical Oncology</p>
+            <h3 class="doctor-name">Dr. Kavitha Reddy</h3>
+            <p class="doctor-spec">Medical Oncology & Precision Chemotherapy — Whitefield Clinic</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Breast cancer</span>
+              <span class="doc-badge">Clinical trials</span>
+              <span class="doc-lang">🌐 English, Telugu</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('kavitha-reddy')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Rohit Krishnaswamy -->
+        <article class="doctor-card" data-specialty="mental-health" id="doc-rohit-krishnaswamy">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=500&q=80" alt="Dr. Rohit Krishnaswamy" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">MENTAL HEALTH · MD Psychiatry</p>
+            <h3 class="doctor-name">Dr. Rohit Krishnaswamy</h3>
+            <p class="doctor-spec">Psychiatry & Cognitive Therapy — City Health Centre + Virtual</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Anxiety</span>
+              <span class="doc-badge">Depression</span>
+              <span class="doc-lang">🌐 English, Kannada</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('rohit-krishnaswamy')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Farhan Naqvi (Pulmonology) -->
+        <article class="doctor-card" data-specialty="pulmonology" id="doc-farhan-naqvi">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=500&q=80" alt="Dr. Farhan Naqvi" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">PULMONOLOGY · MD Pulmonology, FCCP</p>
+            <h3 class="doctor-name">Dr. Farhan Naqvi</h3>
+            <p class="doctor-spec">Respiratory Medicine & Sleep Apnoea — Indiranagar Diagnostic</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Asthma</span>
+              <span class="doc-badge">COPD</span>
+              <span class="doc-lang">🌐 English, Hindi, Urdu</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('farhan-naqvi')">View profile</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Dr. Rajeshwar Rao (Orthopaedics) -->
+        <article class="doctor-card" data-specialty="orthopaedics" id="doc-rajeshwar-rao">
+          <div class="doctor-photo">
+            <img src="https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&w=500&q=80" alt="Dr. Rajeshwar Rao" loading="lazy">
+          </div>
+          <div class="doctor-info">
+            <p class="doctor-role">ORTHOPAEDICS · MS Orthopaedics, MCh (Joint Replacement)</p>
+            <h3 class="doctor-name">Dr. Rajeshwar Rao</h3>
+            <p class="doctor-spec">Orthopaedic Surgery & Sports Medicine — Whitefield Clinic</p>
+            <div class="doctor-badge-row">
+              <span class="doc-badge">Robotic Knee Replacement</span>
+              <span class="doc-badge">Arthroscopy</span>
+              <span class="doc-lang">🌐 English, Kannada, Telugu</span>
+            </div>
+            <div class="doctor-action">
+              <a href="patient-portal.html" class="da-primary">Request appointment</a>
+              <button type="button" class="da-secondary" onclick="openDoctorProfile('rajeshwar-rao')">View profile</button>
+            </div>
+          </div>
+        </article>
+</div>
+    </section>
+
+    <!-- ── Locations ────────────────────────────────────────── -->
+    <div class="locations-strip">
+      <h2>Our facilities</h2>
+      <div class="location-grid">
+        <div class="loc-card">
+          <p class="loc-name">City Health Centre</p>
+          <p class="loc-addr">14 MG Road, Bengaluru — 560001<br>Mon–Sat: 8:00 AM – 8:00 PM</p>
+          <div class="loc-tags">
+            <span class="loc-tag">General Practice</span>
+            <span class="loc-tag">Cardiology</span>
+            <span class="loc-tag">Mental Health</span>
+          </div>
+          <a href="pages.html?page=location-detail-template" class="loc-link">View facility →</a>
+        </div>
+        <div class="loc-card">
+          <p class="loc-name">Whitefield Clinic</p>
+          <p class="loc-addr">22 ITPL Road, Whitefield, Bengaluru — 560066<br>Mon–Sat: 9:00 AM – 7:00 PM</p>
+          <div class="loc-tags">
+            <span class="loc-tag">Cardiology</span>
+            <span class="loc-tag">Oncology</span>
+            <span class="loc-tag">Orthopaedics</span>
+          </div>
+          <a href="pages.html?page=location-detail-template" class="loc-link">View facility →</a>
+        </div>
+        <div class="loc-card">
+          <p class="loc-name">Indiranagar Diagnostic Centre</p>
+          <p class="loc-addr">5 CMH Road, Indiranagar, Bengaluru — 560038<br>Mon–Sat: 7:30 AM – 6:30 PM</p>
+          <div class="loc-tags">
+            <span class="loc-tag">Neurology</span>
+            <span class="loc-tag">Diagnostics</span>
+            <span class="loc-tag">Pulmonology</span>
+          </div>
+          <a href="pages.html?page=location-detail-template" class="loc-link">View facility →</a>
+        </div>
+        <div class="loc-card">
+          <p class="loc-name">Electronic City Unit</p>
+          <p class="loc-addr">Plot 18, Phase 1, Electronic City, Bengaluru — 560100<br>Mon–Fri: 8:00 AM – 6:00 PM</p>
+          <div class="loc-tags">
+            <span class="loc-tag">Endocrinology</span>
+            <span class="loc-tag">General Practice</span>
+            <span class="loc-tag">Lab Services</span>
+          </div>
+          <a href="pages.html?page=location-detail-template" class="loc-link">View facility →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CTA band ──────────────────────────────────────────── -->
+    <section style="padding:56px 10%;background:#e7f0e7;text-align:center">
+      <div class="eyebrow" style="justify-content:center;margin-bottom:16px"><span class="pulse" aria-hidden="true"></span> READY TO TAKE THE NEXT STEP?</div>
+      <h2 style="font:700 32px Manrope;color:var(--deep);margin:0 0 10px">Your care journey starts here.</h2>
+      <p style="color:var(--muted);font-size:13px;max-width:440px;margin:0 auto 26px;line-height:1.75">Create your patient account to request appointments, complete intake, and stay connected with your care team.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="patient-portal.html" class="button">Create an account <span aria-hidden="true">↗</span></a>
+        <a href="ai-assistant.html" class="button button-light">Talk to NexCura AI <span aria-hidden="true">✳</span></a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer class="footer" id="footer" role="contentinfo">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="brand brand-footer" href="index.html" aria-label="NexCura home">
+          <img src="logo-white.svg" alt="NexCura" height="38" style="height:38px;width:auto;display:block;">
+        </a>
+        <p>Thoughtful care, connected around you.</p>
+      </div>
+      <div class="footer-col">
+        <strong>Care</strong>
+        <a href="specialties.html">Specialties</a>
+        <a href="specialties.html#doctors">Find a doctor</a>
+        <a href="clinical-trials.html">Clinical trials</a>
+        <a href="pages.html?page=hospital-and-clinic-locations">Locations</a>
+      </div>
+      <div class="footer-col">
+        <strong>Portals</strong>
+        <a href="patient-portal.html">Patient portal</a>
+        <a href="clinician-portal.html">Clinician workspace</a>
+        <a href="admin-portal.html">Admin console</a>
+        <a href="ai-assistant.html">NexCura AI</a>
+      </div>
+      <div class="footer-col">
+        <strong>Company</strong>
+        <a href="pages.html?page=about-nexcura">About NexCura</a>
+        <a href="pages.html?page=careers">Careers</a>
+        <a href="pages.html?page=news-and-stories">News</a>
+        <a href="pages.html?page=contact-and-support">Contact</a>
+      </div>
+      <div class="footer-contact">
+        <span class="contact-icon" aria-hidden="true">✳</span>
+        <strong>Need help?</strong>
+        <p>Our team is here to help you find your way.</p>
+        <a href="ai-assistant.html">Try NexCura AI <span>↗</span></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 NexCura. All rights reserved. Illustrative platform — not an emergency service.</span>
+      <div>
+        <a href="pages.html?page=privacy-notice">Privacy</a>
+        <a href="pages.html?page=terms-of-use">Terms</a>
+        <a href="pages.html?page=accessibility-information">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const menuToggle = document.querySelector('#menu-toggle');
+    const nav = document.querySelector('.main-nav');
+    menuToggle?.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    // Specialty filter chips
+    function setFilter(el, filter) {
+      filterBySpecialty(filter);
+      return;
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      const cards = document.querySelectorAll('#spec-grid .spec-card');
+      cards.forEach(card => {
+        card.style.display = (filter === 'all' || card.dataset.specialty === filter) ? '' : 'none';
+      });
+    }
+
+    // Search filter
+    function filterCards() {
+      const q = document.querySelector('#doctor-search').value.toLowerCase().trim();
+      if (!q) return;
+      document.querySelectorAll('.doctor-card').forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+      document.querySelectorAll('#spec-grid .spec-card').forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+
+    // Enter key on search
+    document.querySelector('#doctor-search')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') filterCards();
+    });
+  </script>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       SPECIALTY & DOCTOR PROFILE MODAL SYSTEM
+  ═════════════════════════════════════════════════════════════ -->
+  <div id="specModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(18,59,61,0.7); z-index:9999; backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
+    <div id="specModalBox" style="background:#fff; width:100%; max-width:640px; border-radius:16px; box-shadow:0 24px 60px rgba(0,0,0,0.3); overflow:hidden; display:flex; flex-direction:column; max-height:85vh; animation:popModal 0.25s ease;">
+      <div style="background:var(--teal); color:#fff; padding:18px 24px; display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="specModalTitle" style="margin:0; font-family:'Manrope',sans-serif; font-size:1.2rem; color:#fff; font-weight:700;"></h3>
+        <button onclick="closeSpecModal()" style="background:none; border:none; color:#fff; font-size:1.8rem; line-height:1; cursor:pointer;" aria-label="Close modal">&times;</button>
+      </div>
+      <div id="specModalBody" style="padding:24px; overflow-y:auto; font-size:0.92rem; line-height:1.6; color:#233831;"></div>
+      <div id="specModalFooter" style="padding:16px 24px; background:#f7faf8; border-top:1px solid #e2ece9; display:flex; justify-content:flex-end; gap:12px;"></div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes popModal { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+    .review-item { background:#f4f8f6; border-radius:8px; padding:14px; margin-bottom:12px; border-left:3px solid var(--teal); }
+    .review-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.85rem; }
+    .review-stars { color:#eab308; letter-spacing:2px; font-weight:700; }
+  </style>
+
+  <script>
+    // Doctor Profiles Data
+    const DOCTOR_PROFILES = {
+      'priya-sharma': {
+        name: 'Dr. Priya Sharma, MD',
+        role: 'Chief of Primary Care & Preventive Medicine',
+        qualifications: 'MBBS (Bangalore Medical College), MD General Medicine (AIIMS), Dip. Diabetology',
+        experience: '18+ Years Clinical Practice',
+        facility: 'City Health Centre, Building A, Room 204, Bengaluru',
+        languages: 'English, Kannada, Hindi',
+        bio: 'Dr. Priya Sharma specializes in adult preventive healthcare, chronic metabolic condition management (diabetes, hypertension, hyperlipidemia), and geriatric care. She leads NexCura’s comprehensive wellness continuum and is an advocate for patient-centred lifestyle medicine.',
+        specialties: ['Preventive Health Checkups', 'Hypertension & Lipid Clinics', 'Type 2 Diabetes Optimization', 'Pre-operative Medical Clearance'],
+        rating: '4.94 / 5.0 (148 verified patient reviews)',
+        reviews: [
+          { author: 'Meera K.', date: '12 Sep 2026', stars: '★★★★★', text: 'Dr. Sharma spent 30 minutes listening to all my concerns and adjusted my medication with complete clarity. Wonderful bedside manner!' },
+          { author: 'Ramesh V.', date: '28 Aug 2026', stars: '★★★★★', text: 'My HbA1c dropped from 8.2 to 6.4 in 6 months under Dr. Sharma’s structured guidance. Outstanding doctor.' },
+          { author: 'Deepa N.', date: '14 Jul 2026', stars: '★★★★★', text: 'Compassionate, punctual, and thoroughly professional. The whole clinic staff was very supportive.' }
+        ]
+      },
+      'arjun-mehta': {
+        name: 'Dr. Arjun Mehta, MD, DM',
+        role: 'Chief of Interventional Cardiology',
+        qualifications: 'MBBS, MD Internal Medicine, DM Cardiology (KEM Hospital), FACC (USA)',
+        experience: '22+ Years Clinical Practice',
+        facility: 'Whitefield Advanced Heart Pavilion, Suite 402, Bengaluru',
+        languages: 'English, Hindi, Gujarati',
+        bio: 'Dr. Arjun Mehta is a renowned interventional cardiologist specializing in complex coronary interventions, transcatheter aortic valve replacement (TAVR), and heart failure hemodynamics. He has conducted over 5,000 successful coronary angiographies and angioplasties.',
+        specialties: ['Coronary Angiography & Stenting', 'TAVR & Structural Heart Care', 'Congestive Heart Failure Clinics', 'Preventive Lipidology'],
+        rating: '4.96 / 5.0 (210 verified patient reviews)',
+        reviews: [
+          { author: 'Vikram S.', date: '18 Sep 2026', stars: '★★★★★', text: 'Dr. Mehta saved my father’s life during acute angina. His precision and reassuring demeanor are beyond compare.' },
+          { author: 'Sunita P.', date: '04 Aug 2026', stars: '★★★★★', text: 'Extremely clear explanation of coronary CT angiography and treatment options. Top-tier cardiologist.' }
+        ]
+      },
+      'lakshmi-nair': {
+        name: 'Dr. Lakshmi Nair, MD, DM, FRCP',
+        role: 'Director of Neurosciences & Stroke Care',
+        qualifications: 'MBBS, MD General Medicine, DM Neurology (NIMHANS), FRCP (London)',
+        experience: '16+ Years Clinical Practice',
+        facility: 'Indiranagar Diagnostic & Neuro Center, Room 102, Bengaluru',
+        languages: 'English, Malayalam, Tamil, Kannada',
+        bio: 'Dr. Lakshmi Nair is an expert epileptologist and neurovascular specialist. She directs NexCura’s Rapid Stroke Telestroke unit and specializes in medically refractory epilepsy, migraine prophylaxis, and neuro-immunological disorders.',
+        specialties: ['Comprehensive Stroke Evaluation', 'Video EEG & Refractory Epilepsy', 'Migraine & Cluster Headache Management', 'Movement Disorders & Parkinson’s'],
+        rating: '4.91 / 5.0 (98 verified patient reviews)',
+        reviews: [
+          { author: 'Kiran B.', date: '02 Sep 2026', stars: '★★★★★', text: 'Found the right medication for my chronic migraine after 4 years of suffering. Dr. Nair is remarkably thorough.' },
+          { author: 'Asha M.', date: '19 Aug 2026', stars: '★★★★★', text: 'Very attentive and kind. Explain EEG test results in simple, understandable terms.' }
+        ]
+      },
+      'sanjay-rao': {
+        name: 'Dr. Sanjay Rao, MD, DM',
+        role: 'Senior Consultant Endocrinologist',
+        qualifications: 'MBBS, MD Medicine, DM Endocrinology (CMC Vellore)',
+        experience: '15+ Years Clinical Practice',
+        facility: 'Electronic City Specialty Unit, Bengaluru',
+        languages: 'English, Kannada, Telugu',
+        bio: 'Dr. Sanjay Rao is dedicated to endocrine health, including complex diabetes management, thyroid nodule biopsies, pituitary disorders, and osteoporosis bone density therapy.',
+        specialties: ['Insulin Pump & CGM Therapy', 'Thyroid Ultrasound & Biopsies', 'PCOS & Reproductive Endocrinology', 'Metabolic Bone Disorders'],
+        rating: '4.88 / 5.0 (132 verified patient reviews)',
+        reviews: [
+          { author: 'Harish T.', date: '10 Sep 2026', stars: '★★★★★', text: 'Dr. Rao is the best endocrinologist I have consulted. Continuous glucose monitoring setup was smooth and life-changing.' }
+        ]
+      },
+      'kavitha-reddy': {
+        name: 'Dr. Kavitha Reddy, MD, DNB',
+        role: 'Head of Medical Oncology & Precision Therapeutics',
+        qualifications: 'MBBS, MD Internal Medicine, DNB Medical Oncology (Tata Memorial Hospital)',
+        experience: '19+ Years Clinical Practice',
+        facility: 'Whitefield Oncology Pavilion, Bengaluru',
+        languages: 'English, Telugu, Hindi',
+        bio: 'Dr. Kavitha Reddy leads clinical genomics and targeted immunotherapy trials. Her research centers on personalized adjuvant chemotherapy regimens and genomic biomarker testing in solid tumors.',
+        specialties: ['Genomic Targeted Chemotherapy', 'Immune Checkpoint Inhibitor Therapy', 'Clinical Trial Navigation', 'Supportive Cancer Care'],
+        rating: '4.98 / 5.0 (165 verified patient reviews)',
+        reviews: [
+          { author: 'Ananya G.', date: '21 Sep 2026', stars: '★★★★★', text: 'Dr. Reddy gave our family so much clarity and hope during a difficult diagnosis. Her expertise in targeted therapies is world-class.' }
+        ]
+      },
+      'rohit-krishnaswamy': {
+        name: 'Dr. Rohit Krishnaswamy, MD',
+        role: 'Consultant Neuropsychiatrist',
+        qualifications: 'MBBS, MD Psychiatry (NIMHANS), Certified in CBT & ACT',
+        experience: '12+ Years Clinical Practice',
+        facility: 'City Health Centre + Virtual Clinic, Bengaluru',
+        languages: 'English, Kannada',
+        bio: 'Dr. Rohit Krishnaswamy offers evidence-based pharmacotherapy and psychotherapy for anxiety disorders, treatment-resistant depression, adult ADHD, and stress-related burnout.',
+        specialties: ['Anxiety & Panic Disorder Protocol', 'Mood Disorders & Depression', 'Stress Management & Mindfulness', 'Tele-Psychiatry Consultations'],
+        rating: '4.92 / 5.0 (89 verified patient reviews)',
+        reviews: [
+          { author: 'Siddharth M.', date: '05 Sep 2026', stars: '★★★★★', text: 'Warm, non-judgmental, and deeply knowledgeable. Felt genuinely heard and supported.' }
+        ]
+      },
+      'farhan-naqvi': {
+        name: 'Dr. Farhan Naqvi, MD, FCCP',
+        role: 'Lead Pulmonologist & Critical Care Specialist',
+        qualifications: 'MBBS, MD Pulmonary Medicine, Fellow American College of Chest Physicians',
+        experience: '14+ Years Clinical Practice',
+        facility: 'Indiranagar Diagnostic Centre, Bengaluru',
+        languages: 'English, Hindi, Urdu',
+        bio: 'Dr. Farhan Naqvi specializes in bronchoscopy, sleep medicine, chronic asthma protocols, and post-viral pulmonary rehabilitation.',
+        specialties: ['Sleep Apnea (Polysomnography)', 'Asthma & Allergy Desensitization', 'COPD Rehabilitation', 'Interventional Bronchoscopy'],
+        rating: '4.89 / 5.0 (76 verified patient reviews)',
+        reviews: [
+          { author: 'Zubair K.', date: '11 Aug 2026', stars: '★★★★★', text: 'CPAP titration was expertly guided. Finally sleeping peacefully through the night.' }
+        ]
+      },
+      'rajeshwar-rao': {
+        name: 'Dr. Rajeshwar Rao, MS, MCh',
+        role: 'Chief of Robotic Joint Surgery & Orthopaedics',
+        qualifications: 'MBBS, MS Orthopaedics (PGI Chandigarh), MCh Orth (UK), Fellowship in Robotic Arthroplasty (USA)',
+        experience: '20+ Years Clinical Practice',
+        facility: 'Whitefield Orthopaedic & Sports Medicine Center, Bengaluru',
+        languages: 'English, Kannada, Telugu',
+        bio: 'Dr. Rajeshwar Rao pioneered robotic-assisted total knee and hip replacements in South India. He works closely with sports athletes for ACL reconstruction and minimally invasive arthroscopy.',
+        specialties: ['Robotic Mako Total Knee Replacement', 'Direct Anterior Hip Arthroplasty', 'Shoulder & Knee Arthroscopy', 'Sports Injury Rehabilitation'],
+        rating: '4.95 / 5.0 (178 verified patient reviews)',
+        reviews: [
+          { author: 'Gopal R.', date: '15 Sep 2026', stars: '★★★★★', text: 'Had both knees replaced robotically by Dr. Rao. Walking without pain within 3 weeks! Miracle worker.' }
+        ]
+      }
+    };
+
+    // Specialty Information Data
+    const SPECIALTY_DATA = {
+      'cardiology': {
+        title: 'Cardiology & Vascular Medicine',
+        icon: '♥',
+        summary: 'Comprehensive cardiovascular disease prevention, emergency catheterization, structural heart care, and cardiac rehabilitation.',
+        conditions: ['Coronary Artery Disease', 'Heart Failure & Cardiomyopathy', 'Atrial Fibrillation & Arrhythmias', 'Hypertension & Lipid Disorders', 'Valvular Heart Disease'],
+        facilities: ['NexCura Central Institute (Bengaluru)', 'Whitefield Advanced Heart Pavilion (Bengaluru)', 'Coastal Advanced Health Pavilion (Mangaluru)'],
+        docs: ['priya-sharma', 'arjun-mehta']
+      },
+      'neurology': {
+        title: 'Neurology & Neuro-Spine Care',
+        icon: '🧠',
+        summary: 'Advanced diagnostic electrophysiology, acute stroke thrombolysis, epilepsy surgery programs, and neuro-rehabilitation.',
+        conditions: ['Acute Ischemic Stroke', 'Epilepsy & Seizure Disorders', 'Migraine & Trigeminal Neuralgia', 'Parkinson’s Disease & Tremors', 'Multiple Sclerosis'],
+        facilities: ['Indiranagar Diagnostic & Neuro Center', 'Neuro-Spine & Robotic Center (Chennai)'],
+        docs: ['lakshmi-nair']
+      },
+      'oncology': {
+        title: 'Medical & Surgical Oncology',
+        icon: '⚕',
+        summary: 'Precision cancer diagnostics, genomic molecular tumor boards, targeted biologics, immunotherapies, and clinical research trials.',
+        conditions: ['Breast & Gynecologic Cancers', 'Gastrointestinal & Colorectal Tumors', 'Lung & Thoracic Malignancies', 'Lymphomas & Leukemias'],
+        facilities: ['Whitefield Oncology Pavilion', 'Oncology & Genomic Precision Hospital (Mumbai)'],
+        docs: ['kavitha-reddy']
+      },
+      'endocrinology': {
+        title: 'Endocrinology & Metabolic Health',
+        icon: '⚗',
+        summary: 'Comprehensive metabolic disorder management, continuous glucose monitoring technology, thyroid ultrasonography, and adrenal care.',
+        conditions: ['Type 1 & Type 2 Diabetes Mellitus', 'Thyroid Nodules & Hashimotos', 'PCOS & Metabolic Syndrome', 'Osteoporosis & Calcium Disorders'],
+        facilities: ['Electronic City Specialty Unit', 'Royal Heritage Hospital (Mysuru)'],
+        docs: ['sanjay-rao']
+      },
+      'pulmonology': {
+        title: 'Pulmonology & Respiratory Medicine',
+        icon: '🫁',
+        summary: 'Dedicated respiratory allergy testing, pulmonary function laboratories, sleep disorder diagnostics, and bronchoscopy suites.',
+        conditions: ['Bronchial Asthma', 'Chronic Obstructive Pulmonary Disease (COPD)', 'Obstructive Sleep Apnea', 'Interstitial Lung Disease'],
+        facilities: ['Indiranagar Diagnostic Centre', 'City Health Centre'],
+        docs: ['farhan-naqvi']
+      },
+      'mental-health': {
+        title: 'Psychiatry & Behavioral Health',
+        icon: '🤝',
+        summary: 'Confidential, evidence-based psychiatric evaluations, medication management, and psychotherapy provided in clinic or via telehealth.',
+        conditions: ['Generalized Anxiety & Panic Disorders', 'Clinical Depression & Bipolar Spectrum', 'Adult ADHD & Neurodivergence', 'Workplace Burnout & Stress'],
+        facilities: ['City Health Centre', 'Virtual Telehealth Clinic'],
+        docs: ['rohit-krishnaswamy']
+      },
+      'orthopaedics': {
+        title: 'Orthopaedic Surgery & Joint Care',
+        icon: '🦴',
+        summary: 'Computer-guided and robotic joint replacements, sports injury arthroscopy, spine care, and dedicated physical physiotherapy.',
+        conditions: ['Severe Knee & Hip Osteoarthritis', 'Meniscal & Ligament Tears (ACL/PCL)', 'Rotator Cuff & Shoulder Impingement', 'Spinal Disc Herniations'],
+        facilities: ['Whitefield Orthopaedic Center', 'NexCura Central Institute'],
+        docs: ['rajeshwar-rao']
+      }
+    };
+
+    function openSpecModal(title, bodyHtml, footerHtml) {
+      document.getElementById('specModalTitle').textContent = title;
+      document.getElementById('specModalBody').innerHTML = bodyHtml;
+      document.getElementById('specModalFooter').innerHTML = footerHtml || '<button class="da-secondary" onclick="closeSpecModal()">Close</button>';
+      document.getElementById('specModalOverlay').style.display = 'flex';
+    }
+
+    function closeSpecModal() {
+      document.getElementById('specModalOverlay').style.display = 'none';
+    }
+
+    document.getElementById('specModalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeSpecModal();
+    });
+
+    // Open Doctor Profile Function
+    window.openDoctorProfile = function(docId) {
+      const doc = DOCTOR_PROFILES[docId];
+      if (!doc) return;
+
+      const specialtiesChips = doc.specialties.map(s => `<span class="doc-badge" style="background:#eaf4f0; color:#1a5247; font-weight:600; padding:4px 10px; border-radius:12px; font-size:0.8rem;">${s}</span>`).join(' ');
+
+      const reviewsHtml = doc.reviews.map(r => `
+        <div class="review-item">
+          <div class="review-header">
+            <strong>${r.author}</strong>
+            <span class="review-stars">${r.stars}</span>
+          </div>
+          <p style="margin:0 0 4px; font-size:0.88rem; color:#233831;">"${r.text}"</p>
+          <span style="font-size:0.75rem; color:#68867e;">Verified Patient · ${r.date}</span>
+        </div>
+      `).join('');
+
+      const body = `
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <div style="font-size:0.82rem; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:0.5px;">${doc.role}</div>
+            <div style="font-size:0.88rem; color:#5b776f; margin-top:2px;">${doc.qualifications}</div>
+            <div style="font-size:0.82rem; color:#6b877f; margin-top:4px;">📍 ${doc.facility} &nbsp;·&nbsp; ⏱ ${doc.experience}</div>
+            <div style="margin-top:6px; font-size:0.85rem; font-weight:600; color:#1a5247;">⭐ ${doc.rating}</div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 6px; font-size:0.95rem; color:var(--deep);">About the Physician</h4>
+            <p style="margin:0; font-size:0.9rem; line-height:1.6; color:#3b564e;">${doc.bio}</p>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 8px; font-size:0.95rem; color:var(--deep);">Clinical Focus Areas</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">${specialtiesChips}</div>
+          </div>
+
+          <div style="border-top:1px solid #e4ece8; padding-top:14px; margin-top:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h4 style="margin:0; font-size:0.95rem; color:var(--deep);">Verified Patient Reviews (${doc.reviews.length})</h4>
+              <button class="da-secondary" style="font-size:0.78rem; padding:4px 8px;" onclick="openReviewSubmissionModal('${docId}')">+ Leave a Review</button>
+            </div>
+            <div>${reviewsHtml}</div>
+          </div>
+        </div>
+      `;
+
+      const footer = `
+        <button class="da-secondary" onclick="closeSpecModal()">Close</button>
+        <a href="patient-portal.html" class="da-primary" style="text-decoration:none; padding:10px 18px; border-radius:6px;">Book Consultation with ${doc.name.split(',')[0]} ↗</a>
+      `;
+
+      openSpecModal(doc.name, body, footer);
+    };
+
+    // Open Review Submission Modal
+    window.openReviewSubmissionModal = function(docId) {
+      const doc = DOCTOR_PROFILES[docId];
+      if (!doc) return;
+
+      const body = `
+        <form id="docReviewForm" style="display:flex; flex-direction:column; gap:14px;">
+          <p style="margin:0; font-size:0.88rem; color:#5b776f;">Share your experience with <strong>${doc.name}</strong>. Feedback helps patients make informed healthcare decisions.</p>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; color:#233831; margin-bottom:4px;">Rating *</label>
+            <select id="reviewRating" style="width:100%; padding:8px 12px; border:1px solid #c2d9d3; border-radius:6px;">
+              <option value="5">★★★★★ (5/5) — Excellent Care & Communication</option>
+              <option value="4">★★★★☆ (4/5) — Very Good</option>
+              <option value="3">★★★☆☆ (3/5) — Satisfactory</option>
+              <option value="2">★★☆☆☆ (2/5) — Needs Improvement</option>
+              <option value="1">★☆☆☆☆ (1/5) — Unsatisfactory</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; color:#233831; margin-bottom:4px;">Your Comments & Feedback *</label>
+            <textarea id="reviewText" required rows="3" placeholder="Describe the consultation, bedside manner, explanation of treatment..." style="width:100%; padding:10px 12px; border:1px solid #c2d9d3; border-radius:6px; font-family:inherit;"></textarea>
+          </div>
+          <div>
+            <label style="display:block; font-size:0.82rem; font-weight:700; color:#233831; margin-bottom:4px;">Your Name (or initials for privacy)</label>
+            <input type="text" id="reviewAuthor" placeholder="e.g. Ramesh K." style="width:100%; padding:8px 12px; border:1px solid #c2d9d3; border-radius:6px;">
+          </div>
+        </form>
+      `;
+
+      const footer = `
+        <button class="da-secondary" onclick="openDoctorProfile('${docId}')">Back</button>
+        <button class="da-primary" id="btnSubmitReview">Submit Verified Review</button>
+      `;
+
+      openSpecModal(`Review ${doc.name.split(',')[0]}`, body, footer);
+
+      setTimeout(() => {
+        document.getElementById('btnSubmitReview').addEventListener('click', function() {
+          const text = document.getElementById('reviewText').value.trim();
+          const author = document.getElementById('reviewAuthor').value.trim() || 'Verified Patient';
+          const ratingVal = document.getElementById('reviewRating').value;
+          if (!text) return;
+
+          const starStr = '★'.repeat(parseInt(ratingVal)) + '☆'.repeat(5 - parseInt(ratingVal));
+          doc.reviews.unshift({ author, date: 'Just now', stars: starStr, text });
+          openDoctorProfile(docId);
+        });
+      }, 100);
+    };
+
+    // Open Specialty Information Modal
+    window.openSpecialtyModal = function(specKey) {
+      const spec = SPECIALTY_DATA[specKey] || SPECIALTY_DATA['cardiology'];
+      const condsHtml = spec.conditions.map(c => `<li style="padding:4px 0;">${c}</li>`).join('');
+      const facsHtml = spec.facilities.map(f => `<li style="padding:4px 0;">${f}</li>`).join('');
+
+      const body = `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <p style="margin:0; font-size:0.95rem; color:#2a453c; line-height:1.6;">${spec.summary}</p>
+          <div style="background:#f4f8f6; padding:14px; border-radius:8px;">
+            <strong style="color:var(--deep); font-size:0.92rem;">Conditions Evaluated & Treated:</strong>
+            <ul style="margin:6px 0 0 18px; padding:0; color:#3b564e; font-size:0.88rem;">${condsHtml}</ul>
+          </div>
+          <div>
+            <strong style="color:var(--deep); font-size:0.92rem;">Hospital Campuses Providing This Specialty:</strong>
+            <ul style="margin:6px 0 0 18px; padding:0; color:#3b564e; font-size:0.88rem;">${facsHtml}</ul>
+          </div>
+        </div>
+      `;
+
+      const footer = `
+        <button class="da-secondary" onclick="closeSpecModal()">Close</button>
+        <button class="da-primary" onclick="closeSpecModal(); filterBySpecialty('${specKey}');">View Specialists in ${spec.title.split('&')[0]} →</button>
+      `;
+
+      openSpecModal(`${spec.icon} ${spec.title}`, body, footer);
+    };
+
+    // Filter by Specialty Function (filters BOTH specialty cards and doctor cards!)
+    window.filterBySpecialty = function(specKey) {
+      document.querySelectorAll('.filter-chip').forEach(c => {
+        if (c.dataset.filter === specKey) c.classList.add('active');
+        else c.classList.remove('active');
+      });
+
+      // Filter specialty cards
+      const specCards = document.querySelectorAll('#spec-grid .spec-card');
+      specCards.forEach(card => {
+        card.style.display = (specKey === 'all' || card.dataset.specialty === specKey) ? '' : 'none';
+      });
+
+      // Filter doctor cards!
+      const docCards = document.querySelectorAll('#doctor-grid .doctor-card');
+      docCards.forEach(card => {
+        const specs = (card.dataset.specialty || '').split(' ');
+        card.style.display = (specKey === 'all' || specs.includes(specKey)) ? '' : 'none';
+      });
+
+      // Smooth scroll to doctors section
+      const docSection = document.getElementById('doctors');
+      if (docSection) {
+        window.scrollTo({ top: docSection.offsetTop - 70, behavior: 'smooth' });
+      }
+    };
+
+    // Auto-filter on page load from URL hash or query param
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const params = new URLSearchParams(window.location.search);
+      const filter = params.get('filter') || (['cardiology', 'neurology', 'oncology', 'endocrinology', 'pulmonology', 'mental-health', 'orthopaedics'].includes(hash) ? hash : null);
+      if (filter) {
+        filterBySpecialty(filter);
+      }
+    });
+  </script>
+
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

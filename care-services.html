@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b5d5e">
+  <title>Care &amp; Clinical Services — NexCura Healthcare Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/static/images/logo/logo-icon.svg">
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0d1e2e 0%, #0b5d5e 60%, #0284c7 100%);
+      color: #fff;
+      padding: 70px 0 50px;
+      text-align: center;
+      position: relative;
+    }
+    .page-hero h1 { font-family: 'Manrope', sans-serif; font-size: clamp(32px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { font-size: 16px; color: #e2e8f0; max-width: 680px; margin: 0 auto; line-height: 1.6; }
+    .services-full-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin-top: 40px;
+    }
+    .service-full-card {
+      background: #ffffff;
+      border: 1px solid #e2ebe5;
+      border-radius: 18px;
+      padding: 30px 26px;
+      box-shadow: 0 6px 20px rgba(11, 93, 94, 0.05);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      transform-style: preserve-3d;
+    }
+    .service-full-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 36px rgba(11, 93, 94, 0.12);
+      border-color: #0b5d5e;
+    }
+    .service-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+    .service-full-card h3 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0d1e2e;
+      margin-bottom: 8px;
+    }
+    .service-full-card p {
+      font-size: 13.5px;
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .service-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: #e3f5f0;
+      color: #0b5d5e;
+      display: inline-block;
+      margin-bottom: 10px;
+      width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .service-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #0b5d5e;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      margin-top: auto;
+      transition: gap 0.2s;
+    }
+    .service-action-btn:hover { gap: 10px; color: #0284c7; }
+    @media (max-width: 1024px) { .services-full-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .services-full-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-link" aria-label="NexCura Home">
+        <img src="/static/images/logo/logo.svg" alt="NexCura Healthcare" height="42" style="height:42px;width:auto;display:block;">
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/care-services" class="nav-link active">Care &amp; Services</a>
+        <a href="/hospitals-network" class="nav-link">Hospitals &amp; Network</a>
+        <a href="/about" class="nav-link">About Us</a>
+        <a href="/clinical-tools" class="nav-link">Clinical Tools</a>
+        <a href="/healthcare-insights" class="nav-link">Healthcare Insights</a>
+        <a href="/feedback" class="nav-link">Feedback</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="/login" class="btn btn-outline btn-sm">Login</a>
+        <a href="/register" class="btn btn-primary btn-sm">Get Started ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="section-eyebrow" style="background:rgba(255,255,255,0.18);color:#fff;">COMPREHENSIVE CLINICAL CARE</div>
+      <h1>Specialized Care &amp; Clinical Services</h1>
+      <p>Discover NexCura's 10 integrated healthcare disciplines designed to support your journey from preventive health to complex super-specialty surgery.</p>
+    </div>
+  </section>
+
+  <!-- Services Grid -->
+  <section class="section-pad" style="background:#f8fafc;">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">10 Integrated Clinical Services</h2>
+        <p class="section-desc">Every discipline is powered by connected telemetry, specialist clinical boards, and electronic health record synchronization.</p>
+      </div>
+
+      <div class="services-full-grid">
+        <!-- 1. Doctor Consultation -->
+        <div class="service-full-card">
+          <span class="service-badge">Outpatient &amp; Clinic</span>
+          <div class="service-icon-box" style="background:#e3f5f0;color:#0b5d5e;">🩺</div>
+          <h3>Doctor Consultation</h3>
+          <p>Book one-on-one evaluations with 500+ board-certified specialists across cardiology, oncology, neurosurgery, and internal medicine.</p>
+          <a href="/patient-portal.html#appointments" class="service-action-btn">Book Consultation →</a>
+        </div>
+
+        <!-- 2. Appointment Booking -->
+        <div class="service-full-card">
+          <span class="service-badge">Smart Scheduling</span>
+          <div class="service-icon-box" style="background:#e0f2fe;color:#0284c7;">📅</div>
+          <h3>Appointment Booking</h3>
+          <p>Instant digital slot reservation across all hospital campuses with zero waiting lines, calendar reminders, and automated pre-visit intake.</p>
+          <a href="/patient-portal.html#appointments" class="service-action-btn">Reserve Slot →</a>
+        </div>
+
+        <!-- 3. Telemedicine -->
+        <div class="service-full-card">
+          <span class="service-badge">Virtual Care</span>
+          <div class="service-icon-box" style="background:#ede9fe;color:#7c3aed;">📱</div>
+          <h3>Telemedicine &amp; Virtual Care</h3>
+          <p>Encrypted HD video consultations with top clinicians from the comfort of your home, complete with digital prescriptions and follow-up notes.</p>
+          <a href="/patient-portal.html#telehealth" class="service-action-btn">Start Telehealth →</a>
+        </div>
+
+        <!-- 4. Emergency Assistance -->
+        <div class="service-full-card">
+          <span class="service-badge" style="background:#fee2e2;color:#dc2626;">24/7 Golden Hour</span>
+          <div class="service-icon-box" style="background:#fee2e2;color:#dc2626;">🚨</div>
+          <h3>Emergency Assistance</h3>
+          <p>Level 1 rapid trauma response, live GPS cardiac ambulance dispatch, and automated ICU bed reservation during acute medical emergencies.</p>
+          <a href="/#emergency" class="service-action-btn">Emergency Dispatch →</a>
+        </div>
+
+        <!-- 5. Patient Support -->
+        <div class="service-full-card">
+          <span class="service-badge">Care Concierge</span>
+          <div class="service-icon-box" style="background:#fef3c7;color:#d97706;">🤝</div>
+          <h3>Patient Support &amp; Concierge</h3>
+          <p>Dedicated clinical navigators to assist with hospital admissions, insurance pre-authorization, translation, and patient advocacy.</p>
+          <a href="/pages.html?page=contact-and-support" class="service-action-btn">Contact Concierge →</a>
+        </div>
+
+        <!-- 6. Health Checkups -->
+        <div class="service-full-card">
+          <span class="service-badge">Preventive Care</span>
+          <div class="service-icon-box" style="background:#dcfce7;color:#15803d;">🩺</div>
+          <h3>Comprehensive Health Checkups</h3>
+          <p>Whole-body health screenings, advanced cardiovascular stress testing, cancer biomarker panels, and executive wellness evaluations.</p>
+          <a href="/specialties.html" class="service-action-btn">Explore Packages →</a>
+        </div>
+
+        <!-- 7. Medication Assistance -->
+        <div class="service-full-card">
+          <span class="service-badge">Pharmacy &amp; Delivery</span>
+          <div class="service-icon-box" style="background:#fce7f3;color:#db2777;">💊</div>
+          <h3>Medication Assistance</h3>
+          <p>Verified digital pharmacy fulfillment with home delivery, automated refill reminders, and drug-interaction safety audits.</p>
+          <a href="/patient-portal.html#medications" class="service-action-btn">Order Medications →</a>
+        </div>
+
+        <!-- 8. Lab & Diagnostic Services -->
+        <div class="service-full-card">
+          <span class="service-badge">NABL Certified</span>
+          <div class="service-icon-box" style="background:#ccfbf1;color:#0f766e;">🔬</div>
+          <h3>Lab &amp; Diagnostic Services</h3>
+          <p>High-precision pathology, 3T MRI, 128-slice CT scans, and next-generation genomic sequencing delivered directly to your portal.</p>
+          <a href="/patient-portal.html#test-results" class="service-action-btn">View Lab Results →</a>
+        </div>
+
+        <!-- 9. Digital Health Records -->
+        <div class="service-full-card">
+          <span class="service-badge">Interoperable EHR</span>
+          <div class="service-icon-box" style="background:#f1f5f9;color:#0f172a;">📂</div>
+          <h3>Digital Health Records (EHR)</h3>
+          <p>Longitudinal electronic health records adhering to HL7 FHIR standards, allowing instant sharing with specialists across India.</p>
+          <a href="/patient-portal.html#documents" class="service-action-btn">Access Records →</a>
+        </div>
+
+        <!-- 10. Follow-up Care -->
+        <div class="service-full-card">
+          <span class="service-badge">Post-Discharge</span>
+          <div class="service-icon-box" style="background:#e0e7ff;color:#4338ca;">🌱</div>
+          <h3>Follow-up &amp; Rehabilitation</h3>
+          <p>Post-surgical recovery monitoring, physiotherapy coordination, chronic condition management, and remote vital tracking.</p>
+          <a href="/patient-portal.html" class="service-action-btn">View Care Plan →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div class="footer-brand">
+          <img src="/static/images/logo/logo-white.svg" alt="NexCura Logo" height="38">
+          <p>NexCura is an AI-powered hospital intelligence and patient assistance platform connecting patients, doctors, and hospitals.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="/">Home</a>
+          <a href="/care-services">Care &amp; Services</a>
+          <a href="/hospitals-network">Hospitals &amp; Network</a>
+          <a href="/about">About Us</a>
+          <a href="/clinical-tools">Clinical Tools</a>
+          <a href="/feedback">Feedback</a>
+        </div>
+        <div class="footer-col">
+          <h4>Patient Portals</h4>
+          <a href="/patient-portal.html">Patient Dashboard</a>
+          <a href="/patient-portal.html#appointments">Book Appointments</a>
+          <a href="/ai-assistant.html">AI Assistant</a>
+        </div>
+        <div class="footer-col">
+          <h4>Clinical Network</h4>
+          <a href="/clinician-portal.html">Clinician Suite</a>
+          <a href="/admin-portal.html">Admin Console</a>
+          <a href="/staff-portal.html">Staff Workspace</a>
+        </div>
+      </div>
+      <div class="footer-bottom-bar">
+        <span>© 2026 NexCura. All rights reserved.</span>
+        <span>For medical emergencies, immediately dial 112.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

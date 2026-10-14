@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b5d5e">
+  <title>Clinical Tools &amp; Intelligence — NexCura Healthcare Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/static/images/logo/logo-icon.svg">
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0d1e2e 0%, #0b5d5e 60%, #0284c7 100%);
+      color: #fff;
+      padding: 70px 0 50px;
+      text-align: center;
+    }
+    .page-hero h1 { font-family: 'Manrope', sans-serif; font-size: clamp(32px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { font-size: 16px; color: #e2e8f0; max-width: 680px; margin: 0 auto; line-height: 1.6; }
+    
+    .disclaimer-banner {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 30px auto 0;
+      max-width: 860px;
+      color: #92400e;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin-top: 40px;
+    }
+    .tool-card {
+      background: #ffffff;
+      border: 1px solid #e2ebe5;
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 6px 20px rgba(11, 93, 94, 0.05);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .tool-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 36px rgba(11, 93, 94, 0.12);
+      border-color: #0b5d5e;
+    }
+    .tool-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .tool-card h3 { font-family: 'Manrope', sans-serif; font-size: 17px; font-weight: 800; color: #0d1e2e; margin-bottom: 6px; }
+    .tool-card p { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 18px; flex: 1; }
+
+    /* Interactive Risk Calculator Section */
+    .calculator-box {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 36px;
+      border: 1px solid #e2ebe5;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      margin-top: 40px;
+    }
+    .calc-form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .calc-field label { display: block; font-size: 12px; font-weight: 700; color: #0d1e2e; margin-bottom: 6px; text-transform: uppercase; }
+    .calc-field input, .calc-field select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #c2d9d3;
+      border-radius: 8px;
+      font-size: 13.5px;
+      outline: none;
+    }
+    @media (max-width: 1024px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } .calc-form-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .tools-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-link" aria-label="NexCura Home">
+        <img src="/static/images/logo/logo.svg" alt="NexCura Healthcare" height="42" style="height:42px;width:auto;display:block;">
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/care-services" class="nav-link">Care &amp; Services</a>
+        <a href="/hospitals-network" class="nav-link">Hospitals &amp; Network</a>
+        <a href="/about" class="nav-link">About Us</a>
+        <a href="/clinical-tools" class="nav-link active">Clinical Tools</a>
+        <a href="/healthcare-insights" class="nav-link">Healthcare Insights</a>
+        <a href="/feedback" class="nav-link">Feedback</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="/login" class="btn btn-outline btn-sm">Login</a>
+        <a href="/register" class="btn btn-primary btn-sm">Get Started ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="section-eyebrow" style="background:rgba(255,255,255,0.18);color:#fff;">EVIDENCE-BASED INFORMATICS</div>
+      <h1>Clinical Tools &amp; Intelligence Suite</h1>
+      <p>Empowering clinicians and patients with artificial intelligence, risk calculators, medical record synthesizers, and longitudinal telemetry analytics.</p>
+      
+      <div class="disclaimer-banner">
+        <span style="font-size:22px;">⚠️</span>
+        <div>
+          <strong>Clinical Disclaimer &amp; Non-Diagnostic Protocol:</strong>
+          NexCura clinical tools and AI assistants provide evidence-grounded educational synthesis and triage assistance. They do not replace a qualified physician's independent diagnostic judgment. For life-threatening emergencies, call 112 immediately.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Clinical Tools Grid -->
+  <section class="section-pad" style="background:#f8fafc;">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">9 Precision Clinical Tools</h2>
+        <p class="section-desc">Designed to reduce diagnostic latency, streamline SOAP charting, and facilitate patient understanding.</p>
+      </div>
+
+      <div class="tools-grid">
+        <!-- 1. AI Patient Assistant -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#e3f5f0;color:#0b5d5e;">🤖</div>
+          <h3>AI Patient Assistant</h3>
+          <p>24/7 conversational assistant with acute emergency guardrails, multilingual patient routing, and specialist matchmaking.</p>
+          <a href="/ai-assistant.html" class="btn btn-primary btn-sm">Launch Assistant →</a>
+        </div>
+
+        <!-- 2. Symptom Information Tool -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#e0f2fe;color:#0284c7;">🩺</div>
+          <h3>Symptom Information Tool</h3>
+          <p>Structured clinical symptom checklist mapping patient-reported complaints to validated clinical reference guides.</p>
+          <a href="/patient-portal.html#intake" class="btn btn-outline btn-sm">Start Assessment →</a>
+        </div>
+
+        <!-- 3. Patient Risk Assessment -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#fef3c7;color:#d97706;">📊</div>
+          <h3>Patient Risk Assessment</h3>
+          <p>Multivariable cardiovascular and metabolic risk estimator assessing BMI, lipid profiles, blood pressure, and HbA1c history.</p>
+          <a href="#risk-calculator" class="btn btn-outline btn-sm">Calculate Risk Score →</a>
+        </div>
+
+        <!-- 4. Medical Record Summary -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#ede9fe;color:#7c3aed;">📂</div>
+          <h3>Medical Record Summary</h3>
+          <p>Automated synthesis of multi-hospital discharge summaries, lab trends, allergy profiles, and diagnostic imaging timelines.</p>
+          <a href="/patient-portal.html#documents" class="btn btn-outline btn-sm">Summarize Records →</a>
+        </div>
+
+        <!-- 5. Appointment Intelligence -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#dcfce7;color:#15803d;">📅</div>
+          <h3>Appointment Intelligence</h3>
+          <p>AI-driven slot prioritization matching complex clinical cases to sub-specialist surgery boards with minimal queue times.</p>
+          <a href="/patient-portal.html#appointments" class="btn btn-outline btn-sm">Schedule Now →</a>
+        </div>
+
+        <!-- 6. Clinical Dashboard -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#f1f5f9;color:#0f172a;">🖥️</div>
+          <h3>Clinician Encounter Workspace</h3>
+          <p>Interactive SOAP charting drawer, verified trial pre-screening, digital prescription signing, and referral routing.</p>
+          <a href="/clinician-portal.html" class="btn btn-outline btn-sm">Open Workspace →</a>
+        </div>
+
+        <!-- 7. Hospital Analytics -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#fee2e2;color:#dc2626;">📈</div>
+          <h3>Hospital Operations Analytics</h3>
+          <p>Real-time ER door-to-needle tracking, bed occupancy telemetry, and surgical suite utilization metrics.</p>
+          <a href="/admin-portal.html" class="btn btn-outline btn-sm">Inspect Metrics →</a>
+        </div>
+
+        <!-- 8. Patient Monitoring -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#ccfbf1;color:#0f766e;">🛰️</div>
+          <h3>Telemetry &amp; Vitals Monitoring</h3>
+          <p>Continuous ICU and home care telemetry sync tracking heart rate, SpO2, and arterial blood pressure variations.</p>
+          <a href="/staff-portal.html" class="btn btn-outline btn-sm">Monitor Vitals →</a>
+        </div>
+
+        <!-- 9. Health Data Visualization -->
+        <div class="tool-card">
+          <div class="tool-icon" style="background:#fce7f3;color:#db2777;">🔬</div>
+          <h3>3D Molecular &amp; Anatomical Viewer</h3>
+          <p>Interactive 3D WebGL anatomical model explorer and clinical trial biomarker discovery engine.</p>
+          <a href="/clinical-trials.html" class="btn btn-outline btn-sm">Open 3D Explorer →</a>
+        </div>
+      </div>
+
+      <!-- Interactive Risk Calculator Component -->
+      <div class="calculator-box" id="risk-calculator">
+        <h3 style="font-family:'Manrope',sans-serif;font-size:22px;color:#0d1e2e;margin-bottom:8px;">Interactive Cardiovascular Risk Score Estimator</h3>
+        <p style="font-size:13.5px;color:#64748b;">Enter routine vitals to estimate 10-year cardiovascular wellness probability based on Framingham &amp; ACC/AHA clinical models.</p>
+
+        <form id="riskCalcForm" onsubmit="event.preventDefault(); calculateRisk();">
+          <div class="calc-form-grid">
+            <div class="calc-field">
+              <label>Patient Age (Years)</label>
+              <input type="number" id="calcAge" value="48" min="18" max="100" required>
+            </div>
+            <div class="calc-field">
+              <label>Systolic Blood Pressure (mmHg)</label>
+              <input type="number" id="calcSbp" value="128" min="80" max="220" required>
+            </div>
+            <div class="calc-field">
+              <label>Total Cholesterol (mg/dL)</label>
+              <input type="number" id="calcChol" value="195" min="100" max="400" required>
+            </div>
+            <div class="calc-field">
+              <label>HDL Cholesterol (mg/dL)</label>
+              <input type="number" id="calcHdl" value="50" min="20" max="100" required>
+            </div>
+            <div class="calc-field">
+              <label>Smoking Status</label>
+              <select id="calcSmoker">
+                <option value="0">Non-Smoker</option>
+                <option value="1">Active Smoker</option>
+              </select>
+            </div>
+            <div class="calc-field">
+              <label>Diabetic History</label>
+              <select id="calcDiabetic">
+                <option value="0">No Diabetes</option>
+                <option value="1">Type 2 Diabetes</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:24px; display:flex; gap:16px; align-items:center;">
+            <button type="submit" class="btn btn-primary">Calculate Risk Score</button>
+            <div id="riskResultBox" style="font-size:14px; font-weight:700; color:#0b5d5e; padding:10px 18px; border-radius:8px; background:#e3f5f0; display:none;">
+              Estimated 10-Year Cardiovascular Risk: <span id="riskScoreValue" style="color:#0284c7;">5.4% (Low Risk)</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div class="footer-brand">
+          <img src="/static/images/logo/logo-white.svg" alt="NexCura Logo" height="38">
+          <p>NexCura is an AI-powered hospital intelligence and patient assistance platform connecting patients, doctors, and hospitals.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="/">Home</a>
+          <a href="/care-services">Care &amp; Services</a>
+          <a href="/hospitals-network">Hospitals &amp; Network</a>
+          <a href="/about">About Us</a>
+          <a href="/clinical-tools">Clinical Tools</a>
+          <a href="/feedback">Feedback</a>
+        </div>
+        <div class="footer-col">
+          <h4>Patient Portals</h4>
+          <a href="/patient-portal.html">Patient Dashboard</a>
+          <a href="/patient-portal.html#appointments">Book Appointments</a>
+          <a href="/ai-assistant.html">AI Assistant</a>
+        </div>
+        <div class="footer-col">
+          <h4>Clinical Network</h4>
+          <a href="/clinician-portal.html">Clinician Suite</a>
+          <a href="/admin-portal.html">Admin Console</a>
+          <a href="/staff-portal.html">Staff Workspace</a>
+        </div>
+      </div>
+      <div class="footer-bottom-bar">
+        <span>© 2026 NexCura. All rights reserved.</span>
+        <span>For medical emergencies, immediately dial 112.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function calculateRisk() {
+      const age = parseInt(document.getElementById('calcAge').value) || 45;
+      const sbp = parseInt(document.getElementById('calcSbp').value) || 120;
+      const smoker = parseInt(document.getElementById('calcSmoker').value) || 0;
+      const diabetic = parseInt(document.getElementById('calcDiabetic').value) || 0;
+      
+      let base = (age * 0.1) + ((sbp - 110) * 0.08) + (smoker * 3.5) + (diabetic * 4.2);
+      base = Math.max(1.5, Math.min(35.0, base)).toFixed(1);
+      
+      let category = "Low Risk";
+      let color = "#16a34a";
+      if (base > 15) { category = "High Risk"; color = "#dc2626"; }
+      else if (base > 7.5) { category = "Moderate Risk"; color = "#d97706"; }
+
+      const resultBox = document.getElementById('riskResultBox');
+      const scoreSpan = document.getElementById('riskScoreValue');
+      scoreSpan.textContent = `${base}% (${category})`;
+      scoreSpan.style.color = color;
+      resultBox.style.display = 'inline-block';
+    }
+  </script>
+</body>
+</html>

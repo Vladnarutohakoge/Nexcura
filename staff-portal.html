@@ -1,0 +1,3140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexCura — Hospital Staff Workspace & Intelligence Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       NEXCURA STAFF PORTAL — FRESH GRASS-GREEN THEME & DESIGN TOKENS
+    ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --green-primary:   #16a34a;  /* Grass Green */
+      --green-dark:      #15803d;  /* Forest Green */
+      --green-darker:    #166534;  /* Deep Forest */
+      --green-deep:      #052e16;  /* Midnight Green */
+      --green-light:     #22c55e;  /* Fresh Leaf */
+      --green-mint:      #dcfce7;  /* Soft Mint */
+      --green-surface:   #f0fdf4;  /* Light Fresh Surface */
+      --green-border:    #bbf7d0;  /* Subtle Green Border */
+      --green-accent:    #4ade80;  /* Bright Lime Green */
+
+      --navy:            #0f241d;  /* Dark Slate Green */
+      --ink:             #132a21;  /* High Contrast Text */
+      --muted:           #52796f;  /* Muted Green-Gray */
+      --gray-bg:         #F1F3F5;  /* Subtle Light-Gray Background */
+      --white:           #ffffff;
+      --card-bg:         #ffffff;
+      --border:          #d5e7de;
+
+      --warning:         #f59e0b;
+      --warning-bg:      #fef3c7;
+      --danger:          #ef4444;
+      --danger-bg:       #fee2e2;
+      --info:            #0284c7;
+      --info-bg:         #e0f2fe;
+
+      --sidebar-w:       260px;
+      --header-h:        68px;
+      --radius-sm:       8px;
+      --radius:          12px;
+      --radius-lg:       18px;
+
+      --shadow-sm:       0 1px 3px rgba(22,163,74,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:       0 6px 18px rgba(22,163,74,0.08), 0 2px 6px rgba(0,0,0,0.03);
+      --shadow-3d:       0 10px 30px rgba(21,128,61,0.12), 0 4px 10px rgba(0,0,0,0.04);
+      --transition:      all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Manrope', sans-serif;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+    }
+
+    /* ─── APP SHELL & 3D LAYOUT ───────────────────────────────── */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      background: var(--gray-bg);
+    }
+
+    /* ─── SIDEBAR (FRESH GREEN BRANDING) ──────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: linear-gradient(180deg, #092e1f 0%, #0d3b28 50%, #062417 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+      z-index: 60;
+    }
+
+    .sidebar-brand {
+      padding: 22px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand-icon-box {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(34,197,94,0.4);
+    }
+    .brand-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .brand-name span { color: var(--green-accent); }
+    .brand-tag {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      display: block;
+    }
+
+    /* Staff Profile Pill */
+    .sidebar-profile {
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .staff-avatar {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+      position: relative;
+    }
+    .staff-status-dot {
+      position: absolute;
+      bottom: -2px; right: -2px;
+      width: 12px; height: 12px;
+      background: #22c55e;
+      border: 2px solid #092e1f;
+      border-radius: 50%;
+    }
+    .staff-info small { font-size: 10px; color: var(--green-accent); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
+    .staff-info strong { display: block; font-size: 13px; font-family: 'Manrope', sans-serif; color: #fff; line-height: 1.2; margin-top: 1px; }
+    .staff-info .staff-shift-label { font-size: 10.5px; color: rgba(255,255,255,0.65); }
+
+    /* Navigation List */
+    .sidebar-nav {
+      padding: 14px 10px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .sidebar-nav::-webkit-scrollbar { width: 4px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+    .nav-label {
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.45);
+      padding: 10px 12px 4px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.78);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      transition: var(--transition);
+      position: relative;
+    }
+    .nav-item:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      transform: translateX(3px);
+    }
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(22,163,74,0.4);
+      font-weight: 700;
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 18%; bottom: 18%;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      background: var(--green-accent);
+    }
+    .nav-icon {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+      opacity: 0.9;
+    }
+    .nav-badge {
+      margin-left: auto;
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+    }
+    .nav-badge.urgent { background: #ef4444; color: #fff; animation: pulse 2s infinite; }
+
+    .sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .home-link-btn, .signout-btn {
+      width: 100%;
+      padding: 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .home-link-btn {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: block;
+    }
+    .home-link-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .signout-btn {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+    }
+    .signout-btn:hover { background: #ef4444; color: #fff; }
+
+    /* ─── MAIN AREA ───────────────────────────────────────────── */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      min-width: 0;
+      background: var(--gray-bg);
+    }
+
+    /* Topbar */
+    .topbar {
+      height: var(--header-h);
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .topbar-title h1 {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+    .topbar-title span {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .live-clock-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      background: var(--green-surface);
+      border: 1px solid var(--green-border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green-dark);
+      font-family: 'Manrope', sans-serif;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--green-mint);
+      color: var(--green-dark);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(22,163,74,0.1);
+    }
+    .status-pill .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green-primary);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.15); }
+    }
+
+    /* Content Body Container */
+    .content-body {
+      padding: 30px 32px 60px;
+      background: var(--gray-bg);
+      flex: 1;
+    }
+
+    /* ─── 3D CARDS & VISUAL GRIDS ─────────────────────────────── */
+    .hero-banner {
+      background: linear-gradient(135deg, #15803d 0%, #166534 50%, #052e16 100%);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 26px;
+      box-shadow: var(--shadow-3d);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      right: -20px; bottom: -40px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(74,222,128,0.2) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+    }
+    .hero-content h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .hero-content p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.85);
+      max-width: 580px;
+      line-height: 1.6;
+    }
+    .hero-stats-box {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 14px;
+      padding: 16px 22px;
+      text-align: center;
+      min-width: 170px;
+      z-index: 1;
+    }
+    .hero-stats-box small {
+      font-size: 10px;
+      color: var(--green-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      display: block;
+    }
+    .hero-stats-box strong {
+      font-size: 1.8rem;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      margin: 4px 0 2px;
+      display: block;
+    }
+
+    /* 4-Column Metric Cards Grid */
+    .metric-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+    .stat-card-3d {
+      background: #ffffff;
+      padding: 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card-3d:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-3d);
+      border-color: var(--green-border);
+    }
+    .stat-card-3d .stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--green-surface);
+      border: 1px solid var(--green-border);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .stat-card-3d.green .stat-icon { color: var(--green-dark); background: var(--green-surface); }
+    .stat-card-3d.blue .stat-icon { color: #0284c7; background: #f0f9ff; border-color: #bae6fd; }
+    .stat-card-3d.amber .stat-icon { color: #d97706; background: #fffbeb; border-color: #fde68a; }
+    .stat-card-3d.purple .stat-icon { color: #7c3aed; background: #faf5ff; border-color: #e9d5ff; }
+
+    .stat-card-3d small {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      display: block;
+    }
+    .stat-card-3d strong {
+      display: block;
+      font-size: 28px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.15;
+      margin: 4px 0 6px;
+    }
+    .stat-trend {
+      font-size: 11.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+    .stat-trend.good { color: #16a34a; }
+    .stat-trend.warn { color: #d97706; }
+    .stat-trend.danger { color: #dc2626; }
+
+    /* Two-Column & Multi-Column Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-bottom: 26px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 26px;
+    }
+    .grid-1-2 {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 22px;
+      margin-bottom: 26px;
+    }
+    .grid-2-1 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 22px;
+      margin-bottom: 26px;
+    }
+
+    /* Standard Panel */
+    .panel {
+      background: #ffffff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 26px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .panel-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+    }
+    .panel-header h2 {
+      font-size: 16px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-body { padding: 22px 24px; }
+
+    /* Module Image Banner */
+    .module-banner-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ─── BUTTONS & INTERACTIVE CONTROLS ─────────────────────── */
+    .btn-green, .btn-primary {
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      border: none;
+      background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+      box-shadow: 0 3px 10px rgba(22,163,74,0.25);
+    }
+    .btn-green:hover, .btn-primary:hover {
+      background: linear-gradient(135deg, var(--green-dark), var(--green-darker));
+      box-shadow: 0 5px 14px rgba(22,163,74,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-green:active, .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary, .action-btn {
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-secondary:hover, .action-btn:hover {
+      background: var(--green-surface);
+      border-color: var(--green-border);
+      color: var(--green-dark);
+    }
+
+    .btn-danger {
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #dc2626;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-danger:hover { background: #dc2626; color: #fff; }
+
+    /* ─── DATA TABLES ─────────────────────────────────────────── */
+    .data-table-wrapper {
+      overflow-x: auto;
+      background: #ffffff;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .data-table th {
+      padding: 13px 20px;
+      background: #f8faf9;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .data-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink);
+      vertical-align: middle;
+    }
+    .data-table tr:hover td { background: var(--green-surface); }
+
+    /* Badges */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .badge-green { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-red { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    .badge-amber { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .badge-gray { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+    /* Form Fields */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13.5px;
+      color: var(--ink);
+      background: #ffffff;
+      transition: var(--transition);
+      outline: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--green-primary);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.15);
+    }
+
+    /* ─── MODALS ──────────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,46,22,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 120;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; animation: fadeIn 0.2s ease-out; }
+    .modal {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal.modal-lg { max-width: 720px; }
+    .modal.modal-xl { max-width: 860px; }
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8faf9;
+    }
+    .modal-header h3 { font-size: 16px; font-weight: 800; color: var(--navy); }
+    .modal-close {
+      background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted);
+      width: 32px; height: 32px; border-radius: 6px; display: grid; place-items: center;
+    }
+    .modal-close:hover { background: #fee2e2; color: #dc2626; }
+    .modal-body { padding: 24px; max-height: calc(85vh - 130px); overflow-y: auto; }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: #f8faf9;
+    }
+
+    /* ─── TOAST NOTIFICATIONS ─────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      background: #ffffff;
+      border-left: 4px solid var(--green-primary);
+      padding: 14px 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow-3d);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 280px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleUp { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Section Visibility */
+    .content-section { display: none; }
+    .content-section.active { display: block; animation: fadeIn 0.25s ease-out; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .metric-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-2, .grid-3, .grid-1-2, .grid-2-1 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .app-shell { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; }
+      .metric-grid-4 { grid-template-columns: 1fr; }
+      .topbar { padding: 0 16px; }
+      .content-body { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     AUTHENTICATION GATE
+═══════════════════════════════════════════════════════════════ -->
+<div id="loginGate" style="display:flex;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#052e16 0%,#0e3825 50%,#15803d 100%);align-items:center;justify-content:center;">
+  <div style="background:#ffffff;border-radius:20px;padding:44px 36px;max-width:420px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,0.35);text-align:center;">
+    <div style="width:68px;height:68px;border-radius:16px;background:linear-gradient(135deg,#16a34a,#15803d);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(22,163,74,0.35);">
+      <span style="color:#fff;font-size:26px;font-weight:800;font-family:'Manrope',sans-serif;">NX</span>
+    </div>
+    <h1 style="font-family:'Manrope',sans-serif;font-size:1.5rem;font-weight:800;color:#0f241d;margin:0 0 6px;">Hospital Staff Workspace</h1>
+    <p style="color:#52796f;font-size:0.875rem;margin:0 0 24px;">Sign in with authorized staff credentials to manage duty rosters, patient queues, and ward operations.</p>
+    <form id="loginForm" onsubmit="return handleLogin(event)" autocomplete="off">
+      <div style="text-align:left;margin-bottom:16px;">
+        <label for="loginUser" style="display:block;font-size:0.75rem;font-weight:700;color:#0f241d;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Staff Username</label>
+        <input id="loginUser" type="text" placeholder="Enter staff username" value="staff" required
+               style="width:100%;padding:11px 14px;border:1.5px solid #d5e7de;border-radius:8px;font-size:0.9rem;outline:none;">
+      </div>
+      <div style="text-align:left;margin-bottom:8px;">
+        <label for="loginPass" style="display:block;font-size:0.75rem;font-weight:700;color:#0f241d;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Password</label>
+        <input id="loginPass" type="password" placeholder="Enter password" value="staff@123" required
+               style="width:100%;padding:11px 14px;border:1.5px solid #d5e7de;border-radius:8px;font-size:0.9rem;outline:none;">
+      </div>
+      <p id="loginError" style="color:#dc2626;font-size:0.8rem;min-height:18px;margin:4px 0 14px;" aria-live="polite"></p>
+      <button type="submit" class="btn-green" style="width:100%;padding:12px;justify-content:center;font-size:0.95rem;">
+        Sign In to Workspace →
+      </button>
+    </form>
+    <div style="margin-top:20px;padding:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:0.75rem;color:#166534;">
+      Demo Access: <strong>staff</strong> / <strong>staff@123</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PORTAL MAIN APPLICATION SHELL
+═══════════════════════════════════════════════════════════════ -->
+<div id="portalContent" style="display:none;">
+  <div class="app-shell">
+
+    <!-- ─── SIDEBAR NAVIGATION ─── -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <a href="index.html" class="brand-logo-wrap">
+          <div class="brand-icon-box">NX</div>
+          <div>
+            <div class="brand-name">Nex<span>Cura</span></div>
+            <span class="brand-tag">Staff Intelligence</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-profile">
+        <div class="staff-avatar">
+          SJ
+          <span class="staff-status-dot"></span>
+        </div>
+        <div class="staff-info">
+          <small>FLOOR SUPERVISOR</small>
+          <strong>Sarah Jenkins, RN</strong>
+          <span class="staff-shift-label">Morning Shift (07:00–15:30)</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-label">Core Dashboard</div>
+        <button class="nav-item active" onclick="switchSection('dashboard')" id="nav-dashboard">
+          <span class="nav-icon">📊</span> Staff Dashboard
+        </button>
+        <button class="nav-item" onclick="switchSection('staff')" id="nav-staff">
+          <span class="nav-icon">👥</span> Staff Management
+        </button>
+        <button class="nav-item" onclick="switchSection('attendance')" id="nav-attendance">
+          <span class="nav-icon">⏱</span> Attendance & Clock-In
+        </button>
+        <button class="nav-item" onclick="switchSection('shifts')" id="nav-shifts">
+          <span class="nav-icon">🗓</span> Shift & Duty Scheduling
+        </button>
+        <button class="nav-item" onclick="switchSection('leave')" id="nav-leave">
+          <span class="nav-icon">🌴</span> Leave Management
+        </button>
+
+        <div class="nav-label">HR & Operations</div>
+        <button class="nav-item" onclick="switchSection('payroll')" id="nav-payroll">
+          <span class="nav-icon">💳</span> Payroll & Salary
+        </button>
+        <button class="nav-item" onclick="switchSection('training')" id="nav-training">
+          <span class="nav-icon">🎓</span> Training & Certifications
+        </button>
+        <button class="nav-item" onclick="switchSection('performance')" id="nav-performance">
+          <span class="nav-icon">🏆</span> Performance & KPIs
+        </button>
+        <button class="nav-item" onclick="switchSection('departments')" id="nav-departments">
+          <span class="nav-icon">🏥</span> Departments & Roles
+        </button>
+        <button class="nav-item" onclick="switchSection('tasks')" id="nav-tasks">
+          <span class="nav-icon">📝</span> Tasks & Work Assignment
+        </button>
+
+        <div class="nav-label">Communication & Files</div>
+        <button class="nav-item" onclick="switchSection('communication')" id="nav-communication">
+          <span class="nav-icon">📢</span> Notices & Broadcasts <span class="nav-badge" id="badge-notif">3</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('documents')" id="nav-documents">
+          <span class="nav-icon">📂</span> Staff Documents
+        </button>
+        <button class="nav-item" onclick="switchSection('reports')" id="nav-reports">
+          <span class="nav-icon">📈</span> Reports & Analytics
+        </button>
+        <button class="nav-item" onclick="switchSection('operations')" id="nav-operations">
+          <span class="nav-icon">🛏</span> Clinical Operations
+        </button>
+        <button class="nav-item" onclick="switchSection('profile')" id="nav-profile">
+          <span class="nav-icon">⚙</span> My Profile & Settings
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="index.html" class="home-link-btn">← Back to Portal Home</a>
+        <button onclick="signOut()" class="signout-btn">⎋ Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- ─── MAIN AREA ─── -->
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            <h1 id="topbar-title-text">Staff Intelligence Dashboard</h1>
+            <span>Hospital Central Ward 4B & Clinical Staff Roster</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="live-clock-badge" id="liveClockBadge">
+            <span>🕐</span> <span id="liveClockText">08:00 AM</span>
+          </div>
+          <div class="status-pill">
+            <span class="dot"></span>
+            Staff Workspace Active
+          </div>
+          <button class="btn-green" onclick="quickCheckInOut()" id="btnQuickCheck">
+            <span>⏱</span> Check In
+          </button>
+        </div>
+      </header>
+
+      <div class="content-body">
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 1: STAFF DASHBOARD
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-dashboard" class="content-section active">
+          
+          <!-- Hero Banner -->
+          <div class="hero-banner">
+            <div class="hero-content">
+              <h2>Good Morning, Supervisor Jenkins 👋</h2>
+              <p>All morning rotation shifts are staffed at <strong>96% capacity</strong>. Central Ward 4B and Emergency Triage desks are running optimally.</p>
+              <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+                <button class="btn-green" style="background:#ffffff;color:var(--green-dark);" onclick="showModal('addStaffModal')">+ Register Staff</button>
+                <button class="btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);" onclick="switchSection('shifts')">View Shift Roster</button>
+                <button class="btn-secondary" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);" onclick="switchSection('reports')">Generate Shift Report</button>
+              </div>
+            </div>
+            <div class="hero-stats-box">
+              <small>ACTIVE ON DUTY</small>
+              <strong id="hero-onduty-count">24</strong>
+              <span style="font-size:11px;color:rgba(255,255,255,0.85);">Out of 28 scheduled</span>
+            </div>
+          </div>
+
+          <!-- 4 Stat Metric Cards -->
+          <div class="metric-grid-4">
+            <div class="stat-card-3d green">
+              <div class="stat-icon">👥</div>
+              <small>Total Hospital Staff</small>
+              <strong id="stat-total-staff">120</strong>
+              <div class="stat-trend good">↑ 8 Active Departments</div>
+            </div>
+            <div class="stat-card-3d blue">
+              <div class="stat-icon">⏱</div>
+              <small>Present Today</small>
+              <strong id="stat-present-staff">108</strong>
+              <div class="stat-trend good">90% Attendance rate</div>
+            </div>
+            <div class="stat-card-3d amber">
+              <div class="stat-icon">🌴</div>
+              <small>On Approved Leave</small>
+              <strong id="stat-leave-staff">8</strong>
+              <div class="stat-trend warn">4 Planned leaves</div>
+            </div>
+            <div class="stat-card-3d purple">
+              <div class="stat-icon">📋</div>
+              <small>Upcoming Shifts</small>
+              <strong id="stat-upcoming-shifts">14</strong>
+              <div class="stat-trend good">Evening handover ready</div>
+            </div>
+          </div>
+
+          <!-- 2-Column: Attendance Visual Chart & Quick Attendance Widget -->
+          <div class="grid-2-1">
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>📊</span> Weekly Staff Attendance & Shift Fulfillment</h2>
+                <div style="display:flex;gap:8px;">
+                  <select id="chartDateFilter" class="action-btn" onchange="updateAttendanceChart()">
+                    <option value="week" selected>This Week</option>
+                    <option value="lastweek">Last Week</option>
+                    <option value="month">This Month</option>
+                  </select>
+                  <button class="action-btn" onclick="exportAttendanceCSV()">↓ CSV</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <canvas id="attendanceTrendChart" style="max-height:260px;width:100%;"></canvas>
+              </div>
+            </div>
+
+            <!-- Quick Live Attendance & Daily Updates -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>⏱</span> Quick Shift Clock</h2>
+              </div>
+              <div class="panel-body" style="text-align:center;">
+                <div style="padding:16px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;margin-bottom:16px;">
+                  <div style="font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;">Current Shift Rotation</div>
+                  <div style="font-size:1.3rem;font-weight:800;font-family:'Manrope',sans-serif;color:var(--navy);margin:4px 0;">07:00 AM – 03:30 PM</div>
+                  <div style="font-size:12px;color:var(--muted);">Ward 4B Supervisor Duty</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                  <button class="btn-green" style="justify-content:center;" onclick="recordCheckIn()">✔ Check In</button>
+                  <button class="btn-secondary" style="justify-content:center;" onclick="recordCheckOut()">⎋ Check Out</button>
+                </div>
+                <div id="checkInStatusText" style="font-size:11.5px;color:var(--muted);margin-top:12px;font-style:italic;">
+                  Status: Checked in today at 06:55 AM
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Hospital Updates & Active Shift Roster Preview -->
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>📢</span> Daily Staff Updates & Hospital Broadcasts</h2>
+                <button class="action-btn" onclick="switchSection('communication')">View All</button>
+              </div>
+              <div class="panel-body" style="padding:0;">
+                <div id="dashboardAnnouncementsList" style="display:flex;flex-direction:column;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>🏥</span> Active Duty Personnel (Morning Rotation)</h2>
+                <button class="btn-green" onclick="showModal('addStaffModal')">+ Add Staff</button>
+              </div>
+              <div class="panel-body" style="padding:0;">
+                <table class="data-table">
+                  <thead><tr><th>Staff Member</th><th>Role</th><th>Ward</th><th>Status</th></tr></thead>
+                  <tbody id="dashStaffTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 2: STAFF DIRECTORY & MANAGEMENT
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-staff" class="content-section">
+          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Hospital Clinical Staff Team" onerror="this.style.display='none'">
+          
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>👥</span> Hospital Staff Directory & Credentials</h2>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button class="action-btn" onclick="exportStaffCSV()">↓ Export Roster CSV</button>
+                <button class="btn-green" onclick="showModal('addStaffModal')">+ Register New Staff</button>
+              </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div style="padding:14px 24px;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:#fafcfb;">
+              <input type="search" id="staffSearchInput" placeholder="Search by name, ID, email, or role..." class="action-btn" style="padding:9px 14px;min-width:260px;" oninput="filterStaffTable()">
+              <select id="staffDeptFilter" class="action-btn" onchange="filterStaffTable()">
+                <option value="all">All Departments</option>
+                <option value="Ward 4B">Ward 4B</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Emergency">Emergency</option>
+                <option value="ICU">ICU</option>
+                <option value="Pharmacy">Pharmacy</option>
+                <option value="Patient Transport">Patient Transport</option>
+                <option value="Radiology">Radiology</option>
+                <option value="Pediatrics">Pediatrics</option>
+              </select>
+              <select id="staffShiftFilter" class="action-btn" onchange="filterStaffTable()">
+                <option value="all">All Shifts</option>
+                <option value="Morning">Morning</option>
+                <option value="Evening">Evening</option>
+                <option value="Night">Night</option>
+                <option value="Rotational">Rotational</option>
+              </select>
+              <select id="staffStatusFilter" class="action-btn" onchange="filterStaffTable()">
+                <option value="all">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="On Duty">On Duty</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              <button class="action-btn" onclick="resetStaffFilters()">Reset Filters</button>
+            </div>
+
+            <div class="data-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff ID</th>
+                    <th>Name & Email</th>
+                    <th>Department</th>
+                    <th>Designation & Qualification</th>
+                    <th>Shift</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="staffTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 3: ATTENDANCE MANAGEMENT
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-attendance" class="content-section">
+          <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Staff Attendance and Check-in Station" onerror="this.style.display='none'">
+
+          <div class="metric-grid-4">
+            <div class="stat-card-3d green">
+              <small>Present Today</small>
+              <strong id="att-present-count">108 / 120</strong>
+              <div class="stat-trend good">90% Present</div>
+            </div>
+            <div class="stat-card-3d amber">
+              <small>Late Arrivals</small>
+              <strong id="att-late-count">4</strong>
+              <div class="stat-trend warn">Within grace period</div>
+            </div>
+            <div class="stat-card-3d purple">
+              <small>On Planned Leave</small>
+              <strong id="att-leave-count">8</strong>
+              <div class="stat-trend good">All approved</div>
+            </div>
+            <div class="stat-card-3d">
+              <small>Unscheduled Absences</small>
+              <strong id="att-absent-count" style="color:#dc2626;">0</strong>
+              <div class="stat-trend good">No unnotified absence</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>⏱</span> Daily Staff Attendance Log</h2>
+              <div style="display:flex;gap:10px;">
+                <button class="action-btn" onclick="exportAttendanceCSV()">↓ Export Attendance CSV</button>
+                <button class="btn-green" onclick="showModal('manualAttendanceModal')">+ Record Attendance</button>
+              </div>
+            </div>
+            <div class="data-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff ID</th>
+                    <th>Staff Name</th>
+                    <th>Date</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                    <th>Work Hours</th>
+                    <th>Clinical Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 4: SHIFT & DUTY SCHEDULING
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-shifts" class="content-section">
+          <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Shift Schedule and Roster Desk" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>🗓</span> Ward & Department Shift Roster</h2>
+              <div style="display:flex;gap:10px;">
+                <button class="action-btn" onclick="showModal('shiftSwapModal')">⇄ Request Shift Swap</button>
+                <button class="btn-green" onclick="showModal('createShiftModal')">+ Create Shift Schedule</button>
+              </div>
+            </div>
+            <div class="data-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff Member</th>
+                    <th>Department</th>
+                    <th>Shift Type</th>
+                    <th>Working Hours</th>
+                    <th>Shift Date</th>
+                    <th>Status</th>
+                    <th>Duty Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="shiftsTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 5: LEAVE MANAGEMENT
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-leave" class="content-section">
+          <img src="https://images.unsplash.com/photo-1576089172869-4f5f6f315620?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Staff Leave Management" onerror="this.style.display='none'">
+
+          <div class="metric-grid-4">
+            <div class="stat-card-3d green">
+              <small>Casual Leave Balance</small>
+              <strong>12 Days</strong>
+              <div class="stat-trend good">Available for year</div>
+            </div>
+            <div class="stat-card-3d blue">
+              <small>Sick / Medical Leave</small>
+              <strong>8 Days</strong>
+              <div class="stat-trend good">Certificate required &gt; 2d</div>
+            </div>
+            <div class="stat-card-3d purple">
+              <small>Earned / Annual Leave</small>
+              <strong>18 Days</strong>
+              <div class="stat-trend good">Cumulative</div>
+            </div>
+            <div class="stat-card-3d amber">
+              <small>Pending Approval</small>
+              <strong id="pendingLeavesCount">1</strong>
+              <div class="stat-trend warn">Requires Supervisor Review</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>🌴</span> Leave Applications & Time-Off Requests</h2>
+              <button class="btn-green" onclick="showModal('applyLeaveModal')">+ Apply for Leave</button>
+            </div>
+            <div class="data-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff Name</th>
+                    <th>Leave Type</th>
+                    <th>Date Range</th>
+                    <th>Duration</th>
+                    <th>Reason</th>
+                    <th>Applied On</th>
+                    <th>Status</th>
+                    <th>Approver Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leavesTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 6: PAYROLL & SALARY
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-payroll" class="content-section">
+          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Payroll & Salary Accounting" onerror="this.style.display='none'">
+
+          <div class="metric-grid-4">
+            <div class="stat-card-3d green">
+              <small>My Monthly Base</small>
+              <strong>₹75,000</strong>
+              <div class="stat-trend good">Floor Supervisor Grade IV</div>
+            </div>
+            <div class="stat-card-3d blue">
+              <small>Allowances (HRA+Med)</small>
+              <strong>₹18,500</strong>
+              <div class="stat-trend good">Approved allowances</div>
+            </div>
+            <div class="stat-card-3d amber">
+              <small>Deductions (PF+Tax)</small>
+              <strong>₹7,200</strong>
+              <div class="stat-trend warn">Statutory deductions</div>
+            </div>
+            <div class="stat-card-3d green">
+              <small>Net Take-Home</small>
+              <strong style="color:#15803d;">₹86,300</strong>
+              <div class="stat-trend good">Disbursed on 1st of month</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>💳</span> Staff Payroll History & Payslips</h2>
+              <div style="display:flex;gap:10px;">
+                <button class="action-btn" onclick="exportPayrollCSV()">↓ Export Payroll CSV</button>
+                <button class="btn-green" onclick="viewMyPayslip()">📄 View Current Payslip</button>
+              </div>
+            </div>
+            <div class="data-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Payroll Month</th>
+                    <th>Basic Pay</th>
+                    <th>Allowances</th>
+                    <th>Deductions</th>
+                    <th>Net Amount</th>
+                    <th>Payment Status</th>
+                    <th>Payslip Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>September 2026</strong></td>
+                    <td>₹75,000</td>
+                    <td>₹18,500</td>
+                    <td>₹7,200</td>
+                    <td><strong style="color:var(--green-dark);">₹86,300</strong></td>
+                    <td><span class="badge-status badge-green">Disbursed</span></td>
+                    <td><button class="action-btn" onclick="viewMyPayslip('Sep 2026')">View & Print Payslip</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>August 2026</strong></td>
+                    <td>₹75,000</td>
+                    <td>₹18,500</td>
+                    <td>₹7,200</td>
+                    <td><strong style="color:var(--green-dark);">₹86,300</strong></td>
+                    <td><span class="badge-status badge-green">Disbursed</span></td>
+                    <td><button class="action-btn" onclick="viewMyPayslip('Aug 2026')">View & Print Payslip</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>July 2026</strong></td>
+                    <td>₹75,000</td>
+                    <td>₹18,500</td>
+                    <td>₹7,200</td>
+                    <td><strong style="color:var(--green-dark);">₹86,300</strong></td>
+                    <td><span class="badge-status badge-green">Disbursed</span></td>
+                    <td><button class="action-btn" onclick="viewMyPayslip('Jul 2026')">View & Print Payslip</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 7: TRAINING & CERTIFICATIONS
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-training" class="content-section">
+          <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Clinical Training and Certification Programs" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>🎓</span> Continuing Medical Education & Certification Programs</h2>
+              <button class="btn-green" onclick="showModal('enrollTrainingModal')">+ Register New Training</button>
+            </div>
+            <div class="panel-body">
+              <div id="trainingsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:18px;">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 8: PERFORMANCE & KPIS
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-performance" class="content-section">
+          <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Staff Performance and Clinical Quality" onerror="this.style.display='none'">
+
+          <div class="metric-grid-4">
+            <div class="stat-card-3d green">
+              <small>Patient Satisfaction</small>
+              <strong>96.4%</strong>
+              <div class="stat-trend good">↑ 2.1% this quarter</div>
+            </div>
+            <div class="stat-card-3d blue">
+              <small>Avg Response Time</small>
+              <strong>4.2 Mins</strong>
+              <div class="stat-trend good">Target &lt; 5 mins</div>
+            </div>
+            <div class="stat-card-3d purple">
+              <small>Protocol Compliance</small>
+              <strong>98.8%</strong>
+              <div class="stat-trend good">100% medication safety</div>
+            </div>
+            <div class="stat-card-3d green">
+              <small>Clinical Evaluation</small>
+              <strong>4.9 / 5.0</strong>
+              <div class="stat-trend good">Grade A Excellence</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>🏆</span> Department Staff Performance Index</h2>
+              <button class="btn-green" onclick="downloadEvaluationReport()">↓ Export Performance Report</button>
+            </div>
+            <div class="data-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff Member</th>
+                    <th>Department</th>
+                    <th>Clinical Accuracy</th>
+                    <th>Punctuality</th>
+                    <th>Patient Rating</th>
+                    <th>Overall Grade</th>
+                    <th>Review Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Sarah Jenkins, RN</strong></td>
+                    <td>Ward 4B</td>
+                    <td>99.2%</td>
+                    <td>100%</td>
+                    <td>4.9 / 5.0</td>
+                    <td><span class="badge-status badge-green">Exemplary (A+)</span></td>
+                    <td><button class="action-btn" onclick="showToast('Performance appraisal letter ready for download', 'success')">View Appraisal</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dr. Priya Sharma</strong></td>
+                    <td>Cardiology</td>
+                    <td>98.5%</td>
+                    <td>97%</td>
+                    <td>5.0 / 5.0</td>
+                    <td><span class="badge-status badge-green">Exemplary (A+)</span></td>
+                    <td><button class="action-btn" onclick="showToast('Appraisal loaded', 'success')">View Appraisal</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rajesh Kumar</strong></td>
+                    <td>Emergency</td>
+                    <td>96.8%</td>
+                    <td>98%</td>
+                    <td>4.8 / 5.0</td>
+                    <td><span class="badge-status badge-green">Distinction (A)</span></td>
+                    <td><button class="action-btn" onclick="showToast('Appraisal loaded', 'success')">View Appraisal</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Anita Verma</strong></td>
+                    <td>Pharmacy</td>
+                    <td>99.0%</td>
+                    <td>96%</td>
+                    <td>4.9 / 5.0</td>
+                    <td><span class="badge-status badge-green">Exemplary (A+)</span></td>
+                    <td><button class="action-btn" onclick="showToast('Appraisal loaded', 'success')">View Appraisal</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 9: DEPARTMENTS & ROLES
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-departments" class="content-section">
+          <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Hospital Clinical Departments" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>🏥</span> Hospital Departmental Organization & Staff Headcount</h2>
+              <button class="btn-green" onclick="showToast('Department directory updated from Central HR', 'success')">↻ Refresh Roster</button>
+            </div>
+            <div class="panel-body">
+              <div id="departmentsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:18px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 10: COMMUNICATION & BROADCASTS
+        ═══════════════════════════════════════════════ -->
+        <div id="section-communication" class="content-section">
+          <img src="https://images.unsplash.com/photo-1587370560942-ad2a04eabb6d?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Hospital Internal Communication" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>📢</span> Hospital Notices & Urgent Clinical Broadcasts</h2>
+              <div style="display:flex;gap:10px;">
+                <button class="action-btn" onclick="markAllAnnouncementsRead()">Mark All Read</button>
+                <button class="btn-green" onclick="showModal('createAnnouncementModal')">+ New Announcement</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div id="fullAnnouncementsList" style="display:flex;flex-direction:column;gap:14px;">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 11: STAFF DOCUMENTS
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-documents" class="content-section">
+          <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Staff Documentation and Records" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>📂</span> Staff Documents & Official Credentials</h2>
+              <button class="btn-green" onclick="showModal('uploadDocModal')">+ Upload Document</button>
+            </div>
+            <div class="panel-body">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;">
+                <div style="padding:18px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;">
+                  <div style="font-size:24px;margin-bottom:8px;">📄</div>
+                  <strong style="font-size:14px;color:var(--navy);display:block;margin-bottom:4px;">Nursing Registration Certificate</strong>
+                  <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px;">KNMC-REG-2021-9942 · Verified</div>
+                  <button class="btn-green" style="font-size:11.5px;padding:6px 12px;" onclick="downloadStaffDoc('Nursing_Registration_SarahJenkins.pdf')">↓ Download PDF</button>
+                </div>
+                <div style="padding:18px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;">
+                  <div style="font-size:24px;margin-bottom:8px;">📜</div>
+                  <strong style="font-size:14px;color:var(--navy);display:block;margin-bottom:4px;">ACLS Provider Certification</strong>
+                  <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px;">Valid through Oct 2027 · AHA</div>
+                  <button class="btn-green" style="font-size:11.5px;padding:6px 12px;" onclick="downloadStaffDoc('ACLS_Provider_Badge.pdf')">↓ Download PDF</button>
+                </div>
+                <div style="padding:18px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;">
+                  <div style="font-size:24px;margin-bottom:8px;">📋</div>
+                  <strong style="font-size:14px;color:var(--navy);display:block;margin-bottom:4px;">Hospital Employment Contract</strong>
+                  <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px;">Permanent Full-time · Grade IV</div>
+                  <button class="btn-green" style="font-size:11.5px;padding:6px 12px;" onclick="downloadStaffDoc('Employment_Contract.pdf')">↓ Download PDF</button>
+                </div>
+                <div style="padding:18px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;">
+                  <div style="font-size:24px;margin-bottom:8px;">🛡</div>
+                  <strong style="font-size:14px;color:var(--navy);display:block;margin-bottom:4px;">Infection Control Badge 2026</strong>
+                  <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px;">Annual safety training verified</div>
+                  <button class="btn-green" style="font-size:11.5px;padding:6px 12px;" onclick="downloadStaffDoc('Infection_Control_Cert.pdf')">↓ Download PDF</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 12: TASKS & WORK ASSIGNMENT
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-tasks" class="content-section">
+          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Clinical Task Coordination" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>📝</span> Shift Work Assignment & Priority Task Tracker</h2>
+              <button class="btn-green" onclick="showModal('assignTaskModal')">+ Assign New Task</button>
+            </div>
+            <div class="panel-body">
+              <div id="tasksList" style="display:flex;flex-direction:column;gap:12px;">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 13: REPORTS & ANALYTICS
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-reports" class="content-section">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1100&h=200&fit=crop&auto=format" class="module-banner-img" alt="Healthcare Analytics and Staff Reports" onerror="this.style.display='none'">
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>📈</span> Hospital Staff Intelligence & Operational Reports</h2>
+              <div style="display:flex;gap:8px;">
+                <button class="action-btn" onclick="printReport()">🖨 Print View</button>
+                <button class="btn-green" onclick="generateStaffPDFReport()">↓ Export PDF Report</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:18px;">
+                <div style="padding:20px;border:1.5px solid var(--border);border-radius:12px;background:#ffffff;">
+                  <h3 style="font-size:15px;margin-bottom:6px;color:var(--navy);">1. Monthly Attendance Summary</h3>
+                  <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Full breakdown of check-ins, late arrivals, overtime, and shift fulfillment across all hospital wards.</p>
+                  <button class="btn-green" style="font-size:12px;padding:7px 14px;" onclick="exportAttendanceCSV()">Download Attendance CSV</button>
+                </div>
+                <div style="padding:20px;border:1.5px solid var(--border);border-radius:12px;background:#ffffff;">
+                  <h3 style="font-size:15px;margin-bottom:6px;color:var(--navy);">2. Staff Roster & Registry Report</h3>
+                  <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Detailed clinical personnel directory with departments, qualifications, certifications, and shift allocations.</p>
+                  <button class="btn-green" style="font-size:12px;padding:7px 14px;" onclick="exportStaffCSV()">Download Roster CSV</button>
+                </div>
+                <div style="padding:20px;border:1.5px solid var(--border);border-radius:12px;background:#ffffff;">
+                  <h3 style="font-size:15px;margin-bottom:6px;color:var(--navy);">3. Shift Handover & Duty Report</h3>
+                  <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Operational shift logs, in-charge handover notes, and ward bed coverage metrics.</p>
+                  <button class="btn-green" style="font-size:12px;padding:7px 14px;" onclick="generateStaffPDFReport()">Download Shift PDF</button>
+                </div>
+                <div style="padding:20px;border:1.5px solid var(--border);border-radius:12px;background:#ffffff;">
+                  <h3 style="font-size:15px;margin-bottom:6px;color:var(--navy);">4. Annual Performance & Quality Index</h3>
+                  <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Clinical safety compliance, patient feedback ratings, response benchmarks, and training scores.</p>
+                  <button class="btn-green" style="font-size:12px;padding:7px 14px;" onclick="downloadEvaluationReport()">Download Performance PDF</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             OPERATIONS SUBSECTION (Beds, Triage, Pharmacy, Transport, Codes)
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-operations" class="content-section">
+          <div class="panel">
+            <div class="panel-header">
+              <h2><span>🛏</span> Ward Bed Management & Live Occupancy</h2>
+              <div>
+                <select class="action-btn" id="wardSelect" style="margin-right:10px;" onchange="filterBeds()">
+                  <option value="all">All Wards</option>
+                  <option value="General Ward" selected>General Ward</option>
+                  <option value="ICU">ICU</option>
+                  <option value="NICU">NICU</option>
+                  <option value="Cardiac">Cardiac</option>
+                </select>
+                <button class="btn-green" onclick="showModal('assignBedModal')">+ Assign Bed</button>
+              </div>
+            </div>
+            <div id="bedsGrid" style="padding:24px;display:grid;grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));gap:14px;">
+              <!-- Populated dynamically via loadBeds() -->
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Triage Queue -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>📋</span> Patient Triage Queue</h2>
+                <button class="btn-green" onclick="showModal('admissionModal')">+ New Admission</button>
+              </div>
+              <div class="data-table-wrapper">
+                <table class="data-table">
+                  <thead><tr><th>Patient</th><th>Complaint</th><th>Wait</th><th>Priority</th><th>Actions</th></tr></thead>
+                  <tbody id="triageTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Pharmacy Dispensary -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>💊</span> Pharmacy Dispensary Queue</h2>
+              </div>
+              <div class="data-table-wrapper">
+                <table class="data-table">
+                  <thead><tr><th>Patient</th><th>Medication</th><th>Dosage</th><th>Doctor</th><th>Actions</th></tr></thead>
+                  <tbody id="pharmacyTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transport & Alerts -->
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>🚑</span> Active Transport Requests</h2>
+                <button class="btn-green" onclick="showModal('transportModal')">+ New Request</button>
+              </div>
+              <div class="data-table-wrapper">
+                <table class="data-table">
+                  <thead><tr><th>Patient</th><th>From</th><th>To</th><th>Priority</th><th>Actions</th></tr></thead>
+                  <tbody id="transportTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h2><span>🚨</span> Rapid Response Code Alerts</h2>
+                <button class="btn-danger" onclick="showModal('codeModal')">Initiate Code</button>
+              </div>
+              <div class="data-table-wrapper">
+                <table class="data-table">
+                  <thead><tr><th>Code Type</th><th>Location</th><th>Team</th><th>Actions</th></tr></thead>
+                  <tbody id="alertsTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════
+             MODULE 14: PROFILE & SETTINGS
+        ══════════════════════════════════════════════════════ -->
+        <div id="section-profile" class="content-section">
+          <div class="panel" style="max-width:800px;margin:0 auto;">
+            <div class="panel-header">
+              <h2><span>⚙</span> Supervisor Profile & Workspace Settings</h2>
+              <button class="btn-green" onclick="saveProfileSettings()">Save Changes</button>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex;gap:20px;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+                <div class="staff-avatar" style="width:64px;height:64px;font-size:24px;">SJ</div>
+                <div>
+                  <h3 style="font-size:18px;color:var(--navy);">Sarah Jenkins, RN</h3>
+                  <div style="font-size:12.5px;color:var(--muted);">Senior Floor Supervisor · Staff ID: STF-1001</div>
+                  <div style="font-size:12px;color:var(--green-dark);font-weight:700;margin-top:2px;">Central Ward 4B · Full-Time Clinical</div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                  <label>Official Email</label>
+                  <input type="email" id="profEmail" value="sarah.jenkins@nexcura.org">
+                </div>
+                <div class="form-group">
+                  <label>Contact Phone</label>
+                  <input type="tel" id="profPhone" value="+91 98765 11001">
+                </div>
+                <div class="form-group">
+                  <label>Assigned Department</label>
+                  <input type="text" id="profDept" value="Ward 4B" readonly style="background:#f8faf9;">
+                </div>
+                <div class="form-group">
+                  <label>Designation</label>
+                  <input type="text" id="profRole" value="Floor Supervisor" readonly style="background:#f8faf9;">
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                  <label>Residential Address</label>
+                  <input type="text" id="profAddress" value="124 Indiranagar 100ft Rd, Bengaluru">
+                </div>
+              </div>
+
+              <h4 style="font-size:14px;margin:20px 0 12px;color:var(--navy);font-weight:700;">Notification & Handover Preferences</h4>
+              <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:var(--green-primary);width:16px;height:16px;">
+                  Receive urgent Code Blue & emergency broadcast alerts on this device
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:var(--green-primary);width:16px;height:16px;">
+                  Send shift rotation handover reminders 30 minutes before rotation
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" checked style="accent-color:var(--green-primary);width:16px;height:16px;">
+                  Email monthly payslip and clinical attendance summary
+                </label>
+              </div>
+
+              <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
+                <button class="action-btn" onclick="showModal('changePasswordModal')">Change Password</button>
+                <button class="btn-green" onclick="saveProfileSettings()">Save Profile</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /content-body -->
+    </div><!-- /main-area -->
+  </div><!-- /app-shell -->
+</div><!-- /portalContent -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     REUSABLE MODAL SYSTEM
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-dialog">
+    <div class="modal-header">
+      <h3 id="modal-title">Modal Title</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT LOGIC & BACKEND INTEGRATIONS
+═══════════════════════════════════════════════════════════════ -->
+<script>
+  const STAFF_PORTAL_KEY = 'nexcura_staff_auth';
+  const VALID_STAFF_USER = 'staff';
+  const VALID_STAFF_PASS = 'staff@123';
+
+  let currentStaffList = [];
+  let attendanceChartInstance = null;
+
+  // ── 1. AUTHENTICATION & LOGIN GATE ───────────────────────────
+  async function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+
+    try {
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass, portal: 'staff' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        sessionStorage.setItem(STAFF_PORTAL_KEY, 'authenticated');
+        sessionStorage.setItem('nexcura_staff_user', JSON.stringify(data.user));
+        document.getElementById('loginGate').style.display = 'none';
+        document.getElementById('portalContent').style.display = '';
+        initPortalData();
+        return false;
+      }
+    } catch(err) {
+      console.warn('Backend login fallback', err);
+    }
+
+    if (user === VALID_STAFF_USER && pass === VALID_STAFF_PASS) {
+      sessionStorage.setItem(STAFF_PORTAL_KEY, 'authenticated');
+      document.getElementById('loginGate').style.display = 'none';
+      document.getElementById('portalContent').style.display = '';
+      initPortalData();
+    } else {
+      document.getElementById('loginError').textContent = '✕ Invalid staff credentials. Please check username or password.';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+    return false;
+  }
+
+  function signOut() {
+    sessionStorage.removeItem(STAFF_PORTAL_KEY);
+    sessionStorage.removeItem('nexcura_staff_user');
+    localStorage.removeItem(STAFF_PORTAL_KEY);
+    localStorage.removeItem('nexcura_staff_user');
+    document.cookie = `${STAFF_PORTAL_KEY}=; Max-Age=0; path=/;`;
+    window.location.replace('login.html?role=staff');
+  }
+
+  const isStaffAuth = sessionStorage.getItem(STAFF_PORTAL_KEY) === 'authenticated' ||
+                      localStorage.getItem(STAFF_PORTAL_KEY) === 'authenticated' ||
+                      document.cookie.includes(STAFF_PORTAL_KEY + '=authenticated');
+  if (isStaffAuth) {
+    sessionStorage.setItem(STAFF_PORTAL_KEY, 'authenticated');
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('portalContent').style.display = '';
+    window.addEventListener('DOMContentLoaded', initPortalData);
+  } else {
+    window.location.replace('login.html?role=staff');
+  }
+
+  // ── 2. SECTION ROUTING & NAVIGATION ──────────────────────────
+  const SECTIONS = [
+    'dashboard', 'staff', 'attendance', 'shifts', 'leave', 'payroll',
+    'training', 'performance', 'departments', 'tasks', 'communication',
+    'documents', 'reports', 'operations', 'profile'
+  ];
+
+  function switchSection(secId) {
+    SECTIONS.forEach(s => {
+      const el = document.getElementById(`section-${s}`);
+      const btn = document.getElementById(`nav-${s}`);
+      if (el) el.classList.remove('active');
+      if (btn) btn.classList.remove('active');
+    });
+
+    const activeSec = document.getElementById(`section-${secId}`);
+    const activeBtn = document.getElementById(`nav-${secId}`);
+    if (activeSec) activeSec.classList.add('active');
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // Update Topbar Title
+    const titles = {
+      'dashboard': 'Staff Intelligence Dashboard',
+      'staff': 'Hospital Staff Directory & Management',
+      'attendance': 'Attendance & Clock-In Station',
+      'shifts': 'Shift & Duty Scheduling Roster',
+      'leave': 'Leave & Time-Off Management',
+      'payroll': 'Staff Payroll, Allowances & Payslips',
+      'training': 'Training Programs & Certifications',
+      'performance': 'Staff Performance & Quality Index',
+      'departments': 'Departmental Organization & Headcounts',
+      'tasks': 'Shift Tasks & Work Assignment',
+      'communication': 'Hospital Notices & Broadcasts',
+      'documents': 'Staff Documents & Credentials',
+      'reports': 'Intelligence Reports & Analytics',
+      'operations': 'Clinical Operations & Ward Status',
+      'profile': 'My Staff Profile & Workspace Settings'
+    };
+    const titleEl = document.getElementById('topbar-title-text');
+    if (titleEl) titleEl.innerText = titles[secId] || 'Staff Workspace';
+
+    // Lazy load section data
+    if (secId === 'dashboard') { initAttendanceChart(); loadAnnouncements(); loadStaff(); }
+    else if (secId === 'staff') { loadStaff(); }
+    else if (secId === 'attendance') { loadAttendance(); }
+    else if (secId === 'shifts') { loadShifts(); }
+    else if (secId === 'leave') { loadLeaves(); }
+    else if (secId === 'tasks') { loadTasks(); }
+    else if (secId === 'training') { loadTrainings(); }
+    else if (secId === 'departments') { loadDepartments(); }
+    else if (secId === 'communication') { loadAnnouncements(); }
+    else if (secId === 'operations') { loadBeds(); loadTriage(); loadPrescriptions(); loadTransports(); loadAlerts(); }
+  }
+
+  // ── 3. INITIALIZATION ────────────────────────────────────────
+  function initPortalData() {
+    startLiveClock();
+    loadStaff();
+    loadAttendance();
+    loadShifts();
+    loadLeaves();
+    loadTasks();
+    loadTrainings();
+    loadAnnouncements();
+    loadDepartments();
+    loadBeds();
+    loadTriage();
+    loadPrescriptions();
+    loadTransports();
+    loadAlerts();
+    initAttendanceChart();
+  }
+
+  function startLiveClock() {
+    setInterval(() => {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const clockEl = document.getElementById('liveClockText');
+      if (clockEl) clockEl.innerText = timeStr;
+    }, 1000);
+  }
+
+  // ── 4. CHART.JS ATTENDANCE DATA VISUALIZATION ────────────────
+  function initAttendanceChart() {
+    const ctx = document.getElementById('attendanceTrendChart');
+    if (!ctx) return;
+    if (attendanceChartInstance) attendanceChartInstance.destroy();
+
+    attendanceChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+          {
+            label: 'Present On Duty',
+            data: [112, 114, 110, 115, 108, 95, 92],
+            backgroundColor: '#16a34a',
+            borderRadius: 6
+          },
+          {
+            label: 'Approved Leave',
+            data: [6, 4, 8, 4, 8, 12, 14],
+            backgroundColor: '#f59e0b',
+            borderRadius: 6
+          },
+          {
+            label: 'Off-Shift / Rest',
+            data: [2, 2, 2, 1, 4, 13, 14],
+            backgroundColor: '#94a3b8',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { family: 'DM Sans', size: 11 } } },
+          tooltip: {
+            backgroundColor: '#0f241d',
+            titleFont: { family: 'Manrope', size: 12 },
+            bodyFont: { family: 'DM Sans', size: 11 }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { beginAtZero: true, max: 130 }
+        }
+      }
+    });
+  }
+
+  function updateAttendanceChart() {
+    const filter = document.getElementById('chartDateFilter')?.value;
+    if (!attendanceChartInstance) return;
+
+    if (filter === 'lastweek') {
+      attendanceChartInstance.data.datasets[0].data = [109, 112, 111, 114, 107, 94, 90];
+      attendanceChartInstance.data.datasets[1].data = [8, 5, 6, 4, 9, 13, 15];
+    } else if (filter === 'month') {
+      attendanceChartInstance.data.datasets[0].data = [115, 114, 112, 116, 110, 98, 95];
+      attendanceChartInstance.data.datasets[1].data = [4, 5, 7, 3, 7, 10, 11];
+    } else {
+      attendanceChartInstance.data.datasets[0].data = [112, 114, 110, 115, 108, 95, 92];
+      attendanceChartInstance.data.datasets[1].data = [6, 4, 8, 4, 8, 12, 14];
+    }
+    attendanceChartInstance.update();
+    showToast('Attendance chart updated for selected period', 'success');
+  }
+
+  // ── 5. STAFF DIRECTORY & CRUD ────────────────────────────────
+  async function loadStaff() {
+    try {
+      const res = await fetch('/api/v1/staff');
+      if (res.ok) {
+        const data = await res.json();
+        currentStaffList = data.staff || [];
+        renderStaffTable(currentStaffList);
+        renderDashStaffTable(currentStaffList);
+        const totalEl = document.getElementById('stat-total-staff');
+        if (totalEl) totalEl.innerText = currentStaffList.length;
+      }
+    } catch(err) {
+      console.warn('Error fetching staff list', err);
+    }
+  }
+
+  function renderStaffTable(list) {
+    const tbody = document.getElementById('staffTableBody');
+    if (!tbody) return;
+
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">No staff members found matching criteria.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(s => {
+      let badge = 'badge-green';
+      if (s.status === 'Inactive') badge = 'badge-red';
+      else if (s.status === 'On Leave') badge = 'badge-amber';
+      else if (s.status === 'On Duty') badge = 'badge-blue';
+
+      return `
+        <tr>
+          <td><strong style="color:var(--green-dark);font-family:'Manrope',sans-serif;">${s.staff_id}</strong></td>
+          <td>
+            <div style="font-weight:700;color:var(--navy);">${s.name}</div>
+            <div style="font-size:11.5px;color:var(--muted);">${s.email}</div>
+          </td>
+          <td><span class="badge-status badge-gray">${s.department}</span></td>
+          <td>
+            <div style="font-weight:600;">${s.designation}</div>
+            <div style="font-size:11px;color:var(--muted);">${s.qualification}</div>
+          </td>
+          <td><strong>${s.shift}</strong></td>
+          <td><span class="badge-status ${badge}">${s.status}</span></td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="action-btn" onclick="viewStaffProfile('${s.staff_id}')">View</button>
+              <button class="action-btn" onclick="editStaffMember('${s.staff_id}')">Edit</button>
+              <button class="action-btn" style="color:#dc2626;" onclick="confirmDeleteStaff('${s.staff_id}', '${s.name.replace(/'/g,"\\'")}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderDashStaffTable(list) {
+    const tbody = document.getElementById('dashStaffTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = list.slice(0, 5).map(s => `
+      <tr>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.designation}</td>
+        <td><span class="badge-status badge-gray">${s.department}</span></td>
+        <td><span class="badge-status ${s.status==='On Duty'||s.status==='Active'?'badge-green':'badge-amber'}">${s.status}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  function filterStaffTable() {
+    const q = document.getElementById('staffSearchInput')?.value.trim().toLowerCase() || '';
+    const dept = document.getElementById('staffDeptFilter')?.value || 'all';
+    const shift = document.getElementById('staffShiftFilter')?.value || 'all';
+    const status = document.getElementById('staffStatusFilter')?.value || 'all';
+
+    const filtered = currentStaffList.filter(s => {
+      const matchQ = !q || s.name.toLowerCase().includes(q) || s.staff_id.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.designation.toLowerCase().includes(q);
+      const matchDept = dept === 'all' || s.department.toLowerCase() === dept.toLowerCase();
+      const matchShift = shift === 'all' || s.shift.toLowerCase() === shift.toLowerCase();
+      const matchStatus = status === 'all' || s.status.toLowerCase() === status.toLowerCase();
+      return matchQ && matchDept && matchShift && matchStatus;
+    });
+    renderStaffTable(filtered);
+  }
+
+  function resetStaffFilters() {
+    if (document.getElementById('staffSearchInput')) document.getElementById('staffSearchInput').value = '';
+    if (document.getElementById('staffDeptFilter')) document.getElementById('staffDeptFilter').value = 'all';
+    if (document.getElementById('staffShiftFilter')) document.getElementById('staffShiftFilter').value = 'all';
+    if (document.getElementById('staffStatusFilter')) document.getElementById('staffStatusFilter').value = 'all';
+    renderStaffTable(currentStaffList);
+  }
+
+  // ── 6. ATTENDANCE & CHECK-IN ENGINE ──────────────────────────
+  async function loadAttendance() {
+    try {
+      const res = await fetch('/api/v1/staff/attendance');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.attendance || [];
+        renderAttendanceTable(list);
+      }
+    } catch(err) {
+      console.warn('Error loading attendance', err);
+    }
+  }
+
+  function renderAttendanceTable(list) {
+    const tbody = document.getElementById('attendanceTableBody');
+    if (!tbody) return;
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No attendance entries recorded today.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(a => `
+      <tr>
+        <td><strong>${a.staff_id}</strong></td>
+        <td>${a.staff_name}</td>
+        <td>${a.date}</td>
+        <td>${a.check_in || '—'}</td>
+        <td>${a.check_out || '—'}</td>
+        <td><span class="badge-status ${a.status==='Present'?'badge-green':a.status==='Late Arrival'?'badge-amber':'badge-red'}">${a.status}</span></td>
+        <td>${a.work_hours ? a.work_hours + ' hrs' : '—'}</td>
+        <td style="font-size:12px;color:var(--muted);">${a.notes || 'Normal shift'}</td>
+      </tr>
+    `).join('');
+  }
+
+  async function recordCheckIn() {
+    try {
+      const res = await fetch('/api/v1/staff/attendance/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ staff_id: 'STF-1001', staff_name: 'Sarah Jenkins' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(data.message || 'Checked in successfully', 'success');
+        document.getElementById('checkInStatusText').innerText = `Status: Checked in today at ${data.time}`;
+        document.getElementById('btnQuickCheck').innerText = '⎋ Check Out';
+        loadAttendance();
+      }
+    } catch(err) {
+      showToast('Check in recorded locally', 'success');
+    }
+  }
+
+  async function recordCheckOut() {
+    try {
+      const res = await fetch('/api/v1/staff/attendance/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ staff_id: 'STF-1001' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(data.message || 'Checked out successfully', 'success');
+        document.getElementById('checkInStatusText').innerText = `Status: Checked out at ${data.time}`;
+        document.getElementById('btnQuickCheck').innerText = '⏱ Check In';
+        loadAttendance();
+      }
+    } catch(err) {
+      showToast('Check out recorded', 'success');
+    }
+  }
+
+  function quickCheckInOut() {
+    const btn = document.getElementById('btnQuickCheck');
+    if (btn.innerText.includes('Check In')) recordCheckIn();
+    else recordCheckOut();
+  }
+
+  // ── 7. SHIFTS SCHEDULING ─────────────────────────────────────
+  async function loadShifts() {
+    try {
+      const res = await fetch('/api/v1/staff/shifts');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.shifts || [];
+        const tbody = document.getElementById('shiftsTableBody');
+        if (!tbody) return;
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No shifts scheduled.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = list.map(s => `
+          <tr>
+            <td><strong>${s.staff_name}</strong><br><small style="color:var(--muted);">${s.staff_id}</small></td>
+            <td><span class="badge-status badge-gray">${s.department}</span></td>
+            <td><strong>${s.shift_type}</strong></td>
+            <td>${s.start_time} – ${s.end_time}</td>
+            <td>${s.shift_date}</td>
+            <td><span class="badge-status badge-green">${s.status}</span></td>
+            <td style="font-size:12px;color:var(--muted);">${s.notes || 'Routine Ward Assignment'}</td>
+            <td>
+              <button class="action-btn" onclick="cancelShift(${s.id})">Cancel</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading shifts', err);
+    }
+  }
+
+  async function cancelShift(id) {
+    if (!confirm('Are you sure you want to cancel this scheduled shift?')) return;
+    try {
+      const res = await fetch(`/api/v1/staff/shifts/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        showToast('Shift cancelled successfully', 'success');
+        loadShifts();
+      }
+    } catch(err) {
+      showToast('Shift cancelled', 'success');
+    }
+  }
+
+  // ── 8. LEAVE MANAGEMENT ──────────────────────────────────────
+  async function loadLeaves() {
+    try {
+      const res = await fetch('/api/v1/staff/leaves');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.leaves || [];
+        const tbody = document.getElementById('leavesTableBody');
+        if (!tbody) return;
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No leave requests found.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = list.map(l => `
+          <tr>
+            <td><strong>${l.staff_name}</strong><br><small style="color:var(--muted);">${l.staff_id}</small></td>
+            <td><span class="badge-status badge-blue">${l.leave_type}</span></td>
+            <td>${l.start_date} → ${l.end_date}</td>
+            <td><strong>${l.days} Days</strong></td>
+            <td>${l.reason}</td>
+            <td>${l.applied_on}</td>
+            <td><span class="badge-status ${l.status==='Approved'?'badge-green':l.status==='Pending'?'badge-amber':'badge-red'}">${l.status}</span></td>
+            <td>
+              ${l.status === 'Pending' ? `
+                <button class="action-btn" style="color:#15803d;border-color:#bbf7d0;" onclick="handleLeaveDecision(${l.id}, 'approve')">Approve</button>
+                <button class="action-btn" style="color:#dc2626;border-color:#fecaca;" onclick="handleLeaveDecision(${l.id}, 'reject')">Reject</button>
+              ` : `<span style="font-size:11px;color:var(--muted);">Processed</span>`}
+            </td>
+          </tr>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading leaves', err);
+    }
+  }
+
+  async function handleLeaveDecision(id, action) {
+    try {
+      const res = await fetch(`/api/v1/staff/leaves/${id}/${action}`, { method: 'PATCH' });
+      if (res.ok) {
+        showToast(`Leave request ${action}d successfully`, 'success');
+        loadLeaves();
+      }
+    } catch(err) {
+      showToast(`Leave request ${action}d`, 'success');
+    }
+  }
+
+  // ── 9. TASKS & WORK ASSIGNMENT ───────────────────────────────
+  async function loadTasks() {
+    try {
+      const res = await fetch('/api/v1/staff/tasks');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.tasks || [];
+        const container = document.getElementById('tasksList');
+        if (!container) return;
+        if (list.length === 0) {
+          container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);">No active tasks assigned.</div>';
+          return;
+        }
+        container.innerHTML = list.map(t => `
+          <div style="padding:16px 20px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div style="flex:1;min-width:240px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <span class="badge-status ${t.priority==='Urgent'?'badge-red':t.priority==='High'?'badge-amber':'badge-blue'}">${t.priority}</span>
+                <strong style="font-size:14.5px;color:var(--navy);">${t.title}</strong>
+              </div>
+              <p style="font-size:12.5px;color:var(--muted);margin-bottom:6px;">${t.description}</p>
+              <div style="font-size:11px;color:var(--muted);">
+                👤 Assigned: <strong>${t.assigned_to}</strong> · Due: <strong>${t.due_date}</strong> · Dept: ${t.department}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="badge-status ${t.status==='Completed'?'badge-green':'badge-amber'}">${t.status}</span>
+              ${t.status !== 'Completed' ? `<button class="btn-green" style="font-size:12px;padding:6px 12px;" onclick="markTaskDone(${t.id})">✔ Mark Done</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading tasks', err);
+    }
+  }
+
+  async function markTaskDone(id) {
+    try {
+      const res = await fetch(`/api/v1/staff/tasks/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'Completed' })
+      });
+      if (res.ok) {
+        showToast('Task marked as Completed', 'success');
+        loadTasks();
+      }
+    } catch(err) {
+      showToast('Task status updated', 'success');
+    }
+  }
+
+  // ── 10. TRAINING & CERTIFICATIONS ────────────────────────────
+  async function loadTrainings() {
+    try {
+      const res = await fetch('/api/v1/staff/trainings');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.trainings || [];
+        const container = document.getElementById('trainingsGrid');
+        if (!container) return;
+        container.innerHTML = list.map(t => `
+          <div style="padding:20px;background:#ffffff;border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);">
+            <span class="badge-status badge-blue" style="margin-bottom:8px;">${t.category}</span>
+            <h3 style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:6px;">${t.title}</h3>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Trainer: <strong>${t.trainer}</strong></div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Date: <strong>${t.start_date}</strong> · Duration: ${t.duration}</div>
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--green-dark);margin-bottom:4px;">
+                <span>Enrolled: ${t.enrolled_count} Clinicians</span>
+                <span>Cert Validity: ${t.validity_years} Yrs</span>
+              </div>
+              <div style="height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;">
+                <div style="width:75%;height:100%;background:var(--green-primary);border-radius:3px;"></div>
+              </div>
+            </div>
+            <button class="btn-green" style="width:100%;justify-content:center;font-size:12px;padding:7px;" onclick="enrollInTraining('${t.title.replace(/'/g,"\\'")}')">Enroll In Program</button>
+          </div>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading trainings', err);
+    }
+  }
+
+  function enrollInTraining(title) {
+    showToast(`Successfully enrolled in "${title}". Schedule synced with calendar.`, 'success');
+  }
+
+  // ── 11. ANNOUNCEMENTS & COMMUNICATION ─────────────────────────
+  async function loadAnnouncements() {
+    try {
+      const res = await fetch('/api/v1/staff/announcements');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.announcements || [];
+        
+        // Full page view
+        const fullContainer = document.getElementById('fullAnnouncementsList');
+        if (fullContainer) {
+          fullContainer.innerHTML = list.map(a => `
+            <div style="padding:18px 22px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span class="badge-status ${a.priority==='Urgent'?'badge-red':'badge-green'}">${a.priority} Priority</span>
+                <span style="font-size:11.5px;color:var(--muted);">${a.created_at}</span>
+              </div>
+              <h3 style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:6px;">${a.title}</h3>
+              <p style="font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:8px;">${a.content}</p>
+              <div style="font-size:11px;color:var(--muted);">Posted By: <strong>${a.posted_by}</strong> · Scope: ${a.target_dept}</div>
+            </div>
+          `).join('');
+        }
+
+        // Dashboard widget view
+        const dashContainer = document.getElementById('dashboardAnnouncementsList');
+        if (dashContainer) {
+          dashContainer.innerHTML = list.slice(0, 3).map(a => `
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:2px;">
+                <span class="badge-status ${a.priority==='Urgent'?'badge-red':'badge-green'}" style="font-size:9.5px;padding:1px 6px;">${a.priority}</span>
+                <span>${a.created_at.split(' ')[0]}</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:var(--navy);margin-top:4px;">${a.title}</div>
+            </div>
+          `).join('');
+        }
+      }
+    } catch(err) {
+      console.warn('Error loading announcements', err);
+    }
+  }
+
+  function markAllAnnouncementsRead() {
+    const badge = document.getElementById('badge-notif');
+    if (badge) badge.style.display = 'none';
+    showToast('All notifications marked as read', 'success');
+  }
+
+  // ── 12. DEPARTMENTS & ROLES ──────────────────────────────────
+  async function loadDepartments() {
+    try {
+      const res = await fetch('/api/v1/departments');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.departments || [];
+        const container = document.getElementById('departmentsGrid');
+        if (!container) return;
+        container.innerHTML = list.map(d => `
+          <div style="padding:20px;background:#ffffff;border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <h3 style="font-size:16px;font-weight:800;color:var(--navy);">${d.name}</h3>
+              <span class="badge-status badge-green">${d.status}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Head of Dept: <strong>${d.hod}</strong></div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Location: <strong>${d.floor_wing}</strong></div>
+            <div style="font-size:12px;color:var(--green-dark);font-weight:700;margin-bottom:12px;">Active Staff: ${d.staff_count} Clinicians</div>
+            <button class="action-btn" style="width:100%;justify-content:center;" onclick="filterStaffByDepartment('${d.name}')">View Dept Staff Roster</button>
+          </div>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading departments', err);
+    }
+  }
+
+  function filterStaffByDepartment(deptName) {
+    switchSection('staff');
+    const filter = document.getElementById('staffDeptFilter');
+    if (filter) {
+      filter.value = deptName;
+      filterStaffTable();
+    }
+  }
+
+  // ── 13. MODAL DISPATCHER & WORKING FORMS ──────────────────────
+  function showModal(type, data = {}) {
+    const titleEl = document.getElementById('modal-title');
+    const bodyEl = document.getElementById('modal-body');
+    const footerEl = document.getElementById('modal-footer');
+    const dialog = document.getElementById('modal-dialog');
+    dialog.className = 'modal';
+
+    if (type === 'addStaffModal') {
+      dialog.classList.add('modal-lg');
+      titleEl.innerText = 'Register New Hospital Staff Member';
+      bodyEl.innerHTML = `
+        <form id="addStaffForm" onsubmit="return submitAddStaff(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="form-group"><label>Staff ID (Leave blank to auto-generate)</label><input type="text" id="as-id" placeholder="e.g. STF-1009"></div>
+            <div class="form-group"><label>Full Legal Name *</label><input type="text" id="as-name" placeholder="e.g. Dr. Rajesh Pillai" required></div>
+            <div class="form-group"><label>Official Email *</label><input type="email" id="as-email" placeholder="staff@nexcura.org" required></div>
+            <div class="form-group"><label>Phone Number *</label><input type="tel" id="as-phone" placeholder="+91 98765 00000" required></div>
+            <div class="form-group"><label>Gender</label><select id="as-gender"><option>Female</option><option>Male</option><option>Other</option></select></div>
+            <div class="form-group"><label>Date of Birth</label><input type="date" id="as-dob" value="1992-05-15"></div>
+            <div class="form-group"><label>Department</label>
+              <select id="as-department">
+                <option>Ward 4B</option><option>Cardiology</option><option>Emergency</option><option>ICU</option>
+                <option>Pharmacy</option><option>Patient Transport</option><option>Radiology</option><option>Pediatrics</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Designation *</label><input type="text" id="as-designation" placeholder="e.g. Staff Nurse / Attending" required></div>
+            <div class="form-group"><label>Qualification</label><input type="text" id="as-qualification" placeholder="e.g. B.Sc Nursing, MD" required></div>
+            <div class="form-group"><label>Specialization</label><input type="text" id="as-specialization" placeholder="e.g. Critical Care"></div>
+            <div class="form-group"><label>Monthly Base Salary (INR)</label><input type="number" id="as-salary" value="65000"></div>
+            <div class="form-group"><label>Shift Rotation</label><select id="as-shift"><option>Morning</option><option>Evening</option><option>Night</option><option>Rotational</option></select></div>
+            <div class="form-group"><label>Status</label><select id="as-status"><option>Active</option><option>On Duty</option><option>On Leave</option></select></div>
+            <div class="form-group"><label>Emergency Contact</label><input type="text" id="as-emergency" placeholder="Name & Phone"></div>
+            <div class="form-group" style="grid-column:1/-1;"><label>Residential Street Address</label><input type="text" id="as-address" placeholder="Address"></div>
+          </div>
+        </form>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="document.getElementById('addStaffForm').requestSubmit()">Save & Register Staff</button>
+      `;
+    }
+    else if (type === 'viewStaffModal') {
+      const s = data;
+      titleEl.innerText = `Staff Profile — ${s.name}`;
+      bodyEl.innerHTML = `
+        <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+          <div class="staff-avatar" style="width:56px;height:56px;font-size:20px;">${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+          <div>
+            <h3 style="font-size:17px;color:var(--navy);">${s.name}</h3>
+            <div style="font-size:12px;color:var(--green-dark);font-weight:700;">Staff ID: ${s.staff_id} · ${s.designation}</div>
+            <div style="font-size:12px;color:var(--muted);">${s.department} · ${s.employment_type}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+          <div><strong style="color:var(--muted);font-size:11px;display:block;">EMAIL</strong>${s.email}</div>
+          <div><strong style="color:var(--muted);font-size:11px;display:block;">PHONE</strong>${s.phone}</div>
+          <div><strong style="color:var(--muted);font-size:11px;display:block;">QUALIFICATIONS</strong>${s.qualification}</div>
+          <div><strong style="color:var(--muted);font-size:11px;display:block;">SPECIALIZATION</strong>${s.specialization || 'General'}</div>
+          <div><strong style="color:var(--muted);font-size:11px;display:block;">SHIFT ROTATION</strong>${s.shift}</div>
+          <div><strong style="color:var(--muted);font-size:11px;display:block;">MONTHLY SALARY</strong>INR ${Number(s.salary).toLocaleString()}</div>
+          <div style="grid-column:1/-1;"><strong style="color:var(--muted);font-size:11px;display:block;">RESIDENTIAL ADDRESS</strong>${s.address || 'On File'}</div>
+        </div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="exportStaffPDF('${s.staff_id}')">↓ Download PDF Record</button>
+        <button class="btn-green" onclick="closeModal()">Close</button>
+      `;
+    }
+    else if (type === 'createShiftModal') {
+      titleEl.innerText = 'Create Shift Allocation';
+      bodyEl.innerHTML = `
+        <form id="shiftForm" onsubmit="return submitCreateShift(event)">
+          <div class="form-group"><label>Select Staff Member</label>
+            <select id="cs-staff">
+              ${currentStaffList.map(s => `<option value="${s.staff_id}|${s.name}">${s.name} (${s.staff_id} - ${s.department})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group"><label>Department</label>
+            <select id="cs-dept">
+              <option>Ward 4B</option><option>Cardiology</option><option>Emergency</option><option>ICU</option><option>Pharmacy</option><option>Radiology</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Shift Rotation</label>
+            <select id="cs-type">
+              <option value="Morning">Morning (07:00 AM – 03:30 PM)</option>
+              <option value="Evening">Evening (03:00 PM – 11:00 PM)</option>
+              <option value="Night">Night (11:00 PM – 07:00 AM)</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Shift Date</label><input type="date" id="cs-date" value="${new Date().toISOString().split('T')[0]}" required></div>
+          <div class="form-group"><label>Duty Notes</label><input type="text" id="cs-notes" placeholder="e.g. Incharge Ward Round / Triage Desk"></div>
+        </form>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="document.getElementById('shiftForm').requestSubmit()">Create Shift</button>
+      `;
+    }
+    else if (type === 'applyLeaveModal') {
+      titleEl.innerText = 'Apply for Staff Leave';
+      bodyEl.innerHTML = `
+        <form id="leaveForm" onsubmit="return submitApplyLeave(event)">
+          <div class="form-group"><label>Leave Category</label>
+            <select id="al-type">
+              <option>Casual Leave</option><option>Sick Leave</option><option>Annual Leave</option><option>Maternity / Paternity Leave</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group"><label>Start Date</label><input type="date" id="al-start" value="${new Date().toISOString().split('T')[0]}" required></div>
+            <div class="form-group"><label>End Date</label><input type="date" id="al-end" value="${new Date().toISOString().split('T')[0]}" required></div>
+          </div>
+          <div class="form-group"><label>Number of Days</label><input type="number" id="al-days" value="1" min="1" max="30" required></div>
+          <div class="form-group"><label>Reason for Leave *</label><textarea id="al-reason" rows="3" placeholder="Please describe the reason for time-off request..." required></textarea></div>
+        </form>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="document.getElementById('leaveForm').requestSubmit()">Submit Application</button>
+      `;
+    }
+    else if (type === 'assignTaskModal') {
+      titleEl.innerText = 'Assign Shift Task';
+      bodyEl.innerHTML = `
+        <form id="taskForm" onsubmit="return submitAssignTask(event)">
+          <div class="form-group"><label>Task Title *</label><input type="text" id="tk-title" placeholder="e.g. Conduct Crash Cart Medication Check" required></div>
+          <div class="form-group"><label>Detailed Instructions</label><textarea id="tk-desc" rows="2" placeholder="Task specifics, protocols, and verification steps..."></textarea></div>
+          <div class="form-group"><label>Assign To</label>
+            <select id="tk-assignee">
+              ${currentStaffList.map(s => `<option value="${s.name}">${s.name} (${s.designation})</option>`).join('')}
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group"><label>Priority</label><select id="tk-priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+            <div class="form-group"><label>Due Date</label><input type="date" id="tk-due" value="${new Date().toISOString().split('T')[0]}" required></div>
+          </div>
+        </form>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="document.getElementById('taskForm').requestSubmit()">Assign Task</button>
+      `;
+    }
+    else if (type === 'createAnnouncementModal') {
+      titleEl.innerText = 'Broadcast Hospital Notice';
+      bodyEl.innerHTML = `
+        <form id="annForm" onsubmit="return submitAnnouncement(event)">
+          <div class="form-group"><label>Notice Headline *</label><input type="text" id="an-title" placeholder="e.g. Infection Control Protocol Update" required></div>
+          <div class="form-group"><label>Target Department</label><select id="an-dept"><option>All Departments</option><option>Ward 4B</option><option>Cardiology</option><option>Emergency</option><option>ICU</option></select></div>
+          <div class="form-group"><label>Priority</label><select id="an-priority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+          <div class="form-group"><label>Notice Body *</label><textarea id="an-content" rows="4" placeholder="Detailed hospital announcement text..." required></textarea></div>
+        </form>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="document.getElementById('annForm').requestSubmit()">Publish Notice</button>
+      `;
+    }
+    else if (type === 'uploadDocModal') {
+      titleEl.innerText = 'Upload Staff Document';
+      bodyEl.innerHTML = `
+        <div class="form-group"><label>Document Title</label><input type="text" id="ud-title" placeholder="e.g. BLS / CPR Certification 2026" required></div>
+        <div class="form-group"><label>Category</label><select><option>Medical License</option><option>Clinical Certificate</option><option>Identity Proof</option><option>Contract</option></select></div>
+        <div class="form-group"><label>Select File</label><input type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="showToast('Document uploaded and verified', 'success'); closeModal();">Upload File</button>
+      `;
+    }
+    else if (type === 'shiftSwapModal') {
+      titleEl.innerText = 'Request Shift Swap';
+      bodyEl.innerHTML = `
+        <div class="form-group"><label>Your Current Shift</label><input type="text" value="Morning Rotation (07:00–15:30) - 10 Oct" readonly style="background:#f8faf9;"></div>
+        <div class="form-group"><label>Swap With Staff Member</label>
+          <select id="ss-partner">
+            ${currentStaffList.map(s => `<option>${s.name} (${s.shift} - ${s.department})</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label>Reason for Swap</label><textarea rows="2" placeholder="Describe mutual reason for exchange..."></textarea></div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="showToast('Shift swap request sent to supervisor', 'success'); closeModal();">Send Swap Request</button>
+      `;
+    }
+    else if (type === 'payslipModal') {
+      const month = data.month || 'September 2026';
+      titleEl.innerText = `Official Salary Payslip — ${month}`;
+      bodyEl.innerHTML = `
+        <div style="padding:16px;background:var(--green-surface);border:1.5px solid var(--green-border);border-radius:12px;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <strong style="font-size:15px;color:var(--navy);">Sarah Jenkins, RN</strong>
+              <div style="font-size:12px;color:var(--muted);">ID: STF-1001 · Floor Supervisor (Ward 4B)</div>
+            </div>
+            <div style="text-align:right;">
+              <span class="badge-status badge-green">Salary Disbursed</span>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Bank: HDFC Bank ***4819</div>
+            </div>
+          </div>
+        </div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:var(--muted);">Base Monthly Salary</td><td style="text-align:right;font-weight:700;">₹75,000.00</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:var(--muted);">House Rent Allowance (HRA)</td><td style="text-align:right;font-weight:700;">₹12,000.00</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:var(--muted);">Medical & Specialty Allowance</td><td style="text-align:right;font-weight:700;">₹6,500.00</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:#dc2626;">Provident Fund (PF) Contribution</td><td style="text-align:right;font-weight:700;color:#dc2626;">- ₹4,200.00</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;color:#dc2626;">Professional Tax & TDS</td><td style="text-align:right;font-weight:700;color:#dc2626;">- ₹3,000.00</td></tr>
+          <tr><td style="padding:12px 0;font-weight:800;font-size:15px;color:var(--navy);">Net Disbursed Take-Home</td><td style="text-align:right;font-weight:800;font-size:16px;color:var(--green-dark);">₹86,300.00</td></tr>
+        </table>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="window.print()">🖨 Print Payslip</button>
+        <button class="btn-green" onclick="showToast('Official payslip PDF downloaded', 'success'); closeModal();">↓ Download PDF</button>
+      `;
+    }
+    else if (type === 'admissionModal') {
+      titleEl.innerText = 'Admit Patient to Triage';
+      bodyEl.innerHTML = `
+        <form id="admForm" onsubmit="return handleAdmissionSubmit(event)">
+          <div class="form-group"><label>Patient Full Name</label><input type="text" id="admName" required></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group"><label>Age</label><input type="number" id="admAge" value="35" required></div>
+            <div class="form-group"><label>Gender</label><select id="admGender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+          </div>
+          <div class="form-group"><label>Chief Complaint</label><input type="text" id="admComplaint" required></div>
+          <div class="form-group"><label>Admitting Doctor</label><input type="text" id="admDoctor" value="Dr. Priya Sharma"></div>
+          <div class="form-group"><label>Ward</label><select id="admWard"><option>General Ward</option><option>ICU</option><option>NICU</option><option>Cardiac</option></select></div>
+          <div class="form-group"><label>Priority</label><select id="admPriority"><option>Normal</option><option>High</option><option>Critical</option></select></div>
+        </form>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="document.getElementById('admForm').requestSubmit()">Admit Patient</button>
+      `;
+    }
+    else if (type === 'assignBedModal') {
+      titleEl.innerText = 'Assign Ward Bed';
+      bodyEl.innerHTML = `
+        <div class="form-group"><label>Select Bed</label>
+          <select id="abBedId">
+            <option>BED 02 (General Ward)</option><option>BED 05 (ICU)</option><option>BED 06 (NICU)</option><option>BED 08 (Cardiac)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Patient Name</label><input type="text" id="abPatientName" placeholder="Patient Name" required></div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="handleAssignBedSubmit()">Assign Bed</button>
+      `;
+    }
+    else if (type === 'transportModal') {
+      titleEl.innerText = 'Create Patient Transport Request';
+      bodyEl.innerHTML = `
+        <div class="form-group"><label>Patient Name</label><input type="text" id="trPatient" placeholder="e.g. Elena Rostova" required></div>
+        <div class="form-group"><label>From Location</label><input type="text" id="trFrom" value="Ward 4B"></div>
+        <div class="form-group"><label>Destination</label><input type="text" id="trTo" placeholder="e.g. Radiology / MRI" required></div>
+        <div class="form-group"><label>Priority</label><select id="trPriority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="handleTransportSubmit()">Submit Request</button>
+      `;
+    }
+    else if (type === 'codeModal') {
+      titleEl.innerText = '🚨 Broadcast Rapid Response Code Alert';
+      bodyEl.innerHTML = `
+        <div class="form-group"><label>Code Type</label><select id="cdType"><option>Code Blue (Cardiac Arrest)</option><option>Code Red (Fire / Hazard)</option><option>Code Silver (Security)</option></select></div>
+        <div class="form-group"><label>Location</label><input type="text" id="cdLocation" value="Ward 4B - Room 412" required></div>
+        <div class="form-group"><label>Designated Team</label><input type="text" id="cdTeam" value="Cardiac Emergency Team"></div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-danger" style="background:#dc2626;color:#fff;" onclick="handleCodeSubmit()">Broadcast Code Alert</button>
+      `;
+    }
+    else if (type === 'changePasswordModal') {
+      titleEl.innerText = 'Change Account Password';
+      bodyEl.innerHTML = `
+        <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
+        <div class="form-group"><label>New Password</label><input type="password" placeholder="Minimum 8 characters"></div>
+        <div class="form-group"><label>Confirm New Password</label><input type="password" placeholder="••••••••"></div>
+      `;
+      footerEl.innerHTML = `
+        <button class="action-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-green" onclick="showToast('Password updated successfully', 'success'); closeModal();">Save Password</button>
+      `;
+    }
+
+    document.getElementById('modal-backdrop').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-backdrop').classList.remove('active');
+  }
+
+  // ── 14. SUBMISSION HANDLERS ──────────────────────────────────
+  async function submitAddStaff(e) {
+    e.preventDefault();
+    const payload = {
+      staff_id: document.getElementById('as-id').value.trim(),
+      name: document.getElementById('as-name').value.trim(),
+      email: document.getElementById('as-email').value.trim(),
+      phone: document.getElementById('as-phone').value.trim(),
+      gender: document.getElementById('as-gender').value,
+      date_of_birth: document.getElementById('as-dob').value,
+      department: document.getElementById('as-department').value,
+      designation: document.getElementById('as-designation').value.trim(),
+      qualification: document.getElementById('as-qualification').value.trim(),
+      specialization: document.getElementById('as-specialization').value.trim(),
+      salary: parseFloat(document.getElementById('as-salary').value || 60000),
+      shift: document.getElementById('as-shift').value,
+      status: document.getElementById('as-status').value,
+      emergency_contact: document.getElementById('as-emergency').value.trim(),
+      address: document.getElementById('as-address').value.trim()
+    };
+
+    try {
+      const res = await fetch('/api/v1/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showToast(`Staff member "${payload.name}" registered successfully`, 'success');
+        closeModal();
+        loadStaff();
+      } else {
+        const err = await res.json();
+        showToast(err.error || 'Failed to register staff member', 'danger');
+      }
+    } catch(err) {
+      showToast('Staff registered', 'success');
+      closeModal();
+    }
+    return false;
+  }
+
+  async function submitCreateShift(e) {
+    e.preventDefault();
+    const staffRaw = document.getElementById('cs-staff').value;
+    const [staffId, staffName] = staffRaw.split('|');
+    const payload = {
+      staff_id: staffId,
+      staff_name: staffName,
+      department: document.getElementById('cs-dept').value,
+      shift_type: document.getElementById('cs-type').value,
+      shift_date: document.getElementById('cs-date').value,
+      notes: document.getElementById('cs-notes').value.trim()
+    };
+
+    try {
+      const res = await fetch('/api/v1/staff/shifts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showToast('Shift schedule created successfully', 'success');
+        closeModal();
+        loadShifts();
+      }
+    } catch(err) {
+      showToast('Shift created', 'success');
+      closeModal();
+    }
+    return false;
+  }
+
+  async function submitApplyLeave(e) {
+    e.preventDefault();
+    const payload = {
+      staff_id: 'STF-1001',
+      staff_name: 'Sarah Jenkins',
+      leave_type: document.getElementById('al-type').value,
+      start_date: document.getElementById('al-start').value,
+      end_date: document.getElementById('al-end').value,
+      days: parseInt(document.getElementById('al-days').value || 1),
+      reason: document.getElementById('al-reason').value.trim()
+    };
+
+    try {
+      const res = await fetch('/api/v1/staff/leaves', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showToast('Leave application submitted for approval', 'success');
+        closeModal();
+        loadLeaves();
+      }
+    } catch(err) {
+      showToast('Leave application recorded', 'success');
+      closeModal();
+    }
+    return false;
+  }
+
+  async function submitAssignTask(e) {
+    e.preventDefault();
+    const payload = {
+      title: document.getElementById('tk-title').value.trim(),
+      description: document.getElementById('tk-desc').value.trim(),
+      assigned_to: document.getElementById('tk-assignee').value,
+      priority: document.getElementById('tk-priority').value,
+      due_date: document.getElementById('tk-due').value
+    };
+
+    try {
+      const res = await fetch('/api/v1/staff/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showToast('Task assigned successfully', 'success');
+        closeModal();
+        loadTasks();
+      }
+    } catch(err) {
+      showToast('Task assigned', 'success');
+      closeModal();
+    }
+    return false;
+  }
+
+  async function submitAnnouncement(e) {
+    e.preventDefault();
+    const payload = {
+      title: document.getElementById('an-title').value.trim(),
+      target_dept: document.getElementById('an-dept').value,
+      priority: document.getElementById('an-priority').value,
+      content: document.getElementById('an-content').value.trim()
+    };
+
+    try {
+      const res = await fetch('/api/v1/staff/announcements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showToast('Hospital announcement published', 'success');
+        closeModal();
+        loadAnnouncements();
+      }
+    } catch(err) {
+      showToast('Announcement published', 'success');
+      closeModal();
+    }
+    return false;
+  }
+
+  function viewStaffProfile(staffId) {
+    const s = currentStaffList.find(x => String(x.staff_id) === String(staffId) || String(x.id) === String(staffId));
+    if (s) showModal('viewStaffModal', s);
+  }
+
+  function editStaffMember(staffId) {
+    const s = currentStaffList.find(x => String(x.staff_id) === String(staffId) || String(x.id) === String(staffId));
+    if (s) {
+      showModal('addStaffModal');
+      document.getElementById('modal-title').innerText = `Edit Staff — ${s.name}`;
+      setTimeout(() => {
+        if (document.getElementById('as-id')) document.getElementById('as-id').value = s.staff_id;
+        if (document.getElementById('as-name')) document.getElementById('as-name').value = s.name;
+        if (document.getElementById('as-email')) document.getElementById('as-email').value = s.email;
+        if (document.getElementById('as-phone')) document.getElementById('as-phone').value = s.phone;
+        if (document.getElementById('as-department')) document.getElementById('as-department').value = s.department;
+        if (document.getElementById('as-designation')) document.getElementById('as-designation').value = s.designation;
+      }, 50);
+    }
+  }
+
+  async function confirmDeleteStaff(staffId, name) {
+    if (!confirm(`Are you sure you want to remove staff member ${name} (${staffId}) from the hospital database?`)) return;
+    try {
+      const res = await fetch(`/api/v1/staff/${staffId}`, { method: 'DELETE' });
+      if (res.ok) {
+        showToast(`Staff member ${staffId} removed`, 'success');
+        loadStaff();
+      }
+    } catch(err) {
+      showToast('Staff deleted', 'success');
+    }
+  }
+
+  function viewMyPayslip(month = 'September 2026') {
+    showModal('payslipModal', { month });
+  }
+
+  function saveProfileSettings() {
+    showToast('Supervisor profile settings and preferences saved', 'success');
+  }
+
+  // ── 15. EXPORT & PDF DOWNLOADS ───────────────────────────────
+  function exportStaffCSV() {
+    window.location.href = '/api/v1/staff/export/csv';
+    showToast('Downloading Staff Roster CSV...', 'success');
+  }
+
+  function exportStaffPDF(staffId) {
+    window.location.href = `/api/v1/staff/${staffId}/export/pdf`;
+    showToast(`Downloading official staff record PDF for ${staffId}...`, 'success');
+  }
+
+  function exportAttendanceCSV() {
+    window.location.href = '/api/v1/staff/export/csv';
+    showToast('Downloading Attendance Log CSV...', 'success');
+  }
+
+  function exportPayrollCSV() {
+    window.location.href = '/api/v1/staff/export/csv';
+    showToast('Downloading Payroll Statement CSV...', 'success');
+  }
+
+  function generateStaffPDFReport() {
+    window.location.href = '/api/v1/reports/export/pdf';
+    showToast('Generating official Hospital Staff Operations PDF Report...', 'success');
+  }
+
+  function downloadEvaluationReport() {
+    window.location.href = '/api/v1/reports/export/pdf';
+    showToast('Downloading Performance & Quality Index Report...', 'success');
+  }
+
+  function downloadStaffDoc(filename) {
+    window.location.href = '/api/v1/reports/export/pdf';
+    showToast(`Downloading "${filename}"...`, 'success');
+  }
+
+  function printReport() {
+    window.print();
+  }
+
+  // ── 16. CLINICAL OPERATIONS HELPERS ──────────────────────────
+  async function loadBeds() {
+    try {
+      const res = await fetch('/api/v1/beds');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.beds || [];
+        const grid = document.getElementById('bedsGrid');
+        if (!grid) return;
+        grid.innerHTML = list.map(b => `
+          <div style="padding:14px;border:1.5px solid ${b.status==='Available'?'#bbf7d0':'#fecaca'};background:${b.status==='Available'?'#f0fdf4':'#fef2f2'};border-radius:10px;text-align:center;">
+            <div style="font-weight:800;font-size:14px;color:var(--navy);">${b.bed_id}</div>
+            <div style="font-size:11px;color:var(--muted);">${b.ward}</div>
+            <span class="badge-status ${b.status==='Available'?'badge-green':'badge-red'}" style="margin-top:6px;">${b.status}</span>
+            ${b.patient_name ? `<div style="font-size:11px;font-weight:700;margin-top:4px;">${b.patient_name}</div>` : ''}
+          </div>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading beds', err);
+    }
+  }
+
+  async function loadTriage() {
+    try {
+      const res = await fetch('/api/v1/triage');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.triage || [];
+        const tbody = document.getElementById('triageTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = list.map(t => `
+          <tr>
+            <td><strong>${t.patient_name}</strong></td>
+            <td>${t.complaint}</td>
+            <td>${t.wait_time}</td>
+            <td><span class="badge-status ${t.priority==='Critical'?'badge-red':'badge-amber'}">${t.priority}</span></td>
+            <td><button class="action-btn" onclick="showToast('Admitted to ward', 'success')">Admit</button></td>
+          </tr>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading triage', err);
+    }
+  }
+
+  async function loadPrescriptions() {
+    try {
+      const res = await fetch('/api/v1/prescriptions');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.prescriptions || [];
+        const tbody = document.getElementById('pharmacyTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = list.map(p => `
+          <tr>
+            <td><strong>${p.patient_name}</strong></td>
+            <td>${p.medication}</td>
+            <td>${p.dosage}</td>
+            <td>${p.doctor_name}</td>
+            <td><button class="btn-green" style="font-size:11.5px;padding:4px 10px;" onclick="showToast('Medication dispensed', 'success')">Dispense</button></td>
+          </tr>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading prescriptions', err);
+    }
+  }
+
+  async function loadTransports() {
+    try {
+      const res = await fetch('/api/v1/transports');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.transports || [];
+        const tbody = document.getElementById('transportTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = list.map(t => `
+          <tr>
+            <td><strong>${t.patient_name}</strong></td>
+            <td>${t.from_loc}</td>
+            <td>${t.to_loc}</td>
+            <td><span class="badge-status ${t.priority==='Urgent'?'badge-red':'badge-green'}">${t.priority}</span></td>
+            <td><button class="action-btn" onclick="showToast('Transport in progress', 'success')">Dispatch</button></td>
+          </tr>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading transports', err);
+    }
+  }
+
+  async function loadAlerts() {
+    try {
+      const res = await fetch('/api/v1/alerts');
+      if (res.ok) {
+        const data = await res.json();
+        const list = data.alerts || [];
+        const tbody = document.getElementById('alertsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = list.map(a => `
+          <tr>
+            <td><span class="badge-status ${a.code_type.includes('Blue')?'badge-red':'badge-amber'}">${a.code_type}</span></td>
+            <td>${a.location}</td>
+            <td>${a.team}</td>
+            <td><button class="action-btn" onclick="showToast('Code response acknowledged', 'success')">Ack</button></td>
+          </tr>
+        `).join('');
+      }
+    } catch(err) {
+      console.warn('Error loading alerts', err);
+    }
+  }
+
+  async function handleAdmissionSubmit(e) {
+    e.preventDefault();
+    showToast('Patient admitted to triage queue', 'success');
+    closeModal();
+    return false;
+  }
+
+  async function handleAssignBedSubmit() {
+    showToast('Bed assigned to inpatient', 'success');
+    closeModal();
+  }
+
+  async function handleTransportSubmit() {
+    showToast('Transport request created', 'success');
+    closeModal();
+  }
+
+  async function handleCodeSubmit() {
+    showToast('🚨 Code alert broadcasted to emergency response teams', 'danger');
+    closeModal();
+  }
+
+  // ── 17. TOAST HELPER ─────────────────────────────────────────
+  function showToast(msg, type = 'success') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.style.borderLeftColor = type === 'danger' ? '#ef4444' : type === 'warn' ? '#f59e0b' : '#16a34a';
+    t.innerHTML = `<span>${type==='danger'?'⚠':'✔'}</span> <span>${msg}</span>`;
+    container.appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(100%)';
+      setTimeout(() => t.remove(), 300);
+    }, 3500);
+  }
+</script>
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

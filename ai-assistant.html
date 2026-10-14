@@ -1,0 +1,1793 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b5d5e">
+  <title>NexCura AI Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <style>
+    /* ============================================================
+       AI ASSISTANT — DEDICATED STYLES
+       Illustrative sample only — no real patient data
+    ============================================================ */
+
+    /* ---- Reset / Layout ---- */
+    .ai-page-body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    /* ---- Site Header (matches portal) ---- */
+    .ai-site-header {
+      height: 64px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(250,250,246,.97);
+      border-bottom: 1px solid rgba(20,60,60,.07);
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 30;
+      flex-shrink: 0;
+    }
+    .ai-site-header .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: Manrope, sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -1.1px;
+      color: #123b3d;
+      text-decoration: none;
+    }
+    .ai-site-header .brand > span:last-child > span { font-weight: 500; color: #65938a; }
+    .brand-mark {
+      width: 28px; height: 28px;
+      border: 1.8px solid var(--teal);
+      border-radius: 50%;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-mark::before, .brand-mark::after {
+      content: ''; position: absolute; background: var(--teal); border-radius: 4px;
+    }
+    .brand-mark::before { width: 2px; height: 14px; }
+    .brand-mark::after  { height: 2px; width: 14px; }
+    .brand-mark i, .brand-mark b {
+      position: absolute; width: 2px; height: 8px;
+      background: #76aa97; border-radius: 2px;
+    }
+    .brand-mark i { transform: rotate(45deg); }
+    .brand-mark b { transform: rotate(-45deg); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .header-home-link {
+      font-size: 11px;
+      font-weight: 600;
+      color: #385456;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 1px solid #d0dbd5;
+      transition: background .18s, color .18s;
+    }
+    .header-home-link:hover { background: var(--mint); color: var(--teal); }
+    .header-home-link:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    /* ---- Sidebar Toggle (mobile) ---- */
+    #sidebar-toggle {
+      display: none;
+      border: 0;
+      background: none;
+      color: var(--teal);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 4px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    #sidebar-toggle:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+    /* ---- Workspace ---- */
+    .ai-workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ============================================================
+       LEFT PANEL — Conversation history
+    ============================================================ */
+    .ai-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: #f4f7f4;
+      border-right: 1px solid #e2ebe2;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+    }
+
+    .sidebar-top {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid #e2ebe2;
+    }
+
+    #new-conversation-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--teal);
+      color: #fff;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font: 600 12px 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background .18s, transform .18s;
+    }
+    #new-conversation-btn:hover { background: #08494a; transform: translateY(-1px); }
+    #new-conversation-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+    #new-conversation-btn svg { flex-shrink: 0; }
+
+    /* Language selector */
+    .sidebar-lang {
+      margin-top: 11px;
+    }
+    .sidebar-lang label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .sidebar-lang select {
+      flex: 1;
+      border: 1px solid #d5dfd5;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font: 11px 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: white;
+      cursor: pointer;
+    }
+    .sidebar-lang select:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+
+    /* History list */
+    .sidebar-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 10px 10px;
+    }
+    .history-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 0 6px;
+      margin-bottom: 8px;
+    }
+    .history-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: 0;
+      border-radius: 6px;
+      padding: 9px 10px;
+      cursor: pointer;
+      transition: background .15s;
+      margin-bottom: 3px;
+    }
+    .history-item:hover { background: #e8f0e8; }
+    .history-item:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+    .history-item.active { background: #dff1e9; }
+    .history-item strong {
+      display: block;
+      font: 600 11px 'DM Sans', sans-serif;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-item span {
+      display: block;
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-item time {
+      display: block;
+      font-size: 8px;
+      color: #96a8a2;
+      margin-top: 3px;
+    }
+
+    /* Sidebar disclaimer */
+    .sidebar-note {
+      padding: 10px 12px;
+      border-top: 1px solid #e2ebe2;
+      font-size: 9px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       MAIN CHAT AREA
+    ============================================================ */
+    .ai-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fafcf9;
+      position: relative;
+    }
+
+    /* Chat scroll region */
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      padding: 0;
+    }
+    .chat-inner {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 28px 22px 18px;
+    }
+
+    /* ---- WELCOME STATE ---- */
+    .welcome-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 20px 20px;
+    }
+
+    .welcome-logo-mark {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--mint);
+      border: 2.5px solid var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .welcome-logo-mark::before,
+    .welcome-logo-mark::after {
+      content: '';
+      position: absolute;
+      background: var(--teal);
+      border-radius: 4px;
+    }
+    .welcome-logo-mark::before { width: 3px; height: 30px; }
+    .welcome-logo-mark::after  { width: 30px; height: 3px; }
+    .welcome-logo-mark .cross-diag-a,
+    .welcome-logo-mark .cross-diag-b {
+      position: absolute;
+      width: 3px;
+      height: 20px;
+      background: #76aa97;
+      border-radius: 2px;
+    }
+    .welcome-logo-mark .cross-diag-a { transform: rotate(45deg); }
+    .welcome-logo-mark .cross-diag-b { transform: rotate(-45deg); }
+
+    .welcome-brand-name {
+      font-family: Manrope, sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #123b3d;
+      margin-bottom: 4px;
+    }
+    .welcome-brand-name span { font-weight: 500; color: #65938a; }
+
+    .welcome-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 440px;
+      line-height: 1.7;
+      margin: 0 auto 20px;
+    }
+
+    /* Safety notice */
+    .safety-notice {
+      border: 2px solid #F2B95E;
+      background: #fffbf1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 0 auto 22px;
+      max-width: 540px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      text-align: left;
+    }
+    .safety-notice-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      line-height: 1;
+    }
+    .safety-notice-body strong {
+      display: block;
+      font: 700 12px Manrope, sans-serif;
+      color: #7a5a1a;
+      margin-bottom: 5px;
+    }
+    .safety-notice-body p {
+      font-size: 11px;
+      line-height: 1.65;
+      color: #7a6030;
+      margin: 0;
+    }
+
+    /* Prompt chips */
+    .prompt-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .prompt-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid #c9ddc9;
+      background: white;
+      color: #2a5553;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font: 600 11px 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, transform .18s;
+    }
+    .prompt-chip:hover {
+      background: var(--mint);
+      border-color: var(--teal);
+      transform: translateY(-1px);
+    }
+    .prompt-chip:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+    .prompt-chip-icon { font-size: 14px; }
+
+    /* ---- MESSAGE LIST ---- */
+    .message-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* message row */
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .msg-row.user-row { align-items: flex-end; }
+    .msg-row.assistant-row { align-items: flex-start; }
+
+    /* bubbles */
+    .msg-bubble {
+      max-width: 82%;
+      padding: 12px 15px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.65;
+      position: relative;
+    }
+    .assistant-bubble {
+      background: var(--mint);
+      color: var(--ink);
+      border-top-left-radius: 3px;
+      border: 1px solid #c8dfc8;
+    }
+    .user-bubble {
+      background: var(--teal);
+      color: #fff;
+      border-top-right-radius: 3px;
+    }
+
+    /* sender label + timestamp */
+    .msg-meta {
+      font-size: 9px;
+      color: var(--muted);
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .msg-meta .sender { font-weight: 700; }
+
+    /* feedback buttons */
+    .feedback-row {
+      display: flex;
+      gap: 4px;
+      padding: 2px 4px;
+      align-items: center;
+    }
+    .feedback-btn {
+      border: 0;
+      background: none;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: background .15s, transform .15s;
+      color: var(--muted);
+    }
+    .feedback-btn:hover { background: #e4f0e8; transform: scale(1.15); }
+    .feedback-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+    .feedback-thanks {
+      font-size: 9px;
+      color: #247A52;
+      font-weight: 600;
+    }
+
+    /* Emergency card */
+    .emergency-card {
+      border: 2.5px solid #B42318;
+      background: #fef4f3;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+    }
+    .emergency-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .emergency-card-head span {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .emergency-card-head strong {
+      font: 700 13px Manrope, sans-serif;
+      color: #B42318;
+    }
+    .emergency-card p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #7a1c14;
+      margin: 0;
+    }
+    .emergency-card .emergency-numbers {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .emergency-num-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #B42318;
+      color: white;
+      border-radius: 5px;
+      padding: 5px 11px;
+      font: 700 12px Manrope, sans-serif;
+    }
+    .emergency-num-badge small { font-size: 9px; font-weight: 400; opacity: .85; }
+
+    /* Intake handoff card */
+    .intake-card {
+      border: 1.5px solid #c8dfc8;
+      background: white;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin-top: 6px;
+      max-width: 82%;
+    }
+    .intake-card p {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 0 10px;
+      line-height: 1.6;
+    }
+    .intake-card strong {
+      display: block;
+      font: 700 12px Manrope, sans-serif;
+      color: #247A52;
+      margin-bottom: 4px;
+    }
+
+    .intake-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #247A52;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+      padding: 9px 14px;
+      font: 600 11px 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background .18s, transform .18s;
+    }
+    .intake-btn:hover { background: #1a5e3e; transform: translateY(-1px); }
+    .intake-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+    .intake-confirm {
+      background: #f0f9f4;
+      border: 1.5px solid #b4ddc4;
+      border-radius: 7px;
+      padding: 11px 14px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #247A52;
+      line-height: 1.6;
+      display: none;
+    }
+    .intake-confirm.visible { display: block; }
+    .intake-confirm strong { display: block; font-weight: 700; margin-bottom: 3px; }
+
+    /* ---- TYPING INDICATOR ---- */
+    .typing-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 16px;
+      background: var(--mint);
+      border: 1px solid #c8dfc8;
+      border-radius: 14px;
+      border-top-left-radius: 3px;
+    }
+    .typing-indicator .dot {
+      width: 8px;
+      height: 8px;
+      background: #5b9984;
+      border-radius: 50%;
+      animation: bounce 1.3s infinite ease-in-out;
+    }
+    .typing-indicator .dot:nth-child(2) { animation-delay: .2s; }
+    .typing-indicator .dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .5; }
+      40%           { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ---- BOTTOM BAR ---- */
+    .chat-bottom-bar {
+      background: white;
+      border-top: 1px solid #e2ebe2;
+      padding: 12px 16px;
+      flex-shrink: 0;
+    }
+    .chat-bottom-inner {
+      max-width: 740px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid #c8ddc8;
+      border-radius: 10px;
+      background: #fff;
+      padding: 6px 8px 6px 14px;
+      transition: border-color .18s;
+    }
+    .chat-input-row:focus-within { border-color: var(--teal); }
+
+    #chat-input {
+      flex: 1;
+      border: 0;
+      background: none;
+      font: 13px 'DM Sans', sans-serif;
+      color: var(--ink);
+      resize: none;
+      outline: none;
+      min-height: 24px;
+      max-height: 110px;
+      padding: 2px 0;
+      line-height: 1.5;
+    }
+    #chat-input::placeholder { color: #a0b0a8; }
+
+    .attach-btn, .send-btn {
+      border: 0;
+      background: none;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+    .attach-btn { color: var(--muted); font-size: 18px; }
+    .attach-btn:hover { background: var(--mint); }
+    .attach-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--teal);
+      color: white;
+      border-radius: 8px;
+      font-size: 17px;
+      transition: background .18s, transform .18s;
+    }
+    .send-btn:hover { background: #08494a; transform: scale(1.05); }
+    .send-btn:disabled { background: #c4d4c4; cursor: not-allowed; transform: none; }
+    .send-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+    /* Bottom actions row */
+    .chat-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .chat-disclaimer-text {
+      font-size: 9px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    #talk-to-person-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid #c9ddc9;
+      background: white;
+      color: #2a5553;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font: 600 11px 'DM Sans', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .18s, border-color .18s;
+      flex-shrink: 0;
+    }
+    #talk-to-person-btn:hover { background: var(--mint); border-color: var(--teal); }
+    #talk-to-person-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #183537;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 99;
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Person escalation card */
+    .escalation-card {
+      background: #f5f9f5;
+      border: 1.5px solid #b8d4b8;
+      border-radius: 8px;
+      padding: 12px 15px;
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.6;
+      display: none;
+      margin-top: 8px;
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .escalation-card.visible { display: block; }
+    .escalation-card strong { color: #247A52; }
+    .escalation-card a { color: var(--teal); font-weight: 600; text-decoration: underline; }
+
+    /* Sidebar overlay (mobile) */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      z-index: 20;
+    }
+
+    /* ============================================================
+       RESPONSIVE — MOBILE FIRST ADJUSTMENTS
+    ============================================================ */
+    @media (max-width: 720px) {
+      #sidebar-toggle { display: flex; align-items: center; }
+
+      .ai-sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 25;
+        transform: translateX(-100%);
+        width: 280px;
+        max-width: 85vw;
+      }
+      .ai-sidebar.open { transform: translateX(0); }
+      .sidebar-overlay { display: block; }
+      .sidebar-overlay.visible { display: block; }
+      .sidebar-overlay:not(.visible) { display: none; }
+
+      .ai-site-header { padding: 0 4%; }
+      .chat-inner { padding: 18px 14px 12px; }
+      .msg-bubble { max-width: 88%; font-size: 12px; }
+      .prompt-chips { gap: 6px; }
+      .prompt-chip { font-size: 10px; padding: 7px 12px; }
+      .welcome-tagline { font-size: 12px; }
+      .chat-actions-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+      #talk-to-person-btn { align-self: stretch; justify-content: center; }
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -50px;
+      left: 0;
+      background: var(--teal);
+      color: white;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 100;
+      text-decoration: none;
+      border-radius: 0 0 6px 0;
+      transition: top .2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* Utility */
+    .hidden { display: none !important; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    strong.inline { display: inline; }
+  </style>
+</head>
+<body class="ai-page-body">
+
+  <!-- Skip nav -->
+  <a class="skip-link" href="#chat-messages">Skip to conversation</a>
+
+  <!-- ======================================================
+       SITE HEADER
+  ====================================================== -->
+  <header class="ai-site-header" role="banner">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <!-- Sidebar toggle (mobile) -->
+      <button
+        id="sidebar-toggle"
+        aria-label="Open conversation history"
+        aria-expanded="false"
+        aria-controls="ai-sidebar"
+      >☰</button>
+
+      <a class="brand" href="index.html" aria-label="NexCura home">
+        <img src="logo.svg" alt="NexCura" height="38" style="height:38px;width:auto;display:block;">
+      </a>
+
+      <span style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:#e8f0e8;padding:3px 9px;border-radius:10px;margin-left:2px;">
+        AI Assistant <span style="font-weight:400;color:#96a8a2;">· Beta</span>
+      </span>
+    </div>
+
+    <nav class="header-right" aria-label="Site navigation" style="display:flex;align-items:center;gap:12px;">
+      <a href="index.html" class="header-home-link">← Back to NexCura</a>
+      <a href="login.html" style="font-size:12px;font-weight:700;color:var(--teal);padding:5px 12px;border:1px solid var(--teal);border-radius:6px;text-decoration:none;">Sign In</a>
+    </nav>
+  </header>
+
+  <!-- ======================================================
+       MAIN WORKSPACE
+  ====================================================== -->
+  <div class="ai-workspace" role="main">
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- ==================================================
+         LEFT SIDEBAR — History
+    ================================================== -->
+    <aside class="ai-sidebar" id="ai-sidebar" aria-label="Conversation history">
+      <div class="sidebar-top">
+        <!-- New conversation -->
+        <button id="new-conversation-btn" aria-label="Start a new conversation">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          New conversation
+        </button>
+
+        <!-- Language selector -->
+        <div class="sidebar-lang">
+          <label for="language-select">
+            <span style="font-size:13px;" aria-hidden="true">🌐</span>
+            <select id="language-select" aria-label="Select language">
+              <option value="en" selected>English</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="te">తెలుగు (Telugu)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- History items -->
+      <div class="sidebar-history" role="navigation" aria-label="Past conversations">
+        <div class="history-label" aria-hidden="true">Recent</div>
+
+        <button class="history-item" aria-label="Open conversation: Appointment checklist, 3 days ago">
+          <strong>Appointment checklist</strong>
+          <span>What should I bring to my first...</span>
+          <time datetime="2026-09-20">Sep 20, 2026</time>
+        </button>
+
+        <button class="history-item" aria-label="Open conversation: Clinical trials question, 1 week ago">
+          <strong>Clinical trials question</strong>
+          <span>Is there a trial matching my cond...</span>
+          <time datetime="2026-09-15">Sep 15, 2026</time>
+        </button>
+
+        <button class="history-item" aria-label="Open conversation: Accessing test results, 2 weeks ago">
+          <strong>Accessing test results</strong>
+          <span>How do I view my lab results onl...</span>
+          <time datetime="2026-09-09">Sep 9, 2026</time>
+        </button>
+      </div>
+
+      <div class="sidebar-note" role="note">
+        <strong style="display:block;color:var(--ink);font-size:10px;margin-bottom:2px;">Illustrative sample only</strong>
+        Conversation history shown here is for demonstration purposes. No real data is stored.
+      </div>
+    </aside>
+
+    <!-- ==================================================
+         CHAT MAIN AREA
+    ================================================== -->
+    <div class="ai-main" id="ai-main">
+
+      <!-- Chat scrollable region -->
+      <div class="chat-scroll" id="chat-scroll" tabindex="0" aria-label="Chat conversation">
+        <div class="chat-inner">
+
+          <!-- Message list — ARIA live region -->
+          <div
+            id="chat-messages"
+            class="message-list"
+            role="log"
+            aria-live="polite"
+            aria-label="Conversation messages"
+            aria-atomic="false"
+          >
+            <!-- Welcome state (hidden when conversation starts) -->
+            <div id="welcome-state" class="welcome-state" aria-label="AI Assistant welcome">
+
+              <div class="welcome-logo-mark" aria-hidden="true">
+                <span class="cross-diag-a"></span>
+                <span class="cross-diag-b"></span>
+              </div>
+
+              <p class="welcome-brand-name">Nex<span>Cura</span> AI</p>
+
+              <p class="welcome-tagline" id="welcome-tagline">
+                I can help you navigate NexCura, find information, and prepare questions for your care team.
+              </p>
+
+              <!-- Safety notice -->
+              <div class="safety-notice" role="note" aria-label="Safety notice" id="safety-notice">
+                <div class="safety-notice-icon" aria-hidden="true">⚠️</div>
+                <div class="safety-notice-body">
+                  <strong id="safety-title">NexCura AI is not a doctor.</strong>
+                  <p id="safety-text">
+                    For urgent or emergency symptoms, contact your local emergency service immediately or go to the nearest emergency department. Do not use this assistant for medical emergencies.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Prompt chips -->
+              <div class="prompt-chips" id="prompt-chips" aria-label="Suggested questions">
+                <button class="prompt-chip" data-prompt="Help me prepare for my appointment" aria-label="Suggested prompt: Help me prepare for my appointment">
+                  <span class="prompt-chip-icon" aria-hidden="true">📋</span>
+                  <span id="chip-1">Help me prepare for my appointment</span>
+                </button>
+                <button class="prompt-chip" data-prompt="What should I bring to my first visit?" aria-label="Suggested prompt: What should I bring to my first visit?">
+                  <span class="prompt-chip-icon" aria-hidden="true">🏥</span>
+                  <span id="chip-2">What should I bring to my first visit?</span>
+                </button>
+                <button class="prompt-chip" data-prompt="Find care specialists near me" aria-label="Suggested prompt: Find care specialists near me">
+                  <span class="prompt-chip-icon" aria-hidden="true">🔍</span>
+                  <span id="chip-3">Find care specialists near me</span>
+                </button>
+                <button class="prompt-chip" data-prompt="Learn about clinical trials" aria-label="Suggested prompt: Learn about clinical trials">
+                  <span class="prompt-chip-icon" aria-hidden="true">🧬</span>
+                  <span id="chip-4">Learn about clinical trials</span>
+                </button>
+                <button class="prompt-chip" data-prompt="How do I access my test results?" aria-label="Suggested prompt: How do I access my test results?">
+                  <span class="prompt-chip-icon" aria-hidden="true">📊</span>
+                  <span id="chip-5">How do I access my test results?</span>
+                </button>
+              </div>
+
+            </div>
+            <!-- End welcome state -->
+
+          </div>
+          <!-- End message list -->
+
+        </div>
+      </div>
+      <!-- End chat scroll -->
+
+      <!-- Escalation card (shown when Talk to a person clicked) -->
+      <div class="escalation-card" id="escalation-card" role="note" aria-live="polite">
+        <strong>🙋 Speak with a person</strong><br>
+        To speak with a person, use the
+        <a href="index.html#about">Contact &amp; Support page</a>
+        or call your care facility directly. Our support team is available Monday–Friday, 9 am–6 pm IST.
+        <br><br>
+        <span style="font-size:10px;color:var(--muted);">For medical emergencies, always call your local emergency number (112 in India, 911 in US, 999 in UK) immediately.</span>
+      </div>
+
+      <!-- ---- BOTTOM INPUT BAR ---- -->
+      <div class="chat-bottom-bar" role="complementary" aria-label="Message input">
+        <div class="chat-bottom-inner">
+          <div class="chat-input-row">
+            <!-- Attachment button -->
+            <button
+              class="attach-btn"
+              id="attach-btn"
+              aria-label="Attach file (not supported in demo)"
+              title="File attachments — not supported in demo"
+            >📎</button>
+
+            <!-- Text input -->
+            <textarea
+              id="chat-input"
+              rows="1"
+              placeholder="Ask NexCura AI anything…"
+              aria-label="Type your message"
+              aria-multiline="true"
+              autocomplete="off"
+              spellcheck="true"
+              maxlength="2000"
+            ></textarea>
+
+            <!-- Send -->
+            <button
+              class="send-btn"
+              id="send-btn"
+              aria-label="Send message"
+              disabled
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="chat-actions-row">
+            <p class="chat-disclaimer-text" id="bottom-disclaimer">
+              NexCura AI provides navigational help only — not medical advice. Responses are scripted for demonstration.
+            </p>
+            <button id="talk-to-person-btn" aria-label="Talk to a real person">
+              <span aria-hidden="true">👤</span> Talk to a person
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- End ai-main -->
+
+  </div>
+  <!-- End workspace -->
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ======================================================
+       FOOTER
+  ====================================================== -->
+  <footer class="app-footer" role="contentinfo">
+    <a href="index.html" class="brand brand-footer" aria-label="NexCura home">
+      <img src="logo-white.svg" alt="NexCura" height="34" style="height:34px;width:auto;display:block;">
+    </a>
+    <span style="font-size:9px;">Care navigation and portal previews. Not an emergency service. · Illustrative sample only.</span>
+    <a href="index.html#about" style="font-size:10px;color:#c1d4c9;">Contact NexCura ↗</a>
+  </footer>
+
+
+  <!-- ======================================================
+       JAVASCRIPT — SCRIPTED AI LOGIC
+  ====================================================== -->
+  <script>
+  /**
+   * NexCura AI Assistant — Client-side scripted chat
+   * ⚠️ Illustrative sample only. No backend. No real patient data.
+   * All "AI" responses are pre-scripted for demonstration purposes.
+   */
+
+  /* ============================================================
+     MULTILINGUAL CONTENT
+  ============================================================ */
+  const LANG_CONTENT = {
+    en: {
+      welcomeTagline: "I can help you navigate NexCura, find information, and prepare questions for your care team.",
+      safetyTitle:    "NexCura AI is not a doctor.",
+      safetyText:     "For urgent or emergency symptoms, contact your local emergency service immediately or go to the nearest emergency department. Do not use this assistant for medical emergencies.",
+      chips: [
+        "Help me prepare for my appointment",
+        "What should I bring to my first visit?",
+        "Find care specialists near me",
+        "Learn about clinical trials",
+        "How do I access my test results?"
+      ],
+      chipIcons: ["📋","🏥","🔍","🧬","📊"],
+      inputPlaceholder: "Ask NexCura AI anything…",
+      disclaimer: "NexCura AI provides navigational help only — not medical advice. Responses are scripted for demonstration.",
+    },
+    hi: {
+      welcomeTagline: "मैं NexCura में नेविगेट करने, जानकारी खोजने और आपकी देखभाल टीम के लिए प्रश्न तैयार करने में आपकी मदद कर सकता हूँ।",
+      safetyTitle:    "NexCura AI एक डॉक्टर नहीं है।",
+      safetyText:     "तत्काल या आपातकालीन लक्षणों के लिए, तुरंत अपनी स्थानीय आपातकालीन सेवा से संपर्क करें या निकटतम आपातकालीन विभाग में जाएं। चिकित्सा आपात स्थितियों के लिए इस सहायक का उपयोग न करें।",
+      chips: [
+        "मेरी अपॉइंटमेंट की तैयारी में मदद करें",
+        "पहली यात्रा के लिए क्या लाना है?",
+        "मेरे पास देखभाल विशेषज्ञ खोजें",
+        "क्लिनिकल ट्रायल के बारे में जानें",
+        "मैं अपने परीक्षण परिणाम कैसे देखूं?"
+      ],
+      chipIcons: ["📋","🏥","🔍","🧬","📊"],
+      inputPlaceholder: "NexCura AI से कुछ भी पूछें…",
+      disclaimer: "NexCura AI केवल नेविगेशन सहायता प्रदान करता है — चिकित्सा सलाह नहीं। प्रतिक्रियाएँ प्रदर्शन के लिए स्क्रिप्टेड हैं।",
+    },
+    kn: {
+      welcomeTagline: "ನಾನು NexCura ನ್ಯಾವಿಗೇಟ್ ಮಾಡಲು, ಮಾಹಿತಿ ಹುಡುಕಲು ಮತ್ತು ನಿಮ್ಮ ಆರೈಕೆ ತಂಡಕ್ಕೆ ಪ್ರಶ್ನೆಗಳನ್ನು ತಯಾರಿಸಲು ಸಹಾಯ ಮಾಡಬಲ್ಲೆ.",
+      safetyTitle:    "NexCura AI ಒಬ್ಬ ವೈದ್ಯರಲ್ಲ.",
+      safetyText:     "ತುರ್ತು ಅಥವಾ ತೀವ್ರ ರೋಗಲಕ್ಷಣಗಳಿಗಾಗಿ, ತಕ್ಷಣ ನಿಮ್ಮ ಸ್ಥಳೀಯ ತುರ್ತು ಸೇವೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಅಥವಾ ಹತ್ತಿರದ ತುರ್ತು ವಿಭಾಗಕ್ಕೆ ಹೋಗಿ. ವೈದ್ಯಕೀಯ ತುರ್ತು ಪರಿಸ್ಥಿತಿಗಳಿಗೆ ಈ ಸಹಾಯಕವನ್ನು ಬಳಸಬೇಡಿ.",
+      chips: [
+        "ನನ್ನ ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್‌ಗೆ ತಯಾರಾಗಲು ಸಹಾಯ ಮಾಡಿ",
+        "ಮೊದಲ ಭೇಟಿಗೆ ಏನು ತರಬೇಕು?",
+        "ನನ್ನ ಹತ್ತಿರ ತಜ್ಞರನ್ನು ಹುಡುಕಿ",
+        "ಕ್ಲಿನಿಕಲ್ ಟ್ರಯಲ್ಸ್ ಬಗ್ಗೆ ತಿಳಿಯಿರಿ",
+        "ನನ್ನ ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶಗಳನ್ನು ಹೇಗೆ ನೋಡಬಹುದು?"
+      ],
+      chipIcons: ["📋","🏥","🔍","🧬","📊"],
+      inputPlaceholder: "NexCura AI ಗೆ ಏನೆಂದರೂ ಕೇಳಿ…",
+      disclaimer: "NexCura AI ಕೇವಲ ನ್ಯಾವಿಗೇಷನ್ ಸಹಾಯ ನೀಡುತ್ತದೆ — ವೈದ್ಯಕೀಯ ಸಲಹೆ ಅಲ್ಲ.",
+    },
+    te: {
+      welcomeTagline: "నేను NexCura నావిగేట్ చేయడానికి, సమాచారాన్ని వెతకడానికి మరియు మీ సంరక్షణ బృందానికి ప్రశ్నలు సిద్ధం చేయడానికి సహాయం చేయగలను.",
+      safetyTitle:    "NexCura AI ఒక వైద్యుడు కాదు.",
+      safetyText:     "అత్యవసర లేదా తీవ్రమైన లక్షణాల కోసం, వెంటనే మీ స్థానిక అత్యవసర సేవను సంప్రదించండి లేదా సమీపంలోని అత్యవసర విభాగానికి వెళ్ళండి. వైద్య అత్యవసర పరిస్థితులకు ఈ సహాయకుడిని ఉపయోగించవద్దు.",
+      chips: [
+        "నా అపాయింట్‌మెంట్‌కు సిద్ధమవడానికి సహాయం",
+        "మొదటి సందర్శనకు ఏం తీసుకెళ్ళాలి?",
+        "నా దగ్గర నిపుణులను వెతకండి",
+        "క్లినికల్ ట్రయల్స్ గురించి తెలుసుకోండి",
+        "నా పరీక్ష ఫలితాలను ఎలా యాక్సెస్ చేయాలి?"
+      ],
+      chipIcons: ["📋","🏥","🔍","🧬","📊"],
+      inputPlaceholder: "NexCura AI ని ఏమైనా అడగండి…",
+      disclaimer: "NexCura AI నావిగేషన్ సహాయం మాత్రమే అందిస్తుంది — వైద్య సలహా కాదు.",
+    }
+  };
+
+  /* ============================================================
+     SCRIPTED RESPONSES
+  ============================================================ */
+  const RESPONSES = {
+    emergency: {
+      emergency: true,
+      text: `I've flagged this as a potential emergency situation. Please read the notice above carefully and act immediately if you need help.`
+    },
+    appointment: {
+      text: `Great idea to prepare in advance! Here's a checklist to help you get the most from your appointment:
+
+<strong>📋 Before your visit — bring:</strong>
+<ul style="margin:8px 0 8px 16px;line-height:2;">
+  <li>A photo ID and any insurance or health card</li>
+  <li>A current list of all medications (including vitamins &amp; supplements) with dosages</li>
+  <li>Any previous test results, scans, or referral letters</li>
+  <li>Details of your family medical history (if relevant)</li>
+</ul>
+
+<strong>💬 Prepare your questions — try asking your doctor:</strong>
+<ul style="margin:8px 0 8px 16px;line-height:2;">
+  <li>What is the likely cause of my symptoms?</li>
+  <li>What are my treatment options and their side effects?</li>
+  <li>What follow-up steps should I expect?</li>
+  <li>Are there any lifestyle changes I should make?</li>
+</ul>
+
+Would you like me to help you add these topics to your intake form?`,
+      showIntakeBtn: true
+    },
+    visit: {
+      text: `For your <strong>first visit</strong> to a NexCura-partnered facility, we recommend bringing:
+
+<ul style="margin:8px 0 8px 16px;line-height:2;">
+  <li><strong>Valid government-issued photo ID</strong> (Aadhaar, passport, or equivalent)</li>
+  <li><strong>Health insurance documents</strong> or ABHA card (if applicable)</li>
+  <li><strong>Referral letter</strong> from your primary care physician (if specialist visit)</li>
+  <li><strong>Previous medical records</strong> — especially recent lab reports or imaging</li>
+  <li><strong>Medication list</strong> — names, dosages, frequency</li>
+  <li><strong>Emergency contact details</strong></li>
+  <li><strong>Advance care documents</strong> if you have them (e.g. living will)</li>
+</ul>
+
+💡 Tip: arrive 15–20 minutes early to complete any registration paperwork.
+
+<em style="font-size:11px;color:var(--muted);">Illustrative sample only — confirm specific requirements with your care facility.</em>`,
+      showIntakeBtn: true
+    },
+    specialist: {
+      text: `NexCura connects you with specialists across multiple disciplines. Here's how to explore:
+
+<ol style="margin:8px 0 8px 16px;line-height:2;">
+  <li>Use the <strong>Care &amp; Services</strong> section on the NexCura home page</li>
+  <li>Filter by specialty (e.g. Cardiology, Oncology, Neurology, Endocrinology)</li>
+  <li>View available facilities and their information</li>
+  <li>Use the <strong>patient portal</strong> to request an appointment or referral</li>
+</ol>
+
+🗺️ For location-based search, the portal's <em>Find a provider</em> tool lets you enter your city or pincode to see nearby options.
+
+Need help navigating to a specific specialty area? Just tell me which specialty you're looking for.
+
+<em style="font-size:11px;color:var(--muted);">NexCura shows illustrative facility information. Contact facilities directly to confirm availability.</em>`
+    },
+    trial: {
+      text: `NexCura's clinical trials section pulls <strong>preliminary information from ClinicalTrials.gov</strong> to help you explore what studies may be relevant to your condition.
+
+<strong>⚠️ Important to understand:</strong>
+<ul style="margin:8px 0 8px 16px;line-height:2;">
+  <li>All trial matching shown here is <strong>preliminary and illustrative only</strong></li>
+  <li>Eligibility is determined solely by the <strong>clinical study team</strong>, not by this platform</li>
+  <li>NexCura does not enrol patients into trials directly</li>
+  <li>Participation decisions should be made with your treating physician</li>
+</ul>
+
+<strong>To explore trials:</strong>
+<ol style="margin:8px 0 8px 16px;line-height:2;">
+  <li>Visit the <a href="index.html#trials" style="color:var(--teal);font-weight:600;">Clinical Trials section ↗</a></li>
+  <li>Enter your condition or area of interest</li>
+  <li>Review matching studies and contact details</li>
+  <li>Discuss with your care team before expressing interest</li>
+</ol>
+
+<em style="font-size:11px;color:var(--muted);">Illustrative sample only. Trial data shown on NexCura is for informational purposes and may not reflect current availability.</em>`
+    },
+    results: {
+      text: `Your test and lab results are accessible through the <strong>NexCura patient portal</strong>. Here's how:
+
+<ol style="margin:8px 0 8px 16px;line-height:2;">
+  <li>Log in at your care facility's patient portal (linked from NexCura's portal section)</li>
+  <li>Navigate to <strong>"My Health Records"</strong> or <strong>"Lab Results"</strong></li>
+  <li>Results are typically available within <strong>24–72 hours</strong> after your test</li>
+  <li>You can download, print, or share results with other providers</li>
+</ol>
+
+📬 You'll receive a notification (email or SMS) when new results are ready, if you've opted in.
+
+<strong>Can't find your results?</strong> Contact your care facility's records department directly — the portal has a <em>Help &amp; Support</em> section with contact details.
+
+<em style="font-size:11px;color:var(--muted);">Result availability depends on individual facilities. NexCura displays portal previews only.</em>`
+    },
+    default: {
+      text: `I'm here to help with navigating NexCura, finding general health service information, or preparing questions for your care team.
+
+Here's what I can help with:
+<ul style="margin:8px 0 8px 16px;line-height:2;">
+  <li>🗺️ Finding care specialists or services</li>
+  <li>📋 Preparing for appointments</li>
+  <li>📄 Understanding how to access your records and results</li>
+  <li>🧬 Exploring clinical trials information</li>
+  <li>📞 Finding contact and support details</li>
+</ul>
+
+For <strong>medical questions or advice</strong>, please contact your care team directly — they know your health history and are best placed to help.
+
+<em style="font-size:11px;color:var(--muted);">Responses are scripted for demonstration. No real medical guidance is provided.</em>`
+    }
+  };
+
+  /* ============================================================
+     STATE
+  ============================================================ */
+  let conversationStarted = false;
+  let messageCount = 0;
+  let currentLang = 'en';
+
+  /* ============================================================
+     DOM REFS
+  ============================================================ */
+  const msgList         = document.getElementById('chat-messages');
+  const welcomeState    = document.getElementById('welcome-state');
+  const chatInput       = document.getElementById('chat-input');
+  const sendBtn         = document.getElementById('send-btn');
+  const chatScroll      = document.getElementById('chat-scroll');
+  const langSelect      = document.getElementById('language-select');
+  const talkBtn         = document.getElementById('talk-to-person-btn');
+  const escalationCard  = document.getElementById('escalation-card');
+  const attachBtn       = document.getElementById('attach-btn');
+  const toast           = document.getElementById('toast');
+  const newConvBtn      = document.getElementById('new-conversation-btn');
+  const sidebarToggle   = document.getElementById('sidebar-toggle');
+  const sidebar         = document.getElementById('ai-sidebar');
+  const sidebarOverlay  = document.getElementById('sidebar-overlay');
+
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+  function getTimestamp() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function showToast(msg, duration = 3200) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), duration);
+  }
+
+  function scrollBottom() {
+    setTimeout(() => {
+      chatScroll.scrollTop = chatScroll.scrollHeight;
+    }, 50);
+  }
+
+  function hideWelcome() {
+    if (!conversationStarted) {
+      welcomeState.style.display = 'none';
+      conversationStarted = true;
+    }
+  }
+
+  /* ============================================================
+     RENDER — User message bubble
+  ============================================================ */
+  function appendUserMessage(text) {
+    hideWelcome();
+    messageCount++;
+    const id = `msg-${messageCount}`;
+
+    const row = document.createElement('div');
+    row.className = 'msg-row user-row';
+    row.setAttribute('aria-label', `You said: ${text}`);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble user-bubble';
+    bubble.id = id;
+    bubble.textContent = text;
+
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.innerHTML = `<span class="sender">You</span><span>${getTimestamp()}</span>`;
+
+    row.appendChild(bubble);
+    row.appendChild(meta);
+    msgList.appendChild(row);
+    scrollBottom();
+    return row;
+  }
+
+  /* ============================================================
+     RENDER — Typing indicator
+  ============================================================ */
+  function showTypingIndicator() {
+    const row = document.createElement('div');
+    row.className = 'msg-row assistant-row';
+    row.id = 'typing-row';
+    row.setAttribute('aria-label', 'NexCura AI is typing');
+
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.innerHTML = '<span class="sender" style="color:var(--teal);">NexCura AI</span>';
+    row.appendChild(meta);
+
+    const ind = document.createElement('div');
+    ind.className = 'typing-indicator';
+    ind.setAttribute('aria-hidden', 'true');
+    ind.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+    row.appendChild(ind);
+
+    msgList.appendChild(row);
+    scrollBottom();
+    return row;
+  }
+
+  function removeTypingIndicator() {
+    const el = document.getElementById('typing-row');
+    if (el) el.remove();
+  }
+
+  /* ============================================================
+     RENDER — Emergency card
+  ============================================================ */
+  function renderEmergencyCard() {
+    const card = document.createElement('div');
+    card.className = 'emergency-card';
+    card.setAttribute('role', 'alert');
+    card.setAttribute('aria-atomic', 'true');
+    card.innerHTML = `
+      <div class="emergency-card-head">
+        <span aria-hidden="true">🚨</span>
+        <strong>Medical Emergency — Act Immediately</strong>
+      </div>
+      <p>If you are experiencing a medical emergency, <strong>stop and call your local emergency number now</strong> or go to the nearest emergency department. Do not wait.</p>
+      <div class="emergency-numbers" aria-label="Emergency numbers">
+        <div class="emergency-num-badge">
+          <span aria-hidden="true">📞</span>
+          <span>112</span>
+          <small>India</small>
+        </div>
+        <div class="emergency-num-badge">
+          <span aria-hidden="true">📞</span>
+          <span>911</span>
+          <small>US/Canada</small>
+        </div>
+        <div class="emergency-num-badge">
+          <span aria-hidden="true">📞</span>
+          <span>999</span>
+          <small>UK</small>
+        </div>
+        <div class="emergency-num-badge">
+          <span aria-hidden="true">📞</span>
+          <span>000</span>
+          <small>Australia</small>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  /* ============================================================
+     RENDER — Intake handoff button & confirmation
+  ============================================================ */
+  function renderIntakeHandoff() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'intake-card';
+    wrapper.setAttribute('role', 'complementary');
+    wrapper.setAttribute('aria-label', 'Intake form handoff');
+
+    const btn = document.createElement('button');
+    btn.className = 'intake-btn';
+    btn.setAttribute('aria-label', 'Add discussion topics to intake form');
+    btn.innerHTML = '📝 Add this to my intake form →';
+
+    const confirm = document.createElement('div');
+    confirm.className = 'intake-confirm';
+    confirm.setAttribute('role', 'status');
+    confirm.setAttribute('aria-live', 'polite');
+    confirm.innerHTML = `
+      <strong>✅ Topics flagged for your intake form</strong>
+      In a real session, this would pre-fill your intake form with the topics you've discussed. Log in to your patient portal to access your intake form and review the prepared questions.
+      <br><br>
+      <em style="font-size:10px;color:var(--muted);">Illustrative sample only — no data has been saved.</em>
+    `;
+
+    btn.addEventListener('click', () => {
+      confirm.classList.add('visible');
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      btn.setAttribute('aria-disabled', 'true');
+      confirm.focus();
+    });
+
+    wrapper.appendChild(btn);
+    wrapper.appendChild(confirm);
+    return wrapper;
+  }
+
+  /* ============================================================
+     RENDER — Feedback buttons
+  ============================================================ */
+  function renderFeedbackRow() {
+    const row = document.createElement('div');
+    row.className = 'feedback-row';
+    row.setAttribute('aria-label', 'Rate this response');
+
+    const thumbUp = document.createElement('button');
+    thumbUp.className = 'feedback-btn';
+    thumbUp.textContent = '👍';
+    thumbUp.setAttribute('aria-label', 'This response was helpful');
+
+    const thumbDown = document.createElement('button');
+    thumbDown.className = 'feedback-btn';
+    thumbDown.textContent = '👎';
+    thumbDown.setAttribute('aria-label', 'This response was not helpful');
+
+    const thanksSpan = document.createElement('span');
+    thanksSpan.className = 'feedback-thanks hidden';
+    thanksSpan.setAttribute('aria-live', 'polite');
+    thanksSpan.textContent = 'Thank you for your feedback';
+
+    function giveFeedback() {
+      thumbUp.disabled = true;
+      thumbDown.disabled = true;
+      thumbUp.style.opacity = '0.5';
+      thumbDown.style.opacity = '0.5';
+      thanksSpan.classList.remove('hidden');
+    }
+
+    thumbUp.addEventListener('click', giveFeedback);
+    thumbDown.addEventListener('click', giveFeedback);
+
+    row.appendChild(thumbUp);
+    row.appendChild(thumbDown);
+    row.appendChild(thanksSpan);
+    return row;
+  }
+
+  /* ============================================================
+     RENDER — Assistant message bubble
+  ============================================================ */
+  function appendAssistantMessage(response) {
+    messageCount++;
+    const id = `msg-${messageCount}`;
+
+    const row = document.createElement('div');
+    row.className = 'msg-row assistant-row';
+
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.innerHTML = `<span class="sender" style="color:var(--teal);">NexCura AI</span><span>${getTimestamp()}</span>`;
+    row.appendChild(meta);
+
+    // Emergency card (prepended before text bubble)
+    if (response.emergency) {
+      row.appendChild(renderEmergencyCard());
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble assistant-bubble';
+    bubble.id = id;
+    bubble.innerHTML = response.text;
+    row.appendChild(bubble);
+
+    // Intake handoff
+    if (response.showIntakeBtn) {
+      row.appendChild(renderIntakeHandoff());
+    }
+
+    // Feedback
+    row.appendChild(renderFeedbackRow());
+
+    msgList.appendChild(row);
+    scrollBottom();
+
+    // Focus the bubble for screen readers
+    bubble.setAttribute('tabindex', '-1');
+    setTimeout(() => bubble.focus(), 100);
+  }
+
+  /* ============================================================
+     RESPONSE ROUTING
+  ============================================================ */
+  function getResponse(userText) {
+    const t = userText.toLowerCase();
+
+    // Emergency keywords — highest priority
+    if (
+      t.includes('emergency') ||
+      t.includes('chest pain') ||
+      t.includes("can't breathe") ||
+      t.includes('cannot breathe') ||
+      t.includes('heart attack') ||
+      t.includes('stroke') ||
+      t.includes('unconscious') ||
+      t.includes('fainted') ||
+      t.includes('bleeding heavily') ||
+      t.includes('suicide') ||
+      t.includes('overdose')
+    ) {
+      return RESPONSES.emergency;
+    }
+
+    if (t.includes('appointment') || t.includes('prepare') || t.includes('checklist')) {
+      return RESPONSES.appointment;
+    }
+
+    if (t.includes('bring') || t.includes('first visit') || t.includes('first appointment')) {
+      return RESPONSES.visit;
+    }
+
+    if (t.includes('specialist') || t.includes('doctor') || t.includes('find care') || t.includes('near me') || t.includes('physician')) {
+      return RESPONSES.specialist;
+    }
+
+    if (t.includes('trial') || t.includes('clinical') || t.includes('study') || t.includes('research')) {
+      return RESPONSES.trial;
+    }
+
+    if (t.includes('result') || t.includes('test') || t.includes('lab') || t.includes('report') || t.includes('records')) {
+      return RESPONSES.results;
+    }
+
+    return RESPONSES.default;
+  }
+
+  /* ============================================================
+     SEND MESSAGE FLOW — Connected to Backend Clinical AI
+  ============================================================ */
+  async function sendMessage(text) {
+    text = text.trim();
+    if (!text) return;
+
+    // Clear & disable input
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    chatInput.disabled = true;
+
+    appendUserMessage(text);
+    const typingRow = showTypingIndicator();
+
+    const currentLang = (langSelect && langSelect.value) ? langSelect.value : (localStorage.getItem('nexcura_selected_lang') || 'en');
+
+    try {
+      const resp = await fetch('/api/v1/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, language: currentLang })
+      });
+
+      removeTypingIndicator();
+      chatInput.disabled = false;
+      chatInput.focus();
+
+      if (resp.ok) {
+        const data = await resp.json();
+        let formattedText = data.response.replace(/\n/g, '<br>');
+        if (data.suggestedLink) {
+          formattedText += `<br><br><a href="${data.suggestedLink.url}" class="button button-small" style="text-decoration:none; display:inline-block; margin-top:8px;">${data.suggestedLink.text} ↗</a>`;
+        }
+        appendAssistantMessage({
+          emergency: data.isEmergency,
+          text: formattedText,
+          showIntakeBtn: text.toLowerCase().includes('appoint') || text.toLowerCase().includes('visit')
+        });
+      } else {
+        const local = getResponse(text);
+        appendAssistantMessage(local);
+      }
+    } catch (e) {
+      removeTypingIndicator();
+      chatInput.disabled = false;
+      chatInput.focus();
+      const local = getResponse(text);
+      appendAssistantMessage(local);
+    }
+  }
+
+  /* ============================================================
+     EVENT LISTENERS — Input & send
+  ============================================================ */
+  chatInput.addEventListener('input', () => {
+    // Auto-resize
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 110) + 'px';
+    // Enable/disable send
+    sendBtn.disabled = chatInput.value.trim().length === 0;
+  });
+
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) {
+        sendMessage(chatInput.value);
+      }
+    }
+  });
+
+  sendBtn.addEventListener('click', () => {
+    sendMessage(chatInput.value);
+  });
+
+  /* Prompt chips */
+  document.querySelectorAll('.prompt-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const prompt = chip.getAttribute('data-prompt');
+      sendMessage(prompt);
+    });
+  });
+
+  /* ============================================================
+     ATTACH BUTTON — Not supported in demo
+  ============================================================ */
+  attachBtn.addEventListener('click', () => {
+    showToast('📎 File attachments are not supported in this demo.');
+  });
+
+  /* ============================================================
+     TALK TO A PERSON
+  ============================================================ */
+  talkBtn.addEventListener('click', () => {
+    const isVisible = escalationCard.classList.contains('visible');
+    if (isVisible) {
+      escalationCard.classList.remove('visible');
+      talkBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      escalationCard.classList.add('visible');
+      talkBtn.setAttribute('aria-expanded', 'true');
+      escalationCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      escalationCard.focus();
+    }
+  });
+  talkBtn.setAttribute('aria-expanded', 'false');
+  talkBtn.setAttribute('aria-controls', 'escalation-card');
+
+  /* ============================================================
+     NEW CONVERSATION
+  ============================================================ */
+  newConvBtn.addEventListener('click', () => {
+    // Clear all messages except welcome
+    while (msgList.firstChild) msgList.removeChild(msgList.firstChild);
+    msgList.appendChild(welcomeState);
+    welcomeState.style.display = '';
+    conversationStarted = false;
+    messageCount = 0;
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    escalationCard.classList.remove('visible');
+
+    // Re-apply language
+    applyLanguage(currentLang);
+
+    chatInput.focus();
+    // Close sidebar on mobile
+    closeSidebar();
+    showToast('✨ New conversation started');
+  });
+
+  /* History items — demo */
+  document.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', () => {
+      showToast('ℹ️ Conversation history is illustrative only in this demo.');
+      closeSidebar();
+    });
+  });
+
+  /* ============================================================
+     MOBILE SIDEBAR TOGGLE
+  ============================================================ */
+  function openSidebar() {
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('visible');
+    sidebarToggle.setAttribute('aria-expanded', 'true');
+    sidebarToggle.setAttribute('aria-label', 'Close conversation history');
+    sidebarOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('visible');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+    sidebarToggle.setAttribute('aria-label', 'Open conversation history');
+    sidebarOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  sidebarToggle.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+
+  sidebarOverlay.addEventListener('click', closeSidebar);
+
+  // Close sidebar on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+      closeSidebar();
+      sidebarToggle.focus();
+    }
+  });
+
+  /* ============================================================
+     LANGUAGE SELECTOR
+  ============================================================ */
+  function applyLanguage(lang) {
+    currentLang = lang;
+    const L = LANG_CONTENT[lang] || LANG_CONTENT.en;
+
+    document.getElementById('welcome-tagline').textContent = L.welcomeTagline;
+    document.getElementById('safety-title').textContent    = L.safetyTitle;
+    document.getElementById('safety-text').textContent     = L.safetyText;
+    document.getElementById('bottom-disclaimer').textContent = L.disclaimer;
+    document.getElementById('chat-input').placeholder      = L.inputPlaceholder;
+
+    // Update chips
+    const chips    = document.querySelectorAll('.prompt-chip');
+    const chipSpans = document.querySelectorAll('#prompt-chips .prompt-chip span:last-child');
+    L.chips.forEach((text, i) => {
+      if (chipSpans[i]) chipSpans[i].textContent = text;
+      if (chips[i]) {
+        chips[i].setAttribute('data-prompt', text);
+        chips[i].setAttribute('aria-label', `Suggested prompt: ${text}`);
+      }
+    });
+
+    // Update html lang attribute
+    const langMap = { en: 'en', hi: 'hi', kn: 'kn', te: 'te' };
+    document.documentElement.lang = langMap[lang] || 'en';
+  }
+
+  langSelect.addEventListener('change', (e) => {
+    applyLanguage(e.target.value);
+    showToast(`Language changed to ${langSelect.options[langSelect.selectedIndex].text}`);
+  });
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+  // Focus input on load (desktop)
+  if (window.innerWidth > 720) {
+    chatInput.focus();
+  }
+
+  // Add a small opening greeting message after 1.2s on first load
+  setTimeout(() => {
+    if (!conversationStarted) {
+      // Subtle pulsing glow on the welcome mark to invite interaction
+      const mark = document.querySelector('.welcome-logo-mark');
+      if (mark) {
+        mark.style.boxShadow = '0 0 0 6px rgba(11,93,94,.1)';
+        setTimeout(() => { mark.style.boxShadow = ''; }, 1400);
+      }
+    }
+  }, 1200);
+  </script>
+
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

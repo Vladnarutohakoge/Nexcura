@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinical Workspace — NexCura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & TOKENS ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal:          #0b5d5e;
+      --teal-light:    #e4f1ee;
+      --navy:          #17324d;
+      --navy-dark:     #0f2236;
+      --navy-mid:      #1e4266;
+      --mint:          #dff1e9;
+      --cream:         #fafaf6;
+      --ink:           #183537;
+      --muted:         #657779;
+      --line:          #e5ebe5;
+      --alert-red:     #B42318;
+      --alert-bg:      #fdf2f2;
+      --success-green: #247A52;
+      --success-bg:    #edf7f2;
+      --amber:         #F2B95E;
+      --amber-bg:      #fff8eb;
+      --slate-bg:      #f1f3f6;
+      --slate-text:    #5a6378;
+      --sidebar-w:     220px;
+      --topbar-h:      62px;
+      --radius:        6px;
+      --shadow:        0 4px 18px rgba(18,60,62,.10);
+      --shadow-lg:     0 12px 40px rgba(18,60,62,.15);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, select, input, textarea { font: inherit; }
+    h1, h2, h3, h4 { font-family: Manrope, sans-serif; line-height: 1.2; }
+    ul { list-style: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ─── DEMO BANNER ────────────────────────────────────────────── */
+    .demo-banner {
+      background: #1b2840;
+      color: #f0c96b;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      padding: 9px 20px;
+      letter-spacing: .04em;
+      line-height: 1.5;
+      z-index: 100;
+      position: relative;
+    }
+    .demo-banner span { color: #a9c8e0; font-weight: 400; margin-left: 8px; }
+
+    /* ─── APP SHELL ──────────────────────────────────────────────── */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy);
+      color: #c8dce8;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 50;
+      transition: transform .28s ease;
+    }
+    .sidebar-brand {
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-mark-sm {
+      width: 28px; height: 28px;
+      border: 1.8px solid #6bafc8;
+      border-radius: 50%;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .brand-mark-sm::before, .brand-mark-sm::after {
+      content: ''; position: absolute; background: #6bafc8; border-radius: 4px;
+    }
+    .brand-mark-sm::before { width: 2px; height: 14px; }
+    .brand-mark-sm::after  { height: 2px; width: 14px; }
+    .sidebar-brand-name {
+      font-family: Manrope, sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+    .sidebar-brand-name em { font-style: normal; color: #7bbfd4; font-weight: 500; }
+
+    .clinician-card {
+      margin: 16px 14px 12px;
+      background: var(--navy-mid);
+      border-radius: var(--radius);
+      padding: 13px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .clinician-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-family: Manrope, sans-serif;
+    }
+    .clinician-info small { display: block; font-size: 9px; color: #8baab8; letter-spacing: .06em; }
+    .clinician-info strong { display: block; color: #ddeef5; font-size: 11px; font-family: Manrope, sans-serif; margin-top: 2px; }
+    .clinician-info span { display: block; font-size: 9px; color: #6fa3bc; margin-top: 1px; }
+
+    .sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+    .nav-section-label {
+      font-size: 8px;
+      letter-spacing: .12em;
+      color: #5a7f97;
+      font-weight: 700;
+      padding: 14px 18px 5px;
+      text-transform: uppercase;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 18px;
+      cursor: pointer;
+      border-radius: 0;
+      color: #9cbfd2;
+      font-size: 12px;
+      font-weight: 500;
+      transition: background .18s, color .18s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      position: relative;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.06); color: #daeef7; }
+    .nav-item.active { background: rgba(255,255,255,.10); color: #fff; font-weight: 700; }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--amber);
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--alert-red);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 2px 6px;
+      min-width: 18px;
+      text-align: center;
+    }
+    .nav-badge.amber { background: var(--amber); color: #5a3a00; }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      font-size: 10px;
+      color: #5a7f97;
+    }
+    .sidebar-footer a { color: #6fa3bc; }
+    .sidebar-footer a:hover { color: #daeef7; }
+
+    /* ─── MAIN AREA ──────────────────────────────────────────────── */
+    .main-area {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ─── TOP BAR ────────────────────────────────────────────────── */
+    .topbar {
+      height: var(--topbar-h);
+      background: white;
+      border-bottom: 1px solid var(--line);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 1px 0 var(--line);
+    }
+    .topbar-title { font-family: Manrope, sans-serif; font-size: 15px; font-weight: 700; color: var(--navy); }
+    .topbar-title small { display: block; font-family: 'DM Sans', sans-serif; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+    .topbar-actions { display: flex; align-items: center; gap: 14px; }
+    .topbar-btn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 7px 13px;
+      font-size: 11px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .topbar-btn:hover { background: var(--mint); }
+    .topbar-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+    .menu-toggle-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--navy);
+      cursor: pointer;
+      padding: 4px;
+    }
+    .menu-toggle-btn:focus-visible { outline: 2px solid var(--teal); }
+
+    /* ─── PAGE CONTENT ───────────────────────────────────────────── */
+    .page-content { flex: 1; padding: 28px; overflow: auto; }
+    .section-view { display: none; }
+    .section-view.active { display: block; }
+
+    /* ─── SECTION HEADINGS ───────────────────────────────────────── */
+    .section-head { margin-bottom: 22px; }
+    .section-head h2 { font-size: 22px; color: var(--navy); margin-bottom: 4px; }
+    .section-head p { color: var(--muted); font-size: 12px; }
+    .section-kicker {
+      font-size: 9px;
+      letter-spacing: .12em;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    /* ─── CARDS & PANELS ─────────────────────────────────────────── */
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card-pad { padding: 20px; }
+    .card-head {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-head h3 { font-size: 14px; color: var(--navy); }
+    .card-body { padding: 18px 20px; }
+
+    /* ─── BADGES / STATUS CHIPS ──────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+    .badge-green  { background: var(--success-bg); color: var(--success-green); }
+    .badge-green::before  { background: var(--success-green); }
+    .badge-amber  { background: var(--amber-bg); color: #935900; }
+    .badge-amber::before  { background: var(--amber); }
+    .badge-slate  { background: var(--slate-bg); color: var(--slate-text); }
+    .badge-slate::before  { background: #a0aabb; }
+    .badge-red    { background: var(--alert-bg); color: var(--alert-red); }
+    .badge-red::before    { background: var(--alert-red); }
+    .badge-teal   { background: var(--teal-light); color: var(--teal); }
+    .badge-teal::before   { background: var(--teal); }
+
+    /* ─── BUTTONS ────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, transform .12s;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--teal); color: white; }
+    .btn-secondary { background: var(--teal-light); color: var(--teal); }
+    .btn-ghost { background: none; border: 1px solid var(--line); color: var(--ink); }
+    .btn-danger { background: var(--alert-bg); color: var(--alert-red); border: 1px solid #f5c6c3; }
+    .btn-sm { padding: 6px 11px; font-size: 11px; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+    /* ─── ALERT NOTICES ──────────────────────────────────────────── */
+    .notice {
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 11px;
+      line-height: 1.65;
+      border-left: 4px solid transparent;
+      margin-bottom: 14px;
+    }
+    .notice-warn { background: var(--amber-bg); border-color: var(--amber); color: #735900; }
+    .notice-info { background: #e8f4fb; border-color: #5da8cc; color: #1a4f6e; }
+    .notice-error { background: var(--alert-bg); border-color: var(--alert-red); color: #7a1810; }
+    .notice-success { background: var(--success-bg); border-color: var(--success-green); color: #145038; }
+    .notice strong { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    /* ─── INLINE TOAST ───────────────────────────────────────────── */
+    .inline-toast {
+      display: none;
+      background: var(--amber-bg);
+      border: 1px solid var(--amber);
+      color: #735900;
+      font-size: 11px;
+      padding: 8px 13px;
+      border-radius: var(--radius);
+      margin-top: 10px;
+    }
+    .inline-toast.show { display: block; }
+
+    /* ─── TABLES ─────────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--line);
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: .06em;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #f8faf8;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f5faf8; }
+
+    /* ─── FORMS ──────────────────────────────────────────────────── */
+    .form-group { display: grid; gap: 5px; }
+    .form-group label { font-size: 11px; font-weight: 700; color: var(--muted); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      border: 1px solid #d4dfd4;
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--ink);
+      background: white;
+      font-size: 12px;
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: 2px solid var(--teal);
+      outline-offset: 1px;
+      border-color: var(--teal);
+    }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+    /* ─── DISCLAIMER BOX ─────────────────────────────────────────── */
+    .disclaimer-box {
+      background: #fff8eb;
+      border: 2px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: 11px;
+      line-height: 1.7;
+      color: #5a3c00;
+    }
+    .disclaimer-box strong { display: block; font-size: 13px; color: #3a2700; margin-bottom: 4px; }
+    .disclaimer-box.red-border { border-color: var(--alert-red); background: var(--alert-bg); color: #7a1810; }
+    .disclaimer-box.red-border strong { color: var(--alert-red); }
+
+    /* ─── GRID LAYOUTS ───────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    /* ─── DASHBOARD ──────────────────────────────────────────────── */
+    .metric-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+    .metric-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 18px 14px;
+      box-shadow: var(--shadow);
+    }
+    .metric-card .metric-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .metric-card .metric-value { font-family: Manrope, sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); }
+    .metric-card .metric-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .metric-card .metric-tag { margin-top: 8px; }
+    .icon-teal   { background: var(--teal-light); color: var(--teal); }
+    .icon-amber  { background: var(--amber-bg); color: #835500; }
+    .icon-red    { background: var(--alert-bg); color: var(--alert-red); }
+    .icon-navy   { background: #e4eaf5; color: var(--navy); }
+
+    .schedule-list { display: grid; gap: 8px; }
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #fafcfa;
+    }
+    .schedule-time {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      min-width: 48px;
+      text-align: center;
+    }
+    .schedule-sep { width: 1px; height: 36px; background: var(--line); }
+    .schedule-info strong { display: block; font-size: 12px; color: var(--navy); }
+    .schedule-info span  { display: block; font-size: 10px; color: var(--muted); }
+    .schedule-item .badge { margin-left: auto; }
+
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .qa-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      cursor: pointer;
+      transition: box-shadow .18s, transform .18s;
+      text-align: center;
+    }
+    .qa-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .qa-card:focus-visible { outline: 2px solid var(--teal); }
+    .qa-icon { font-size: 26px; margin-bottom: 8px; display: block; }
+    .qa-card strong { display: block; font-size: 13px; color: var(--navy); font-family: Manrope, sans-serif; margin-bottom: 4px; }
+    .qa-card p { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+    .alert-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: white;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--alert-red);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .alert-card.amber { border-left-color: var(--amber); }
+    .alert-card.teal { border-left-color: var(--teal); }
+    .alert-icon { font-size: 20px; margin-top: 1px; }
+    .alert-body strong { display: block; font-size: 12px; color: var(--navy); }
+    .alert-body p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── PATIENT LIST ───────────────────────────────────────────── */
+    .patient-row { cursor: pointer; }
+    .patient-row:hover td { background: #f0f9f5; }
+    .patient-name-cell { display: flex; align-items: center; gap: 10px; }
+    .patient-avatar-sm {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      color: var(--teal);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .concern-tag {
+      background: #f1f5f8;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 10px;
+      color: var(--navy);
+    }
+
+    /* ─── PATIENT CHART DRAWER ───────────────────────────────────── */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 34, 54, .4);
+      z-index: 60;
+      backdrop-filter: blur(2px);
+    }
+    .drawer-overlay.open { display: block; }
+    .chart-drawer {
+      position: fixed;
+      right: 0; top: 0; bottom: 0;
+      width: min(680px, 92vw);
+      background: white;
+      z-index: 61;
+      box-shadow: -6px 0 40px rgba(15,34,54,.18);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+    }
+    .chart-drawer.open { transform: translateX(0); }
+    .drawer-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--navy);
+      color: white;
+    }
+    .drawer-head h2 { font-size: 16px; color: white; }
+    .drawer-head small { display: block; font-size: 10px; color: #8baab8; margin-top: 2px; }
+    .drawer-close {
+      margin-left: auto;
+      background: rgba(255,255,255,.12);
+      border: none;
+      color: white;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+    .drawer-close:hover { background: rgba(255,255,255,.22); }
+    .drawer-close:focus-visible { outline: 2px solid var(--amber); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 22px; }
+    .drawer-disclaimer {
+      background: #fff3cd;
+      border: 2px dashed #d4a017;
+      border-radius: var(--radius);
+      text-align: center;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b4c00;
+      margin-bottom: 18px;
+      letter-spacing: .03em;
+    }
+    .drawer-section { margin-bottom: 20px; }
+    .drawer-section h4 {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line);
+    }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .detail-item small { display: block; font-size: 10px; color: var(--muted); }
+    .detail-item strong { display: block; font-size: 12px; color: var(--navy); margin-top: 2px; }
+    .condition-tag {
+      display: inline-block;
+      background: var(--teal-light);
+      color: var(--teal);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      margin: 2px;
+    }
+    .med-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+    .med-item:last-child { border-bottom: none; }
+    .med-item .med-name { color: var(--navy); font-weight: 600; }
+    .med-item .med-dose { color: var(--muted); font-size: 10px; }
+    .allergy-badge {
+      display: inline-block;
+      background: var(--alert-bg);
+      color: var(--alert-red);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      margin: 2px;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-name { color: var(--navy); font-weight: 600; }
+    .result-val { font-size: 13px; font-weight: 700; color: var(--teal); }
+    .result-ref { font-size: 9px; color: var(--muted); }
+    .result-flag { color: var(--alert-red); font-size: 10px; font-weight: 700; }
+    .encounter-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+    }
+    .encounter-item:last-child { border-bottom: none; }
+    .enc-date { min-width: 70px; color: var(--muted); font-size: 10px; }
+    .enc-body strong { display: block; color: var(--navy); font-size: 12px; }
+    .enc-body p { color: var(--muted); margin-top: 2px; }
+
+    /* ─── ENCOUNTER WORKSPACE / SOAP ─────────────────────────────── */
+    .soap-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .soap-section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .soap-letter {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: white;
+      font-family: Manrope, sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .soap-section-label label { font-weight: 700; font-size: 13px; color: var(--navy); }
+    .soap-section-label em { font-style: normal; font-size: 10px; color: var(--muted); margin-left: 4px; }
+    .soap-field { width: 100%; }
+    .soap-block { margin-bottom: 18px; }
+    .intake-panel { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .intake-panel-head { background: var(--navy); color: white; padding: 12px 16px; font-family: Manrope, sans-serif; font-size: 13px; font-weight: 700; }
+    .intake-panel-body { padding: 16px; }
+    .intake-q { margin-bottom: 12px; }
+    .intake-q strong { display: block; font-size: 11px; color: var(--navy); margin-bottom: 2px; }
+    .intake-q p { font-size: 11px; color: var(--ink); background: #f5faf8; border-radius: 4px; padding: 7px 10px; }
+
+    /* ─── TRIAL DISCOVERY ────────────────────────────────────────── */
+    .trial-disclaimer {
+      background: #fff8eb;
+      border: 2px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .trial-disclaimer strong { display: block; font-size: 14px; color: #5a3700; margin-bottom: 6px; font-family: Manrope, sans-serif; }
+    .trial-disclaimer p { font-size: 11px; color: #735500; line-height: 1.7; }
+    .trial-search-bar {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+    .trial-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .trial-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .trial-nct { font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .05em; }
+    .trial-title { font-family: Manrope, sans-serif; font-size: 15px; color: var(--navy); font-weight: 700; margin: 4px 0 8px; }
+    .trial-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .trial-eligibility { background: #f5faf8; border-radius: 4px; padding: 10px 12px; font-size: 11px; color: var(--ink); line-height: 1.65; margin-bottom: 12px; }
+    .trial-eligibility strong { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+    .trial-source { font-size: 9px; color: var(--muted); }
+    .trial-card-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+
+    /* ─── REFERRALS ──────────────────────────────────────────────── */
+    .filter-tabs { display: flex; gap: 4px; margin-bottom: 18px; }
+    .filter-tab {
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: white;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background .15s, color .15s;
+    }
+    .filter-tab:hover { background: var(--mint); color: var(--teal); }
+    .filter-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .filter-tab:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+    /* ─── FOLLOW-UP TASKS ────────────────────────────────────────── */
+    .task-list { display: grid; gap: 10px; }
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      padding: 14px 16px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 4px rgba(18,60,62,.05);
+      transition: background .15s;
+    }
+    .task-item.done { opacity: .6; }
+    .task-item.done .task-title { text-decoration: line-through; }
+    .task-check-wrap { padding-top: 2px; }
+    .task-check {
+      width: 18px; height: 18px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+    .task-check:focus-visible { outline: 2px solid var(--teal); }
+    .task-info { flex: 1; }
+    .task-title { font-size: 13px; font-weight: 600; color: var(--navy); display: block; margin-bottom: 3px; }
+    .task-desc { font-size: 11px; color: var(--muted); }
+    .task-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .task-due { font-size: 10px; color: var(--muted); }
+    .task-due.overdue { color: var(--alert-red); font-weight: 700; }
+    .task-patient { font-size: 10px; color: var(--teal); font-weight: 600; }
+    .priority-high { background: var(--alert-bg); color: var(--alert-red); }
+    .priority-med  { background: var(--amber-bg); color: #835500; }
+    .priority-low  { background: var(--success-bg); color: var(--success-green); }
+
+    /* ─── SAMPLE DATA WATERMARK ──────────────────────────────────── */
+    .sample-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 2px 7px;
+      background: #ffebd2;
+      color: #7a4000;
+      border-radius: 3px;
+      text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ─── DIVIDERS ───────────────────────────────────────────────── */
+    .divider { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+
+    /* ─── SIDEBAR OPEN/CLOSE MOBILE ──────────────────────────────── */
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar {
+        transform: translateX(-220px);
+        width: 220px;
+      }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle-btn { display: flex; }
+      .metric-strip { grid-template-columns: 1fr 1fr; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .quick-actions { grid-template-columns: 1fr 1fr; }
+      .trial-search-bar { grid-template-columns: 1fr 1fr; }
+      .soap-layout { grid-template-columns: 1fr; }
+      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .page-content { padding: 18px; }
+      .topbar { padding: 0 18px; }
+    }
+    @media (max-width: 480px) {
+      .metric-strip { grid-template-columns: 1fr; }
+      .quick-actions { grid-template-columns: 1fr; }
+      .filter-tabs { flex-wrap: wrap; }
+    }
+  
+    /* ─── ADDED BY PATCH ─────────────────────────────────────────── */
+    .dropdown-panel.show { display: block !important; }
+    @media print {
+      body * { visibility: hidden; }
+      #chartDrawer, #chartDrawer * { visibility: visible; }
+      #chartDrawer { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; transform: none; }
+      .drawer-close, .btn-row { display: none !important; }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ─── LOGIN GATE ─────────────────────────────────────────────── -->
+<div id="loginGate" style="display:flex;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0d1b2a 0%,#17324d 50%,#0d1b2a 100%);align-items:center;justify-content:center;font-family:'DM Sans','Manrope',sans-serif;">
+  <div style="background:#fff;border-radius:16px;padding:48px 40px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4);text-align:center;">
+    <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#17324d,#2e5c8a);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+      <span style="color:#fff;font-size:24px;font-weight:800;font-family:'Manrope',sans-serif;">NC</span>
+    </div>
+    <h1 style="font-family:'Manrope',sans-serif;font-size:1.5rem;color:#0d1b2a;margin:0 0 6px;">Clinical Workspace</h1>
+    <p style="color:#5a6a72;font-size:0.9rem;margin:0 0 28px;">Enter your credentials to access the clinical workspace.</p>
+    <form id="loginForm" onsubmit="return handleLogin(event)" autocomplete="off">
+      <div style="text-align:left;margin-bottom:16px;">
+        <label for="loginUser" style="display:block;font-size:0.8rem;font-weight:600;color:#17324d;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Username</label>
+        <input id="loginUser" type="text" placeholder="Enter username" required
+               style="width:100%;padding:12px 14px;border:1.5px solid #d1d9dd;border-radius:8px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;outline:none;transition:border 0.2s;"
+               onfocus="this.style.borderColor='#17324d'" onblur="this.style.borderColor='#d1d9dd'">
+      </div>
+      <div style="text-align:left;margin-bottom:8px;">
+        <label for="loginPass" style="display:block;font-size:0.8rem;font-weight:600;color:#17324d;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Password</label>
+        <input id="loginPass" type="password" placeholder="Enter password" required
+               style="width:100%;padding:12px 14px;border:1.5px solid #d1d9dd;border-radius:8px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;outline:none;transition:border 0.2s;"
+               onfocus="this.style.borderColor='#17324d'" onblur="this.style.borderColor='#d1d9dd'">
+      </div>
+      <p id="loginError" style="color:#c0392b;font-size:0.82rem;min-height:20px;margin:4px 0 16px;" aria-live="polite"></p>
+      <button type="submit"
+              style="width:100%;padding:13px;background:linear-gradient(135deg,#17324d,#2e5c8a);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;transition:opacity 0.2s;"
+              onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        Sign In
+      </button>
+    </form>
+    <p style="color:#8a9ca5;font-size:0.75rem;margin-top:20px;">Demo credentials: <strong>clinician</strong> / <strong>clinic@123</strong></p>
+  </div>
+</div>
+
+<script>
+  // ── Auth Gate Logic ──
+  const PORTAL_KEY = 'nexcura_clinician_auth';
+  const VALID_USER = 'clinician';
+  const VALID_PASS = 'clinic@123';
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if (user === VALID_USER && pass === VALID_PASS) {
+      sessionStorage.setItem(PORTAL_KEY, 'authenticated');
+      document.getElementById('loginGate').style.display = 'none';
+      document.getElementById('portalContent').style.display = '';
+    } else {
+      document.getElementById('loginError').textContent = '✕ Invalid username or password. Please try again.';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+    return false;
+  }
+
+  function signOut() {
+    sessionStorage.removeItem(PORTAL_KEY);
+    document.getElementById('portalContent').style.display = 'none';
+    document.getElementById('loginGate').style.display = 'flex';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').textContent = '';
+  }
+
+  // Auto-login if session exists
+  if (sessionStorage.getItem(PORTAL_KEY) === 'authenticated') {
+    document.getElementById('loginGate').style.display = 'none';
+  }
+</script>
+
+<!-- ─── PORTAL CONTENT (hidden until authenticated) ──────────── -->
+<div id="portalContent" style="display:none;">
+
+<!-- ════════════════════════════════════════════════════════
+     DEMO BANNER
+═════════════════════════════════════════════════════════ -->
+<div class="demo-banner" role="banner" aria-label="Important workspace preview notice">
+  ⚠ WORKSPACE PREVIEW — Sample interface content only.
+  <span>Not connected to EHR, patient records, or clinical systems. Production access must be enforced by a secure backend.</span>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     APP SHELL
+═════════════════════════════════════════════════════════ -->
+<div class="app-shell">
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Clinical workspace navigation">
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <div class="brand-mark-sm" aria-hidden="true"></div>
+      <span class="sidebar-brand-name">Nex<em>Cura</em></span>
+    </div>
+
+    <!-- Clinician Card -->
+    <div class="clinician-card" aria-label="Signed-in clinician">
+      <div class="clinician-avatar" aria-hidden="true">AM</div>
+      <div class="clinician-info">
+        <small>ATTENDING</small>
+        <strong>Dr. A. Mehta, MD</strong>
+        <span>Internal Medicine</span>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav" aria-label="Main sections">
+      <div class="nav-section-label">Workspace</div>
+
+      <button class="nav-item active" data-section="dashboard"
+              aria-current="page" onclick="switchSection('dashboard', this)">
+        <span class="nav-icon" aria-hidden="true">🏠</span>Dashboard
+      </button>
+
+      <button class="nav-item" data-section="patients"
+              onclick="switchSection('patients', this)">
+        <span class="nav-icon" aria-hidden="true">👥</span>Patient List
+        <span class="nav-badge amber">6</span>
+      </button>
+
+      <button class="nav-item" data-section="encounter"
+              onclick="switchSection('encounter', this)">
+        <span class="nav-icon" aria-hidden="true">📝</span>Encounter Workspace
+      </button>
+
+      <div class="nav-section-label">Discovery</div>
+
+      <button class="nav-item" data-section="trials"
+              onclick="switchSection('trials', this)">
+        <span class="nav-icon" aria-hidden="true">🔬</span>Trial Discovery
+        <span class="nav-badge">1</span>
+      </button>
+
+      <div class="nav-section-label">Management</div>
+
+      <button class="nav-item" data-section="referrals"
+              onclick="switchSection('referrals', this)">
+        <span class="nav-icon" aria-hidden="true">📤</span>Referrals
+      </button>
+
+      <button class="nav-item" data-section="tasks"
+              onclick="switchSection('tasks', this)">
+        <span class="nav-icon" aria-hidden="true">✅</span>Follow-Up Tasks
+        <span class="nav-badge">3</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div>NexCura v2.5 — Demo</div>
+      <div style="margin-top:4px"><a href="index.html">← Back to home</a> · <a href="pages.html?page=contact-and-support">Support</a></div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN AREA ────────────────────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- Top Bar -->
+    <header class="topbar" role="banner">
+      <button class="menu-toggle-btn" id="menuToggle" aria-label="Toggle navigation menu"
+              aria-expanded="false" aria-controls="sidebar"
+              onclick="toggleMobileSidebar()">☰</button>
+      <div class="topbar-title">
+        Clinical Workspace — Dr. A. Mehta, MD
+        <small id="active-section-label">Dashboard — Today's Overview</small>
+      </div>
+      <div class="topbar-actions">
+        <button class="topbar-btn" onclick="
+      switchSection('encounter', document.querySelector('[data-section=encounter]'));
+      if(window.activePatientId && PATIENTS[window.activePatientId]) {
+         document.getElementById('soap-s').value = 'Patient ' + PATIENTS[window.activePatientId].initials + ' presents for...';
+      }
+    " aria-label="New encounter">+ New Encounter</button>
+        
+<div style="position:relative; display:inline-block;">
+  <button class="topbar-btn" aria-label="Notifications" onclick="document.getElementById('notif-dropdown').classList.toggle('show')">🔔 <span class="sr-only">Notifications</span></button>
+  <div id="notif-dropdown" class="dropdown-panel" style="display:none; position:absolute; right:0; top:100%; width:300px; background:white; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-lg); z-index:100; margin-top:8px;">
+    <div style="padding:12px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+      <strong style="font-family:Manrope,sans-serif; color:var(--navy);">Notifications</strong>
+      <button class="btn btn-ghost btn-sm" style="font-size:10px; padding:2px 6px;" onclick="document.getElementById('notif-dropdown').style.display='none'; showPreviewMsg(this, 'All marked as read');">Mark all read</button>
+    </div>
+    <div style="padding:12px; border-bottom:1px solid var(--line);">
+      <div style="font-size:11px; color:var(--navy);"><strong>New Lab Result</strong></div>
+      <div style="font-size:10px; color:var(--muted);">HbA1c for R.D. is 8.1% (Above target).</div>
+    </div>
+    <div style="padding:12px; border-bottom:1px solid var(--line);">
+      <div style="font-size:11px; color:var(--navy);"><strong>Intake Pending</strong></div>
+      <div style="font-size:10px; color:var(--muted);">P.K. submitted intake form. Review needed.</div>
+    </div>
+    <div style="padding:12px;">
+      <div style="font-size:11px; color:var(--navy);"><strong>Trial Match Found</strong></div>
+      <div style="font-size:10px; color:var(--muted);">NCT04832167 matches patient R.D.</div>
+    </div>
+  </div>
+</div>
+
+        
+<div style="position:relative; display:inline-block;">
+  <button class="topbar-btn" aria-label="Settings" onclick="document.getElementById('settings-dropdown').classList.toggle('show')">⚙ <span class="sr-only">Settings</span></button>
+  <div id="settings-dropdown" class="dropdown-panel" style="display:none; position:absolute; right:0; top:100%; width:250px; background:white; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-lg); z-index:100; margin-top:8px;">
+    <div style="padding:12px; border-bottom:1px solid var(--line);">
+      <strong style="font-family:Manrope,sans-serif; color:var(--navy);">Workspace Preferences</strong>
+    </div>
+    <div style="padding:12px; display:flex; flex-direction:column; gap:10px;">
+      <label style="font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+        Theme: 
+        <select style="font-size:10px; padding:2px 4px; border:1px solid var(--line); border-radius:4px;"><option>Light</option><option>Dark</option><option>System</option></select>
+      </label>
+      <label style="font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+        Notifications:
+        <input type="checkbox" checked>
+      </label>
+      <label style="font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+        Default View:
+        <select style="font-size:10px; padding:2px 4px; border:1px solid var(--line); border-radius:4px;"><option>Dashboard</option><option>Patient List</option></select>
+      </label>
+    </div>
+  </div>
+</div>
+
+      </div>
+    </header>
+
+    <!-- ════════════════════════════════════════════════════════
+         PAGE CONTENT
+    ═════════════════════════════════════════════════════════ -->
+    <main class="page-content" id="pageContent" role="main">
+
+      <!-- ══════════════════════════════════════════════════
+           SECTION 1 — DASHBOARD
+      ═══════════════════════════════════════════════════ -->
+      <section class="section-view active" id="section-dashboard" aria-labelledby="dash-heading">
+
+        <div class="section-head">
+          <span class="section-kicker">Today · Wed 24 Sep 2026</span>
+          <h2 id="dash-heading">Good morning, Dr. Mehta 👋</h2>
+          <p>Here's your clinical overview for today. <em class="sample-tag">Illustrative sample only</em></p>
+        </div>
+
+        <!-- Metric Strip -->
+        <div class="metric-strip" role="list" aria-label="Today's metrics">
+          <div class="metric-card" role="listitem">
+            <div class="metric-icon icon-teal" aria-hidden="true">📅</div>
+            <div class="metric-value">5</div>
+            <div class="metric-label">Appointments Today</div>
+            <div class="metric-tag"><span class="badge badge-green">2 Confirmed</span></div>
+          </div>
+          <div class="metric-card" role="listitem">
+            <div class="metric-icon icon-amber" aria-hidden="true">📋</div>
+            <div class="metric-value">2</div>
+            <div class="metric-label">Pending Intake Reviews</div>
+            <div class="metric-tag"><span class="badge badge-amber">Action needed</span></div>
+          </div>
+          <div class="metric-card" role="listitem">
+            <div class="metric-icon icon-navy" aria-hidden="true">🔁</div>
+            <div class="metric-value">3</div>
+            <div class="metric-label">Follow-Up Tasks Due</div>
+            <div class="metric-tag"><span class="badge badge-slate">1 Overdue</span></div>
+          </div>
+          <div class="metric-card" role="listitem">
+            <div class="metric-icon icon-red" aria-hidden="true">🔬</div>
+            <div class="metric-value">1</div>
+            <div class="metric-label">Trial Match Alert</div>
+            <div class="metric-tag"><span class="badge badge-red">Review now</span></div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div style="margin-bottom:22px">
+          <div class="alert-card" role="alert" aria-label="Trial match alert">
+            <div class="alert-icon" aria-hidden="true">🔬</div>
+            <div class="alert-body">
+              <strong>Trial Match: Patient R.D. — NCT04832167</strong>
+              <p>Preliminary eligibility criteria met for Phase II Glycaemic Control Study. Study team must confirm. <em class="sample-tag">Illustrative sample</em></p>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="switchSection('trials', document.querySelector('[data-section=trials]'))">Review →</button>
+          </div>
+          <div class="alert-card amber" role="status" aria-label="Pending intake review">
+            <div class="alert-icon" aria-hidden="true">📋</div>
+            <div class="alert-body">
+              <strong>2 Pending Intake Reviews</strong>
+              <p>Patient P.K. and Patient S.T. submitted pre-visit intake forms that require clinician review before their appointments today.</p>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="switchSection('patients', document.querySelector('[data-section=patients]'))">View Patients →</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Today's Schedule -->
+          <div class="card">
+            <div class="card-head">
+              <h3>📅 Today's Schedule</h3>
+              <span class="badge badge-teal">5 appointments</span>
+            </div>
+            <div class="card-body">
+              <div class="schedule-list" role="list" aria-label="Today's appointments">
+                <div class="schedule-item" role="listitem">
+                  <div class="schedule-time">09:00</div>
+                  <div class="schedule-sep" aria-hidden="true"></div>
+                  <div class="schedule-info">
+                    <strong>R.D. — Annual Review</strong>
+                    <span>Internal Medicine · 45 min</span>
+                  </div>
+                  <span class="badge badge-green">Confirmed</span>
+                </div>
+                <div class="schedule-item" role="listitem">
+                  <div class="schedule-time">10:00</div>
+                  <div class="schedule-sep" aria-hidden="true"></div>
+                  <div class="schedule-info">
+                    <strong>P.K. — Intake Review</strong>
+                    <span>New Patient · 60 min</span>
+                  </div>
+                  <span class="badge badge-amber">Intake Pending</span>
+                </div>
+                <div class="schedule-item" role="listitem">
+                  <div class="schedule-time">11:30</div>
+                  <div class="schedule-sep" aria-hidden="true"></div>
+                  <div class="schedule-info">
+                    <strong>S.T. — Telehealth Follow-up</strong>
+                    <span>Telehealth · 30 min</span>
+                  </div>
+                  <span class="badge badge-teal">Telehealth</span>
+                </div>
+                <div class="schedule-item" role="listitem">
+                  <div class="schedule-time">14:00</div>
+                  <div class="schedule-sep" aria-hidden="true"></div>
+                  <div class="schedule-info">
+                    <strong>M.L. — Medication Review</strong>
+                    <span>Pharmacology · 30 min</span>
+                  </div>
+                  <span class="badge badge-green">Confirmed</span>
+                </div>
+                <div class="schedule-item" role="listitem">
+                  <div class="schedule-time">15:30</div>
+                  <div class="schedule-sep" aria-hidden="true"></div>
+                  <div class="schedule-info">
+                    <strong>A.B. — Post-Op Check</strong>
+                    <span>Follow-up · 20 min</span>
+                  </div>
+                  <span class="badge badge-slate">Pending Confirm</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="card-head"><h3>⚡ Quick Actions</h3></div>
+              <div class="card-body">
+                <div class="quick-actions" role="list">
+                  <button class="qa-card" role="listitem"
+                          onclick="switchSection('patients', document.querySelector('[data-section=patients]'))"
+                          aria-label="Go to patient list">
+                    <span class="qa-icon" aria-hidden="true">👥</span>
+                    <strong>Patient List</strong>
+                    <p>View all today's patients</p>
+                  </button>
+                  <button class="qa-card" role="listitem"
+                          onclick="switchSection('encounter', document.querySelector('[data-section=encounter]'))"
+                          aria-label="Open SOAP note editor">
+                    <span class="qa-icon" aria-hidden="true">📝</span>
+                    <strong>New SOAP Note</strong>
+                    <p>Open encounter editor</p>
+                  </button>
+                  <button class="qa-card" role="listitem"
+                          onclick="switchSection('trials', document.querySelector('[data-section=trials]'))"
+                          aria-label="Go to trial discovery">
+                    <span class="qa-icon" aria-hidden="true">🔬</span>
+                    <strong>Trial Discovery</strong>
+                    <p>Search ClinicalTrials</p>
+                  </button>
+                  <button class="qa-card" role="listitem"
+                          onclick="switchSection('referrals', document.querySelector('[data-section=referrals]'))"
+                          aria-label="View referrals">
+                    <span class="qa-icon" aria-hidden="true">📤</span>
+                    <strong>Referrals</strong>
+                    <p>Track outgoing referrals</p>
+                  </button>
+                  <button class="qa-card" role="listitem"
+                          onclick="switchSection('tasks', document.querySelector('[data-section=tasks]'))"
+                          aria-label="View follow-up tasks">
+                    <span class="qa-icon" aria-hidden="true">✅</span>
+                    <strong>Follow-Up Tasks</strong>
+                    <p>3 pending items</p>
+                  </button>
+                  <button class="qa-card" role="listitem"
+                          onclick="document.getElementById('labModal').style.display='flex'"
+                          aria-label="View lab results">
+                    <span class="qa-icon" aria-hidden="true">🧪</span>
+                    <strong>Lab Results</strong>
+                    <p>Preview — not connected</p>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /dashboard -->
+
+      <!-- ══════════════════════════════════════════════════
+           SECTION 2 — PATIENT LIST
+      ═══════════════════════════════════════════════════ -->
+      <section class="section-view" id="section-patients" aria-labelledby="patients-heading">
+
+        <div class="section-head">
+          <span class="section-kicker">Patient Management</span>
+          <h2 id="patients-heading">Patient List <em class="sample-tag">Illustrative sample only</em></h2>
+          <p>Click any row to open the patient chart. Data shown is fictional for interface demonstration.</p>
+        </div>
+
+        <div class="notice notice-warn" role="note">
+          <strong>⚠ Sample Data Notice</strong>
+          All patient names are anonymised initials and all clinical data below is entirely fictional. This interface is not connected to any EHR, patient database, or clinical system.
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Today's Patients &amp; Active Panel</h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <label for="patientSearch" class="sr-only">Search patients</label>
+              <input id="patientSearch" type="search" placeholder="Search name or concern…"
+                     style="border:1px solid var(--line);border-radius:var(--radius);padding:7px 12px;font-size:11px;width:200px;"
+                     onkeyup="filterPatients(this.value)"
+                     aria-label="Search patient list"/>
+              <button class="btn btn-primary btn-sm" onclick="document.getElementById('addPatientModal').style.display='flex'">+ Add Patient</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table id="patientTable" aria-label="Patient list — sample data">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">DOB</th>
+                    <th scope="col">Last Visit</th>
+                    <th scope="col">Next Appointment</th>
+                    <th scope="col">Primary Concern</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody id="patientTableBody">
+                  <tr class="patient-row" onclick="openChart('rd')" tabindex="0"
+                      onkeydown="if(event.key==='Enter'||event.key===' ')openChart('rd')"
+                      aria-label="Open chart for R.D.">
+                    <td>
+                      <div class="patient-name-cell">
+                        <div class="patient-avatar-sm" aria-hidden="true">RD</div>
+                        <div><strong>R.D.</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: #0028 (sample)</small></div>
+                      </div>
+                    </td>
+                    <td>12 Mar 1975</td>
+                    <td>02 Aug 2026</td>
+                    <td>24 Sep 2026</td>
+                    <td><span class="concern-tag">Type 2 Diabetes</span></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openChart('rd')">View →</button></td>
+                  </tr>
+                  <tr class="patient-row" onclick="openChart('pk')" tabindex="0"
+                      onkeydown="if(event.key==='Enter'||event.key===' ')openChart('pk')"
+                      aria-label="Open chart for P.K.">
+                    <td>
+                      <div class="patient-name-cell">
+                        <div class="patient-avatar-sm" aria-hidden="true">PK</div>
+                        <div><strong>P.K.</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: #0041 (sample)</small></div>
+                      </div>
+                    </td>
+                    <td>07 Jun 1990</td>
+                    <td>New Patient</td>
+                    <td>24 Sep 2026</td>
+                    <td><span class="concern-tag">Hypertension</span></td>
+                    <td><span class="badge badge-amber">Intake Pending</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openChart('pk')">View →</button></td>
+                  </tr>
+                  <tr class="patient-row" onclick="openChart('st')" tabindex="0"
+                      onkeydown="if(event.key==='Enter'||event.key===' ')openChart('st')"
+                      aria-label="Open chart for S.T.">
+                    <td>
+                      <div class="patient-name-cell">
+                        <div class="patient-avatar-sm" aria-hidden="true">ST</div>
+                        <div><strong>S.T.</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: #0054 (sample)</small></div>
+                      </div>
+                    </td>
+                    <td>22 Nov 1962</td>
+                    <td>10 Sep 2026</td>
+                    <td>24 Sep 2026</td>
+                    <td><span class="concern-tag">Chronic Fatigue</span></td>
+                    <td><span class="badge badge-teal">Telehealth</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openChart('st')">View →</button></td>
+                  </tr>
+                  <tr class="patient-row" onclick="openChart('ml')" tabindex="0"
+                      onkeydown="if(event.key==='Enter'||event.key===' ')openChart('ml')"
+                      aria-label="Open chart for M.L.">
+                    <td>
+                      <div class="patient-name-cell">
+                        <div class="patient-avatar-sm" aria-hidden="true">ML</div>
+                        <div><strong>M.L.</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: #0063 (sample)</small></div>
+                      </div>
+                    </td>
+                    <td>30 Jan 1948</td>
+                    <td>18 Sep 2026</td>
+                    <td>24 Sep 2026</td>
+                    <td><span class="concern-tag">Atrial Fibrillation</span></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openChart('ml')">View →</button></td>
+                  </tr>
+                  <tr class="patient-row" onclick="openChart('ab')" tabindex="0"
+                      onkeydown="if(event.key==='Enter'||event.key===' ')openChart('ab')"
+                      aria-label="Open chart for A.B.">
+                    <td>
+                      <div class="patient-name-cell">
+                        <div class="patient-avatar-sm" aria-hidden="true">AB</div>
+                        <div><strong>A.B.</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: #0077 (sample)</small></div>
+                      </div>
+                    </td>
+                    <td>15 Apr 1985</td>
+                    <td>05 Sep 2026</td>
+                    <td>24 Sep 2026</td>
+                    <td><span class="concern-tag">Post-Op Care</span></td>
+                    <td><span class="badge badge-slate">Pending Confirm</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openChart('ab')">View →</button></td>
+                  </tr>
+                  <tr class="patient-row" onclick="openChart('fn')" tabindex="0"
+                      onkeydown="if(event.key==='Enter'||event.key===' ')openChart('fn')"
+                      aria-label="Open chart for F.N.">
+                    <td>
+                      <div class="patient-name-cell">
+                        <div class="patient-avatar-sm" aria-hidden="true">FN</div>
+                        <div><strong>F.N.</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: #0089 (sample)</small></div>
+                      </div>
+                    </td>
+                    <td>03 Aug 2001</td>
+                    <td>01 Sep 2026</td>
+                    <td>08 Oct 2026</td>
+                    <td><span class="concern-tag">Anxiety / Sleep</span></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openChart('fn')">View →</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /patients -->
+
+      <!-- ══════════════════════════════════════════════════
+           SECTION 3 — ENCOUNTER WORKSPACE (SOAP)
+      ═══════════════════════════════════════════════════ -->
+      <section class="section-view" id="section-encounter" aria-labelledby="encounter-heading">
+
+        <div class="section-head">
+          <span class="section-kicker">Clinical Documentation</span>
+          <h2 id="encounter-heading">Encounter Workspace — SOAP Note <em class="sample-tag">Illustrative sample only</em></h2>
+          <p>Draft a clinical SOAP note. Preview only — no data is saved or transmitted.</p>
+        </div>
+
+        <div class="notice notice-warn" role="note">
+          <strong>⚠ Preview Mode</strong>
+          This is a demonstration interface. Nothing entered here is stored, transmitted, or connected to any clinical system.
+        </div>
+
+        <div class="soap-layout">
+          <!-- SOAP Editor -->
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="card-head">
+                <h3>📝 SOAP Note — R.D. (24 Sep 2026)</h3>
+                <span class="badge badge-slate">Draft</span>
+              </div>
+              <div class="card-body">
+
+                <!-- Subjective -->
+                <div class="soap-block">
+                  <div class="soap-section-label">
+                    <div class="soap-letter" aria-hidden="true">S</div>
+                    <label for="soap-s">Subjective</label>
+                    <em>Patient's chief complaint and history</em>
+                  </div>
+                  <div class="form-group">
+                    <textarea id="soap-s" class="soap-field"
+                              rows="4"
+                              placeholder="Patient reports… e.g. Patient R.D. presents for annual review. Reports intermittent fatigue and increased thirst over past 3 weeks. Denies chest pain or dyspnoea. Last HbA1c was 7.2% (3 months ago)."
+                              aria-label="Subjective: patient complaint and history"></textarea>
+                  </div>
+                </div>
+
+                <hr class="divider"/>
+
+                <!-- Objective -->
+                <div class="soap-block">
+                  <div class="soap-section-label">
+                    <div class="soap-letter" style="background:#17324d;" aria-hidden="true">O</div>
+                    <label for="soap-o">Objective</label>
+                    <em>Examination findings and vital signs</em>
+                  </div>
+                  <div class="form-group">
+                    <textarea id="soap-o" class="soap-field"
+                              rows="4"
+                              placeholder="Vitals: BP 138/86 mmHg, HR 78 bpm, Temp 36.7°C, O2 Sat 98%&#10;Exam: Alert and oriented. Abdomen soft, non-tender…"
+                              aria-label="Objective: examination findings and vital signs"></textarea>
+                  </div>
+                </div>
+
+                <hr class="divider"/>
+
+                <!-- Assessment -->
+                <div class="soap-block">
+                  <div class="soap-section-label">
+                    <div class="soap-letter" style="background:#247A52;" aria-hidden="true">A</div>
+                    <label for="soap-a">Assessment</label>
+                    <em>Clinical impression and differential</em>
+                  </div>
+                  <div class="form-group">
+                    <textarea id="soap-a" class="soap-field"
+                              rows="3"
+                              placeholder="1. Type 2 Diabetes Mellitus — suboptimally controlled, HbA1c trending upward.&#10;2. Hypertension — borderline control, consider medication adjustment…"
+                              aria-label="Assessment: clinical impression and differential"></textarea>
+                  </div>
+                </div>
+
+                <hr class="divider"/>
+
+                <!-- Plan -->
+                <div class="soap-block">
+                  <div class="soap-section-label">
+                    <div class="soap-letter" style="background:#935900;" aria-hidden="true">P</div>
+                    <label for="soap-p">Plan</label>
+                    <em>Next steps, prescriptions, referrals</em>
+                  </div>
+                  <div class="form-group">
+                    <textarea id="soap-p" class="soap-field"
+                              rows="4"
+                              placeholder="1. Repeat HbA1c in 6 weeks.&#10;2. Adjust Metformin dosage — increase to 1000 mg BD if tolerated.&#10;3. Dietary counselling referral.&#10;4. Blood pressure monitoring diary — review in 4 weeks.&#10;5. Trial match flag raised — refer to study coordinator."
+                              aria-label="Plan: next steps and follow-up actions"></textarea>
+                  </div>
+                </div>
+
+                <hr class="divider"/>
+
+                <div class="btn-row">
+                  <button class="btn btn-ghost" onclick="soapAction('draft')">💾 Save Draft</button>
+                  <button class="btn btn-primary" onclick="soapAction('sign')">✏️ Sign Note</button>
+                </div>
+                <div class="inline-toast" id="soap-toast" role="status" aria-live="polite">
+                  ℹ Preview only — no note is saved, signed, or transmitted. This interface is not connected to a clinical system.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Intake Review Panel -->
+          <aside aria-label="Patient intake review">
+            <div class="intake-panel">
+              <div class="intake-panel-head">
+                📋 Pre-Visit Intake — R.D.
+                <span class="sample-tag">Sample</span>
+              </div>
+              <div class="intake-panel-body">
+                <p style="font-size:10px;color:var(--muted);margin-bottom:12px;">Submitted: 23 Sep 2026 · 09:42 AM</p>
+
+                <div class="intake-q">
+                  <strong>Chief complaint today</strong>
+                  <p>Feeling more tired than usual and drinking a lot more water. A bit worried about my blood sugar.</p>
+                </div>
+                <div class="intake-q">
+                  <strong>Symptom severity (1–10)</strong>
+                  <p>Fatigue: 6/10 · Thirst: 7/10 · No pain</p>
+                </div>
+                <div class="intake-q">
+                  <strong>Any changes to medications?</strong>
+                  <p>No changes. Still taking Metformin 500 mg twice daily as prescribed.</p>
+                </div>
+                <div class="intake-q">
+                  <strong>Recent blood glucose readings</strong>
+                  <p>Morning readings averaging 8.4 mmol/L over last week. One reading of 11.2 mmol/L after a large meal.</p>
+                </div>
+                <div class="intake-q">
+                  <strong>Any new symptoms or concerns?</strong>
+                  <p>Occasional mild blurred vision in the evenings. No chest pain, no shortness of breath.</p>
+                </div>
+                <div class="intake-q">
+                  <strong>Questions for doctor</strong>
+                  <p>Should I adjust my diet? Is there a new medication option? Saw something about a clinical study.</p>
+                </div>
+
+                <div style="background:#f5f9f5;border-radius:4px;padding:10px;font-size:10px;color:var(--muted);margin-top:10px;line-height:1.6;">
+                  ⚠ <strong style="color:var(--navy)">Illustrative sample only.</strong> This intake form content is entirely fictional and is not connected to any patient, EHR, or clinical record.
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+      </section><!-- /encounter -->
+
+      <!-- ══════════════════════════════════════════════════
+           SECTION 4 — TRIAL DISCOVERY
+      ═══════════════════════════════════════════════════ -->
+      <section class="section-view" id="section-trials" aria-labelledby="trials-heading">
+
+        <div class="section-head">
+          <span class="section-kicker">Research Matching</span>
+          <h2 id="trials-heading">Clinical Trial Discovery <em class="sample-tag">Illustrative sample only</em></h2>
+        </div>
+
+        <!-- Prominent Trial Disclaimer -->
+        <div class="trial-disclaimer" role="note" aria-label="Clinical trial disclaimer">
+          <strong>⚠ Important — Preliminary Match Only</strong>
+          <p>
+            Results below are <strong>illustrative samples only</strong> and are not sourced in real time from ClinicalTrials.gov.
+            <strong>The study team must confirm all eligibility criteria</strong> before a patient is enrolled or approached.
+            Clinician discretion is required at all stages. These trial summaries do <strong>not</strong> constitute a referral or enrolment.
+            Always verify against current data at <strong>ClinicalTrials.gov</strong> before presenting options to patients.
+          </p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-head"><h3>🔍 Search Trials</h3></div>
+          <div class="card-body">
+            <form onsubmit="event.preventDefault();trialSearch();" aria-label="Trial search form">
+              <div class="trial-search-bar">
+                <div class="form-group">
+                  <label for="trial-condition">Condition / Keyword</label>
+                  <input id="trial-condition" type="text" value="Type 2 Diabetes" placeholder="e.g. Hypertension, Oncology…" aria-required="true"/>
+                </div>
+                <div class="form-group">
+                  <label for="trial-phase">Trial Phase</label>
+                  <select id="trial-phase">
+                    <option value="">All Phases</option>
+                    <option value="1">Phase I</option>
+                    <option selected value="2">Phase II</option>
+                    <option value="3">Phase III</option>
+                    <option value="4">Phase IV</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="trial-location">Location</label>
+                  <input id="trial-location" type="text" value="London, UK" placeholder="City or Country…"/>
+                </div>
+                <div class="form-group">
+                  <label style="color:transparent" aria-hidden="true">Search</label>
+                  <button class="btn btn-primary" type="submit">Search Trials</button>
+                </div>
+              </div>
+              <p style="font-size:10px;color:var(--muted);">Source: ClinicalTrials.gov (illustrative) · Last verified: 15 Sep 2026</p>
+            </form>
+          </div>
+        </div>
+
+        <!-- Results Notice -->
+        <div class="notice notice-info" role="status" id="trial-results-label">
+          <strong>2 Illustrative Results for: Type 2 Diabetes — Phase II — London, UK</strong>
+          These are sample trial cards for interface demonstration. They do not represent live search results.
+        </div>
+
+        <!-- Trial Cards -->
+        <div id="trialResults">
+
+          <!-- Trial 1 -->
+          <article class="trial-card" aria-label="Trial: NCT04832167">
+            <div class="trial-card-head">
+              <div>
+                <div class="trial-nct">NCT04832167 <span class="sample-tag">Illustrative sample</span></div>
+                <h3 class="trial-title">GLUCO-PRIME II: Phase II Study of Novel GLP-1 Receptor Agonist in Adults with Suboptimally Controlled Type 2 Diabetes</h3>
+              </div>
+              <span class="badge badge-green" style="white-space:nowrap;flex-shrink:0;">Recruiting</span>
+            </div>
+            <div class="trial-meta">
+              <span class="badge badge-teal">Phase II</span>
+              <span class="badge badge-slate">Randomised · Double-Blind</span>
+              <span class="badge badge-slate">🏥 NexResearch Centre, London (Illustrative)</span>
+            </div>
+            <div class="trial-eligibility">
+              <strong>Eligibility Summary (patient-reported — study team confirms)</strong>
+              Inclusion: Adults 30–75 years · Diagnosed T2DM ≥ 12 months · HbA1c 7.0–10.0% · BMI 25–40 kg/m² · Currently on stable oral therapy.
+              Exclusion: Type 1 diabetes · Renal impairment (eGFR &lt;45) · Pregnancy/breastfeeding · Prior GLP-1 therapy · Active malignancy.
+            </div>
+            <div class="trial-source">
+              Source: ClinicalTrials.gov (Illustrative) · Verified: 15 Sep 2026 · Sponsor: Sample Pharma Research Ltd.
+            </div>
+            <div class="trial-card-actions">
+              <button class="btn btn-ghost btn-sm" onclick="trialAction('criteria')">📄 View Full Criteria</button>
+              <button class="btn btn-secondary btn-sm" onclick="trialAction('save')">🔖 Save for Patient</button>
+            </div>
+          </article>
+
+          <!-- Trial 2 -->
+          <article class="trial-card" aria-label="Trial: NCT05210483">
+            <div class="trial-card-head">
+              <div>
+                <div class="trial-nct">NCT05210483 <span class="sample-tag">Illustrative sample</span></div>
+                <h3 class="trial-title">CARDIO-DIAB: Cardiovascular Outcomes in Adults with T2DM and Hypertension — Phase II/III Multi-site Cohort</h3>
+              </div>
+              <span class="badge badge-green" style="white-space:nowrap;flex-shrink:0;">Recruiting</span>
+            </div>
+            <div class="trial-meta">
+              <span class="badge badge-teal">Phase II / III</span>
+              <span class="badge badge-slate">Observational · Prospective</span>
+              <span class="badge badge-slate">🏥 Multi-site UK (Illustrative)</span>
+            </div>
+            <div class="trial-eligibility">
+              <strong>Eligibility Summary (patient-reported — study team confirms)</strong>
+              Inclusion: Adults ≥ 40 years · T2DM + Hypertension co-diagnosis · Systolic BP 130–160 mmHg at enrolment · No cardiac event in last 6 months.
+              Exclusion: Unstable angina · Current participation in another cardiovascular trial · Severe hepatic impairment.
+            </div>
+            <div class="trial-source">
+              Source: ClinicalTrials.gov (Illustrative) · Verified: 15 Sep 2026 · Sponsor: UK Academic Health Research Consortium (Sample)
+            </div>
+            <div class="trial-card-actions">
+              <button class="btn btn-ghost btn-sm" onclick="trialAction('criteria')">📄 View Full Criteria</button>
+              <button class="btn btn-secondary btn-sm" onclick="trialAction('save')">🔖 Save for Patient</button>
+            </div>
+          </article>
+
+        </div><!-- /trialResults -->
+
+        <div class="inline-toast" id="trial-toast" role="status" aria-live="polite"></div>
+
+        <div class="disclaimer-box" style="margin-top:20px;">
+          <strong>⚠ Clinical Trial Use Disclaimer</strong>
+          Preliminary match only. Study team confirms eligibility. These are illustrative samples — verify against current ClinicalTrials.gov data before presenting to patients or initiating any referral process. NexCura does not guarantee accuracy of trial information shown here.
+        </div>
+
+      </section><!-- /trials -->
+
+      <!-- ══════════════════════════════════════════════════
+           SECTION 5 — REFERRALS
+      ═══════════════════════════════════════════════════ -->
+      <section class="section-view" id="section-referrals" aria-labelledby="referrals-heading">
+
+        <div class="section-head">
+          <span class="section-kicker">Care Coordination</span>
+          <h2 id="referrals-heading">Outgoing Referrals <em class="sample-tag">Illustrative sample only</em></h2>
+          <p>Track referrals initiated by Dr. A. Mehta. All patient identifiers are anonymised.</p>
+        </div>
+
+        <div class="notice notice-warn" role="note">
+          <strong>⚠ Sample Data</strong>
+          All referral data shown is fictional and for interface demonstration only. Not connected to any referral management system or clinical network.
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" role="tablist" aria-label="Filter referrals by status">
+          <button class="filter-tab active" role="tab" aria-selected="true" id="ref-tab-all"
+                  onclick="filterReferrals('all', this)">All (4)</button>
+          <button class="filter-tab" role="tab" aria-selected="false" id="ref-tab-pending"
+                  onclick="filterReferrals('pending', this)">Pending (2)</button>
+          <button class="filter-tab" role="tab" aria-selected="false" id="ref-tab-accepted"
+                  onclick="filterReferrals('accepted', this)">Accepted (1)</button>
+          <button class="filter-tab" role="tab" aria-selected="false" id="ref-tab-closed"
+                  onclick="filterReferrals('closed', this)">Closed (1)</button>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Referral Tracker</h3>
+            <button class="btn btn-primary btn-sm" onclick="showPreviewMsg(this)">+ New Referral</button>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table id="referralTable" aria-label="Referral list — sample data">
+                <thead>
+                  <tr>
+                    <th scope="col">Ref. #</th>
+                    <th scope="col">Patient (Anon.)</th>
+                    <th scope="col">Referring Doctor</th>
+                    <th scope="col">Specialty</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody id="referralBody">
+                  <tr data-status="accepted">
+                    <td><strong>#REF-2611</strong></td>
+                    <td>Patient A</td>
+                    <td>Dr. A. Mehta</td>
+                    <td>Endocrinology</td>
+                    <td>T2DM complication review</td>
+                    <td>10 Sep 2026</td>
+                    <td><span class="badge badge-green">Accepted</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="openRefModal(this)">Details</button></td>
+                  </tr>
+                  <tr data-status="pending">
+                    <td><strong>#REF-2654</strong></td>
+                    <td>Patient B</td>
+                    <td>Dr. A. Mehta</td>
+                    <td>Cardiology</td>
+                    <td>Hypertension + arrhythmia concern</td>
+                    <td>15 Sep 2026</td>
+                    <td><span class="badge badge-amber">Pending</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="openRefModal(this)">Details</button></td>
+                  </tr>
+                  <tr data-status="pending">
+                    <td><strong>#REF-2701</strong></td>
+                    <td>Patient C</td>
+                    <td>Dr. A. Mehta</td>
+                    <td>Dietetics</td>
+                    <td>Nutritional counselling — DM management</td>
+                    <td>20 Sep 2026</td>
+                    <td><span class="badge badge-amber">Pending</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="openRefModal(this)">Details</button></td>
+                  </tr>
+                  <tr data-status="closed">
+                    <td><strong>#REF-2534</strong></td>
+                    <td>Patient D</td>
+                    <td>Dr. A. Mehta</td>
+                    <td>Ophthalmology</td>
+                    <td>Diabetic retinopathy screening</td>
+                    <td>28 Aug 2026</td>
+                    <td><span class="badge badge-slate">Closed</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="openRefModal(this)">Details</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /referrals -->
+
+      <!-- ══════════════════════════════════════════════════
+           SECTION 6 — FOLLOW-UP TASKS
+      ═══════════════════════════════════════════════════ -->
+      <section class="section-view" id="section-tasks" aria-labelledby="tasks-heading">
+
+        <div class="section-head">
+          <span class="section-kicker">Task Management</span>
+          <h2 id="tasks-heading">Follow-Up Tasks <em class="sample-tag">Illustrative sample only</em></h2>
+          <p>Manage clinical follow-up actions. Check off tasks to mark as reviewed. Preview mode — no data is saved.</p>
+        </div>
+
+        <div class="notice notice-warn" role="note">
+          <strong>⚠ Preview Mode</strong>
+          Checking items off is a UI preview only. No task data is stored or transmitted.
+        </div>
+
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-head">
+            <h3>Active Tasks — Dr. A. Mehta</h3>
+            <div style="display:flex;gap:8px;">
+              <span class="badge badge-red">1 Overdue</span>
+              <span class="badge badge-amber">2 Due Today</span>
+              <span class="badge badge-slate">2 Upcoming</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="task-list" role="list" aria-label="Follow-up tasks">
+
+              <!-- Task 1 — HIGH / OVERDUE -->
+              <li class="task-item" id="task-1" role="listitem">
+                <div class="task-check-wrap">
+                  <input type="checkbox" class="task-check" id="check-1"
+                         aria-label="Mark task 1 complete: Review HbA1c lab results for R.D."
+                         onchange="toggleTask('task-1', this)"/>
+                </div>
+                <label class="task-info" for="check-1" style="cursor:pointer;">
+                  <span class="task-title">Review HbA1c lab results — R.D.</span>
+                  <span class="task-desc">Lab panel returned 23 Sep 2026. HbA1c 8.1% — above target. Review and update care plan before today's appointment.</span>
+                  <div class="task-meta">
+                    <span class="badge badge priority-high">🔴 High Priority</span>
+                    <span class="task-due overdue" aria-label="Overdue">⚠ Due: 23 Sep 2026 — Overdue</span>
+                    <span class="task-patient">Patient: R.D.</span>
+                  </div>
+                </label>
+              </li>
+
+              <!-- Task 2 — HIGH / TODAY -->
+              <li class="task-item" id="task-2" role="listitem">
+                <div class="task-check-wrap">
+                  <input type="checkbox" class="task-check" id="check-2"
+                         aria-label="Mark task 2 complete: Review P.K. intake form before 10 AM appointment"
+                         onchange="toggleTask('task-2', this)"/>
+                </div>
+                <label class="task-info" for="check-2" style="cursor:pointer;">
+                  <span class="task-title">Review intake form — P.K. (New Patient)</span>
+                  <span class="task-desc">P.K. submitted a pre-visit intake form at 09:42 AM. Review before 10:00 AM appointment. Flagged: BP history, family history of stroke.</span>
+                  <div class="task-meta">
+                    <span class="badge badge priority-high">🔴 High Priority</span>
+                    <span class="task-due overdue">⚠ Due: Today 09:45 AM</span>
+                    <span class="task-patient">Patient: P.K.</span>
+                  </div>
+                </label>
+              </li>
+
+              <!-- Task 3 — MED / TODAY -->
+              <li class="task-item" id="task-3" role="listitem">
+                <div class="task-check-wrap">
+                  <input type="checkbox" class="task-check" id="check-3"
+                         aria-label="Mark task 3 complete: Send referral confirmation to Cardiology for Patient B"
+                         onchange="toggleTask('task-3', this)"/>
+                </div>
+                <label class="task-info" for="check-3" style="cursor:pointer;">
+                  <span class="task-title">Send referral confirmation — Patient B → Cardiology</span>
+                  <span class="task-desc">Referral REF-2654 is awaiting a covering letter. Attach clinical summary and BP readings before sending to Cardiology Department.</span>
+                  <div class="task-meta">
+                    <span class="badge badge priority-med">🟡 Medium Priority</span>
+                    <span class="task-due">Due: Today EOD</span>
+                    <span class="task-patient">Patient: Patient B</span>
+                  </div>
+                </label>
+              </li>
+
+              <!-- Task 4 — MED / UPCOMING -->
+              <li class="task-item" id="task-4" role="listitem">
+                <div class="task-check-wrap">
+                  <input type="checkbox" class="task-check" id="check-4"
+                         aria-label="Mark task 4 complete: Update care plan for M.L. following medication review"
+                         onchange="toggleTask('task-4', this)"/>
+                </div>
+                <label class="task-info" for="check-4" style="cursor:pointer;">
+                  <span class="task-title">Update care plan — M.L. post-medication review</span>
+                  <span class="task-desc">Following today's medication review at 14:00, update Warfarin dosing plan and schedule INR monitoring in 10 days.</span>
+                  <div class="task-meta">
+                    <span class="badge badge priority-med">🟡 Medium Priority</span>
+                    <span class="task-due">Due: 25 Sep 2026</span>
+                    <span class="task-patient">Patient: M.L.</span>
+                  </div>
+                </label>
+              </li>
+
+              <!-- Task 5 — LOW / UPCOMING -->
+              <li class="task-item" id="task-5" role="listitem">
+                <div class="task-check-wrap">
+                  <input type="checkbox" class="task-check" id="check-5"
+                         aria-label="Mark task 5 complete: Complete clinical trial flag for R.D. — NCT04832167"
+                         onchange="toggleTask('task-5', this)"/>
+                </div>
+                <label class="task-info" for="check-5" style="cursor:pointer;">
+                  <span class="task-title">Clinical trial flag — R.D. / NCT04832167</span>
+                  <span class="task-desc">Preliminary eligibility flagged for GLUCO-PRIME II trial. Complete eligibility worksheet and submit to study coordinator for review.</span>
+                  <div class="task-meta">
+                    <span class="badge badge priority-low">🟢 Low Priority</span>
+                    <span class="task-due">Due: 30 Sep 2026</span>
+                    <span class="task-patient">Patient: R.D.</span>
+                  </div>
+                </label>
+              </li>
+
+            </ul>
+
+            <div class="inline-toast" id="task-toast" role="status" aria-live="polite">
+              ℹ Preview only — task status is not saved. This is a demonstration interface only.
+            </div>
+          </div>
+        </div>
+
+      </section><!-- /tasks -->
+
+    </main><!-- /pageContent -->
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
+<div id="refModal" style="display:none; position:fixed; inset:0; background:rgba(15,34,54,0.4); z-index:9000; align-items:center; justify-content:center; backdrop-filter:blur(2px);">
+  <div style="background:white; border-radius:var(--radius); width:450px; padding:20px; box-shadow:var(--shadow-lg);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:var(--navy); font-family:Manrope,sans-serif;">Referral Details</h3>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('refModal').style.display='none'">✕</button>
+    </div>
+    <div id="refModalContent" style="display:flex; flex-direction:column; gap:10px; font-size:12px;"></div>
+  </div>
+</div>
+<script>
+function openRefModal(btn) {
+  const tr = btn.closest('tr');
+  const tds = tr.querySelectorAll('td');
+  const refNum = tds[0].textContent;
+  const patient = tds[1].textContent;
+  const dr = tds[2].textContent;
+  const spec = tds[3].textContent;
+  const reason = tds[4].textContent;
+  const date = tds[5].textContent;
+  const status = tds[6].textContent;
+  
+  document.getElementById('refModalContent').innerHTML = `
+    <div><strong>Referral ID:</strong> ${refNum}</div>
+    <div><strong>Patient:</strong> ${patient}</div>
+    <div><strong>Referring Doctor:</strong> ${dr}</div>
+    <div><strong>Specialty:</strong> ${spec}</div>
+    <div><strong>Reason:</strong> ${reason}</div>
+    <div><strong>Date:</strong> ${date}</div>
+    <div><strong>Status:</strong> ${status}</div>
+    <div style="margin-top:10px;"><strong>Clinical Notes:</strong><br>Patient referred for specialist review regarding aforementioned concerns. Please evaluate and advise on further management.</div>
+  `;
+  document.getElementById('refModal').style.display = 'flex';
+}
+</script>
+
+<div id="labModal" style="display:none; position:fixed; inset:0; background:rgba(15,34,54,0.4); z-index:9000; align-items:center; justify-content:center; backdrop-filter:blur(2px);">
+  <div style="background:white; border-radius:var(--radius); width:500px; padding:20px; box-shadow:var(--shadow-lg);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:var(--navy); font-family:Manrope,sans-serif;">Recent Lab Results</h3>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('labModal').style.display='none'">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; max-height:400px; overflow-y:auto;">
+      <div class="result-row" style="border:1px solid var(--line); padding:10px; border-radius:4px;">
+        <div>
+          <div class="result-name">HbA1c - R.D.</div>
+          <div class="result-ref">Target <7.0% · 23 Sep 2026</div>
+        </div>
+        <div style="text-align:right">
+          <div class="result-val">8.1%</div>
+          <div class="result-flag">⚑ Flagged for review</div>
+        </div>
+      </div>
+      <div class="result-row" style="border:1px solid var(--line); padding:10px; border-radius:4px;">
+        <div>
+          <div class="result-name">Fasting Glucose - R.D.</div>
+          <div class="result-ref">3.9-5.6 mmol/L · 23 Sep 2026</div>
+        </div>
+        <div style="text-align:right">
+          <div class="result-val">8.4 mmol/L</div>
+          <div class="result-flag">⚑ Flagged for review</div>
+        </div>
+      </div>
+      <div class="result-row" style="border:1px solid var(--line); padding:10px; border-radius:4px;">
+        <div>
+          <div class="result-name">Ferritin - S.T.</div>
+          <div class="result-ref">12-150 ng/mL · 10 Sep 2026</div>
+        </div>
+        <div style="text-align:right">
+          <div class="result-val">9 ng/mL</div>
+          <div class="result-flag">⚑ Flagged for review</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="addPatientModal" style="display:none; position:fixed; inset:0; background:rgba(15,34,54,0.4); z-index:9000; align-items:center; justify-content:center; backdrop-filter:blur(2px);">
+  <div style="background:white; border-radius:var(--radius); width:400px; padding:20px; box-shadow:var(--shadow-lg);">
+    <h3 style="margin-bottom:15px; color:var(--navy); font-family:Manrope,sans-serif;">Add New Patient</h3>
+    <form id="addPatientForm" onsubmit="submitAddPatient(event)" style="display:flex; flex-direction:column; gap:12px;">
+      <div class="form-group"><label>Patient Initials</label><input type="text" id="ap-initials" required></div>
+      <div class="form-group"><label>Date of Birth</label><input type="date" id="ap-dob" required></div>
+      <div class="form-group"><label>Primary Concern</label><input type="text" id="ap-concern" required></div>
+      <div class="form-group"><label>Allergies</label><textarea id="ap-allergies" rows="2"></textarea></div>
+      <div class="form-group"><label>Referring Doctor</label><input type="text" id="ap-referring"></div>
+      <div class="btn-row" style="justify-content:flex-end;">
+        <button type="button" class="btn btn-ghost" onclick="document.getElementById('addPatientModal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Patient</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function submitAddPatient(e) {
+  e.preventDefault();
+  const initials = document.getElementById('ap-initials').value.toUpperCase();
+  const dob = document.getElementById('ap-dob').value;
+  const concern = document.getElementById('ap-concern').value;
+  
+  const tr = document.createElement('tr');
+  tr.className = 'patient-row';
+  tr.innerHTML = `
+    <td>
+      <div class="patient-name-cell">
+        <div class="patient-avatar-sm" aria-hidden="true">${initials.substring(0,2)}</div>
+        <div><strong>${initials}</strong><br><small style="color:var(--muted);font-size:10px">Patient ID: New</small></div>
+      </div>
+    </td>
+    <td>${dob}</td>
+    <td>New Patient</td>
+    <td>Pending</td>
+    <td><span class="concern-tag">${concern}</span></td>
+    <td><span class="badge badge-amber">Intake Pending</span></td>
+    <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();">View →</button></td>
+  `;
+  document.getElementById('patientTableBody').prepend(tr);
+  document.getElementById('addPatientModal').style.display='none';
+  showPreviewMsg(null, 'Patient ' + initials + ' added successfully.');
+  e.target.reset();
+}
+</script>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PATIENT CHART DRAWER
+═════════════════════════════════════════════════════════ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeChart()" aria-hidden="true"></div>
+
+<aside class="chart-drawer" id="chartDrawer"
+       role="dialog" aria-modal="true" aria-labelledby="drawerTitle"
+       aria-describedby="drawerDisclaimer">
+  <div class="drawer-head">
+    <div class="clinician-avatar" id="drawerAvatar" aria-hidden="true">RD</div>
+    <div>
+      <h2 id="drawerTitle">Patient Chart</h2>
+      <small id="drawerSubtitle">Loading…</small>
+    </div>
+    <button class="drawer-close" onclick="closeChart()" aria-label="Close patient chart">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <!-- Populated by JS -->
+  </div>
+</aside>
+
+<!-- ════════════════════════════════════════════════════════
+     PREVIEW TOAST (global)
+═════════════════════════════════════════════════════════ -->
+<div id="globalToast" role="status" aria-live="polite" style="
+  display:none;
+  position:fixed;bottom:24px;right:24px;z-index:200;
+  background:#17324d;color:white;
+  font-size:12px;padding:14px 20px;border-radius:8px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+  max-width:360px;line-height:1.55;
+">
+  ℹ Preview only — no action is taken. This interface is not connected to any clinical system.
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+═════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── Section labels for top bar ─────────────────────────── */
+const SECTION_LABELS = {
+  dashboard:  'Dashboard — Today\'s Overview',
+  patients:   'Patient List — Sample Data',
+  encounter:  'Encounter Workspace — SOAP Note',
+  trials:     'Trial Discovery — ClinicalTrials.gov (Sample)',
+  referrals:  'Referrals — Outgoing Tracker',
+  tasks:      'Follow-Up Tasks — Action List',
+};
+
+/* ── Switch visible section ─────────────────────────────── */
+function switchSection(id, btn) {
+  // Hide all sections
+  document.querySelectorAll('.section-view').forEach(s => {
+    s.classList.remove('active');
+    s.setAttribute('aria-hidden', 'true');
+  });
+  // Show target
+  const target = document.getElementById('section-' + id);
+  if (target) {
+    target.classList.add('active');
+    target.removeAttribute('aria-hidden');
+    target.focus && target.setAttribute('tabindex','-1');
+  }
+
+  // Update nav items
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    n.removeAttribute('aria-current');
+  });
+  // Find the matching button (could be passed directly or be a nav-item)
+  const navBtn = document.querySelector(`.nav-item[data-section="${id}"]`);
+  if (navBtn) {
+    navBtn.classList.add('active');
+    navBtn.setAttribute('aria-current', 'page');
+  }
+
+  // Update topbar label
+  document.getElementById('active-section-label').textContent = SECTION_LABELS[id] || '';
+
+  // Close mobile sidebar
+  closeMobileSidebar();
+
+  // Scroll to top
+  document.getElementById('pageContent').scrollTop = 0;
+}
+
+/* ── Mobile sidebar ─────────────────────────────────────── */
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.getElementById('menuToggle');
+  const isOpen = sidebar.classList.toggle('mobile-open');
+  btn.setAttribute('aria-expanded', isOpen);
+}
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar.classList.contains('mobile-open')) {
+    sidebar.classList.remove('mobile-open');
+    document.getElementById('menuToggle').setAttribute('aria-expanded', 'false');
+  }
+}
+
+/* ── Global preview message ─────────────────────────────── */
+let toastTimer = null;
+
+// Dropdown toggle handling
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.topbar-btn')) {
+    document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('show'));
+  }
+});
+
+function showPreviewMsg(el, customMsg) {
+  const toast = document.getElementById('globalToast');
+  if(customMsg) toast.textContent = customMsg; else toast.textContent = 'ℹ Preview only — no action is taken. This interface is not connected to any clinical system.'; toast.style.display = 'block';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 4000);
+}
+
+/* ── SOAP actions ───────────────────────────────────────── */
+
+function soapAction(type) {
+  const toast = document.getElementById('soap-toast');
+  const btn = event.currentTarget;
+  const origText = btn.innerHTML;
+  
+  btn.innerHTML = (type === 'draft') ? '⏳ Saving...' : '⏳ Signing...';
+  
+  setTimeout(() => {
+    btn.innerHTML = (type === 'draft') ? '✓ Saved' : '✓ Signed';
+    toast.textContent = (type === 'draft') ? `Draft saved at ${new Date().toLocaleTimeString()}` : `Note signed successfully at ${new Date().toLocaleTimeString()}`;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      btn.innerHTML = origText;
+      toast.classList.remove('show');
+    }, 4000);
+  }, 800);
+}
+
+
+/* ── Patient filter ─────────────────────────────────────── */
+
+function filterPatients(q) {
+  const rows = document.querySelectorAll('#patientTableBody tr');
+  const lower = q.toLowerCase();
+  rows.forEach(row => {
+    const nameCell = row.cells[0]?.textContent.toLowerCase() || '';
+    const concernCell = row.cells[4]?.textContent.toLowerCase() || '';
+    row.style.display = (nameCell.includes(lower) || concernCell.includes(lower)) ? '' : 'none';
+  });
+}
+);
+}
+
+/* ── Trial search ───────────────────────────────────────── */
+
+function trialSearch() {
+  const condition = document.getElementById('trial-condition').value || 'Unknown Condition';
+  const label = document.getElementById('trial-results-label');
+  label.innerHTML = `<strong>Fetching results for: ${escHtml(condition)}...</strong>`;
+  
+  fetch('/api/v1/trials/search?condition=' + encodeURIComponent(condition))
+    .then(res => res.ok ? res.json() : [])
+    .then(data => {
+      label.innerHTML = `<strong>Results for: ${escHtml(condition)}</strong>`;
+      const container = document.getElementById('trialResults');
+      if(data && data.length > 0) {
+        container.innerHTML = data.map(trial => `
+          <article class="trial-card">
+            <div class="trial-card-head">
+              <div>
+                <div class="trial-nct">${escHtml(trial.nct_id || 'N/A')}</div>
+                <h3 class="trial-title">${escHtml(trial.title || 'Untitled Trial')}</h3>
+              </div>
+              <span class="badge badge-green" style="white-space:nowrap;flex-shrink:0;">${escHtml(trial.status || 'Recruiting')}</span>
+            </div>
+            <div class="trial-meta">
+              <span class="badge badge-teal">${escHtml(trial.phase || 'Phase Unknown')}</span>
+            </div>
+            <div class="trial-eligibility">
+              <strong>Eligibility Summary</strong>
+              ${escHtml(trial.eligibility || 'No summary available')}
+            </div>
+            <div class="trial-card-actions">
+              <button class="btn btn-ghost btn-sm" onclick="trialAction('criteria')">📄 View Full Criteria</button>
+              <button class="btn btn-secondary btn-sm" onclick="trialAction('save')">🔖 Save for Patient</button>
+            </div>
+          </article>
+        `).join('');
+      } else {
+        container.innerHTML = '<p>No trials found for this condition.</p>';
+      }
+    })
+    .catch(err => {
+      label.innerHTML = `<strong>Error fetching trials</strong>`;
+      console.error(err);
+    });
+}
+function escHtml(s) {
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+
+/* ── Trial card actions ─────────────────────────────────── */
+function trialAction(type) {
+  const toast = document.getElementById('trial-toast');
+  if (type === 'save') {
+    toast.textContent = '🔖 Preview only — trial saved to session view only. Not persisted. Study team must confirm eligibility before any patient contact.';
+  } else {
+    toast.textContent = '📄 Full criteria view is a preview placeholder. Verify current criteria at ClinicalTrials.gov before clinical use.';
+  }
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 7000);
+}
+
+/* ── Task toggle ────────────────────────────────────────── */
+function toggleTask(taskId, checkbox) {
+  const item = document.getElementById(taskId);
+  item.classList.toggle('done', checkbox.checked);
+  const toast = document.getElementById('task-toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
+/* ── Patient chart data ─────────────────────────────────── */
+const PATIENTS = {
+  rd: {
+    initials: 'RD',
+    name: 'R.D.',
+    id: '#0028 (sample)',
+    dob: '12 March 1975 (Age: 51)',
+    sex: 'Male',
+    phone: '●●●● ●●● ●24 (masked)',
+    email: 'r.●●●●@●●●.com (masked)',
+    address: 'London, UK (generalised)',
+    gp: 'Dr. A. Mehta, MD (self)',
+    lastVisit: '02 Aug 2026',
+    nextAppt: '24 Sep 2026 — 09:00 AM',
+    conditions: ['Type 2 Diabetes Mellitus', 'Hypertension', 'Dyslipidaemia'],
+    medications: [
+      { name: 'Metformin', dose: '500 mg', freq: 'Twice daily' },
+      { name: 'Amlodipine', dose: '5 mg', freq: 'Once daily' },
+      { name: 'Atorvastatin', dose: '20 mg', freq: 'Once nightly' },
+    ],
+    allergies: ['Penicillin — rash', 'Sulfonamides — urticaria'],
+    results: [
+      { name: 'HbA1c', value: '8.1%', ref: 'Target <7.0%', date: '23 Sep 2026', flag: true },
+      { name: 'Fasting Glucose', value: '8.4 mmol/L', ref: '3.9–5.6 mmol/L', date: '23 Sep 2026', flag: true },
+      { name: 'Total Cholesterol', value: '4.9 mmol/L', ref: '<5.0 mmol/L', date: '02 Aug 2026', flag: false },
+    ],
+    encounters: [
+      { date: '02 Aug 2026', title: 'Annual Review', note: 'HbA1c 7.2%. BP well-controlled. Continue current medications.' },
+      { date: '14 May 2026', title: 'Follow-up — Medication Review', note: 'Increased Metformin from 250 mg to 500 mg BD. Tolerated well.' },
+      { date: '10 Jan 2026', title: 'Routine Check', note: 'Labs within range. Lifestyle counselling provided.' },
+    ],
+  },
+  pk: {
+    initials: 'PK',
+    name: 'P.K.',
+    id: '#0041 (sample)',
+    dob: '07 June 1990 (Age: 36)',
+    sex: 'Female',
+    phone: '●●●● ●●● ●71 (masked)',
+    email: 'p.●●●●@●●●.com (masked)',
+    address: 'Manchester, UK (generalised)',
+    gp: 'New Patient — transferred from Dr. J. Patel (Sample)',
+    lastVisit: 'New Patient — No prior visit',
+    nextAppt: '24 Sep 2026 — 10:00 AM',
+    conditions: ['Hypertension (patient-reported)', 'Family History: CVA'],
+    medications: [
+      { name: 'Ramipril', dose: '5 mg', freq: 'Once daily' },
+    ],
+    allergies: ['NKDA (No Known Drug Allergies — patient-reported)'],
+    results: [
+      { name: 'BP (Home reading)', value: '148/92 mmHg', ref: 'Target <130/80', date: '22 Sep 2026', flag: true },
+      { name: 'Heart Rate', value: '74 bpm', ref: '60–100 bpm', date: '22 Sep 2026', flag: false },
+    ],
+    encounters: [
+      { date: 'New patient', title: 'Intake form submitted', note: 'No prior encounters in this system.' },
+    ],
+  },
+  st: {
+    initials: 'ST',
+    name: 'S.T.',
+    id: '#0054 (sample)',
+    dob: '22 November 1962 (Age: 63)',
+    sex: 'Female',
+    phone: '●●●● ●●● ●55 (masked)',
+    email: 's.●●●●@●●●.com (masked)',
+    address: 'Bristol, UK (generalised)',
+    gp: 'Dr. A. Mehta, MD',
+    lastVisit: '10 Sep 2026',
+    nextAppt: '24 Sep 2026 — 11:30 AM (Telehealth)',
+    conditions: ['Chronic Fatigue Syndrome', 'Hypothyroidism', 'Osteoarthritis (mild)'],
+    medications: [
+      { name: 'Levothyroxine', dose: '75 mcg', freq: 'Once daily (morning)' },
+      { name: 'Paracetamol', dose: '500 mg', freq: 'PRN (as needed)' },
+    ],
+    allergies: ['Aspirin — GI intolerance'],
+    results: [
+      { name: 'TSH', value: '2.4 mIU/L', ref: '0.4–4.0 mIU/L', date: '10 Sep 2026', flag: false },
+      { name: 'Free T4', value: '15.2 pmol/L', ref: '12–22 pmol/L', date: '10 Sep 2026', flag: false },
+      { name: 'Ferritin', value: '9 ng/mL', ref: '12–150 ng/mL', date: '10 Sep 2026', flag: true },
+    ],
+    encounters: [
+      { date: '10 Sep 2026', title: 'Thyroid Review', note: 'TSH stable. Fatigue persisting — iron studies ordered.' },
+      { date: '18 Jun 2026', title: 'Follow-up', note: 'Levothyroxine dose adjusted. Advised adequate hydration and rest.' },
+    ],
+  },
+  ml: {
+    initials: 'ML',
+    name: 'M.L.',
+    id: '#0063 (sample)',
+    dob: '30 January 1948 (Age: 78)',
+    sex: 'Male',
+    phone: '●●●● ●●● ●88 (masked)',
+    email: 'm.●●●●@●●●.com (masked)',
+    address: 'Birmingham, UK (generalised)',
+    gp: 'Dr. A. Mehta, MD',
+    lastVisit: '18 Sep 2026',
+    nextAppt: '24 Sep 2026 — 14:00 PM',
+    conditions: ['Atrial Fibrillation (paroxysmal)', 'Heart Failure (HFpEF)', 'T2DM'],
+    medications: [
+      { name: 'Warfarin', dose: '4 mg', freq: 'Once daily (dose varies)' },
+      { name: 'Bisoprolol', dose: '5 mg', freq: 'Once daily' },
+      { name: 'Furosemide', dose: '40 mg', freq: 'Once daily' },
+      { name: 'Metformin', dose: '500 mg', freq: 'Twice daily' },
+    ],
+    allergies: ['Amiodarone — thyroid dysfunction (historical)'],
+    results: [
+      { name: 'INR', value: '3.8', ref: 'Target 2.0–3.0', date: '18 Sep 2026', flag: true },
+      { name: 'eGFR', value: '52 mL/min', ref: '>60 mL/min', date: '18 Sep 2026', flag: true },
+      { name: 'BNP', value: '310 pg/mL', ref: '<100 pg/mL', date: '18 Sep 2026', flag: true },
+    ],
+    encounters: [
+      { date: '18 Sep 2026', title: 'INR Check', note: 'INR supratherapeutic at 3.8. Warfarin dose reduced. Repeat INR in 5 days.' },
+      { date: '04 Sep 2026', title: 'Cardiology MDT Note', note: 'HFpEF stable. Continue current diuresis. Echo booked.' },
+    ],
+  },
+  ab: {
+    initials: 'AB',
+    name: 'A.B.',
+    id: '#0077 (sample)',
+    dob: '15 April 1985 (Age: 41)',
+    sex: 'Male',
+    phone: '●●●● ●●● ●30 (masked)',
+    email: 'a.●●●●@●●●.com (masked)',
+    address: 'Leeds, UK (generalised)',
+    gp: 'Dr. A. Mehta, MD',
+    lastVisit: '05 Sep 2026',
+    nextAppt: '24 Sep 2026 — 15:30 PM',
+    conditions: ['Post-op appendectomy (laparoscopic)', 'Mild anaemia (post-op)'],
+    medications: [
+      { name: 'Ibuprofen', dose: '400 mg', freq: 'TDS (three times daily) with food' },
+      { name: 'Ferrous Sulphate', dose: '200 mg', freq: 'Once daily' },
+    ],
+    allergies: ['NKDA'],
+    results: [
+      { name: 'Haemoglobin', value: '10.4 g/dL', ref: '13.5–17.5 g/dL', date: '05 Sep 2026', flag: true },
+      { name: 'CRP', value: '18 mg/L', ref: '<5 mg/L', date: '05 Sep 2026', flag: true },
+      { name: 'WBC', value: '9.2 ×10⁹/L', ref: '4–11 ×10⁹/L', date: '05 Sep 2026', flag: false },
+    ],
+    encounters: [
+      { date: '05 Sep 2026', title: 'Post-op Day 3 Review', note: 'Wound healing well. Mild anaemia — iron supplementation commenced.' },
+    ],
+  },
+  fn: {
+    initials: 'FN',
+    name: 'F.N.',
+    id: '#0089 (sample)',
+    dob: '03 August 2001 (Age: 25)',
+    sex: 'Female',
+    phone: '●●●● ●●● ●12 (masked)',
+    email: 'f.●●●●@●●●.com (masked)',
+    address: 'London, UK (generalised)',
+    gp: 'Dr. A. Mehta, MD',
+    lastVisit: '01 Sep 2026',
+    nextAppt: '08 Oct 2026',
+    conditions: ['Generalised Anxiety Disorder (patient-reported)', 'Insomnia', 'Vitamin D deficiency'],
+    medications: [
+      { name: 'Sertraline', dose: '50 mg', freq: 'Once daily' },
+      { name: 'Colecalciferol (Vit D3)', dose: '1000 IU', freq: 'Once daily' },
+      { name: 'Melatonin', dose: '2 mg', freq: 'PRN (30 min before sleep)' },
+    ],
+    allergies: ['NKDA'],
+    results: [
+      { name: 'Vitamin D (25-OH)', value: '18 nmol/L', ref: '>50 nmol/L', date: '01 Sep 2026', flag: true },
+      { name: 'Thyroid Function', value: 'Normal', ref: 'Within range', date: '01 Sep 2026', flag: false },
+      { name: 'CBC (Full Blood Count)', value: 'Normal', ref: 'Within range', date: '01 Sep 2026', flag: false },
+    ],
+    encounters: [
+      { date: '01 Sep 2026', title: 'Mental Health Review', note: 'Sertraline well-tolerated. Sleep slightly improved. Vitamin D deficiency found — supplementation started.' },
+      { date: '20 Jul 2026', title: 'Anxiety Follow-up', note: 'GAD-7 score 12/21. Referral to talking therapies considered.' },
+    ],
+  },
+};
+
+/* ── Open patient chart drawer ──────────────────────────── */
+function openChart(id) {
+  window.activePatientId = id;
+  const p = PATIENTS[id];
+  if (!p) return;
+
+  document.getElementById('drawerAvatar').textContent = p.initials;
+  document.getElementById('drawerTitle').textContent  = 'Patient Chart — ' + p.name;
+  document.getElementById('drawerSubtitle').textContent = 'ID: ' + p.id + ' · Next: ' + p.nextAppt;
+
+  const body = document.getElementById('drawerBody');
+  body.innerHTML = `
+    <div class="drawer-disclaimer" id="drawerDisclaimer" role="note">
+      ⚠ SAMPLE DATA — Not connected to any real patient record or EHR system
+    </div>
+
+    <!-- Demographics -->
+    <div class="drawer-section">
+      <h4>Demographics</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><small>Full Name (Anonymised)</small><strong>${escHtml(p.name)} <span class="sample-tag">Sample</span></strong></div>
+        <div class="detail-item"><small>Patient ID</small><strong>${escHtml(p.id)}</strong></div>
+        <div class="detail-item"><small>Date of Birth</small><strong>${escHtml(p.dob)}</strong></div>
+        <div class="detail-item"><small>Sex (Patient-reported)</small><strong>${escHtml(p.sex)}</strong></div>
+        <div class="detail-item"><small>Contact Phone</small><strong>${escHtml(p.phone)}</strong></div>
+        <div class="detail-item"><small>Email</small><strong>${escHtml(p.email)}</strong></div>
+        <div class="detail-item"><small>Address</small><strong>${escHtml(p.address)}</strong></div>
+        <div class="detail-item"><small>Primary Clinician</small><strong>${escHtml(p.gp)}</strong></div>
+      </div>
+    </div>
+
+    <!-- Active Conditions -->
+    <div class="drawer-section">
+      <h4>Active Conditions (Patient-reported)</h4>
+      <div>${p.conditions.map(c => `<span class="condition-tag">${escHtml(c)}</span>`).join('')}</div>
+      <p style="font-size:10px;color:var(--muted);margin-top:8px;">Conditions are self-reported in pre-visit intake. Clinical confirmation required.</p>
+    </div>
+
+    <!-- Medications -->
+    <div class="drawer-section">
+      <h4>Current Medications</h4>
+      <div>${p.medications.map(m => `
+        <div class="med-item">
+          <div>
+            <div class="med-name">${escHtml(m.name)}</div>
+            <div class="med-dose">${escHtml(m.dose)} · ${escHtml(m.freq)}</div>
+          </div>
+          <span class="badge badge-teal">Active</span>
+        </div>
+      `).join('')}</div>
+    </div>
+
+    <!-- Allergies -->
+    <div class="drawer-section">
+      <h4>Allergies &amp; Intolerances</h4>
+      <div>${p.allergies.map(a => `<span class="allergy-badge">⚠ ${escHtml(a)}</span>`).join('')}</div>
+    </div>
+
+    <!-- Last Results -->
+    <div class="drawer-section">
+      <h4>Last Results <span class="sample-tag">Illustrative values</span></h4>
+      <div>${p.results.map(r => `
+        <div class="result-row">
+          <div>
+            <div class="result-name">${escHtml(r.name)}</div>
+            <div class="result-ref">Ref: ${escHtml(r.ref)} · ${escHtml(r.date)}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="result-val">${escHtml(r.value)}</div>
+            ${r.flag ? '<div class="result-flag">⚑ Flagged for review</div>' : '<div style="color:var(--success-green);font-size:10px;">✓ Within range</div>'}
+          </div>
+        </div>
+      `).join('')}</div>
+    </div>
+
+    <!-- Encounter Notes -->
+    <div class="drawer-section">
+      <h4>Encounter Notes</h4>
+      ${p.encounters.map(e => `
+        <div class="encounter-item">
+          <div class="enc-date">${escHtml(e.date)}</div>
+          <div class="enc-body">
+            <strong>${escHtml(e.title)}</strong>
+            <p>${escHtml(e.note)}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="btn-row" style="padding-top:4px;">
+      <button class="btn btn-primary btn-sm"
+              onclick="switchSection('encounter', document.querySelector('[data-section=encounter]'));closeChart();">
+        📝 Open SOAP Note
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">
+        🖨 Print Summary
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="closeChart()">
+        ✕ Close
+      </button>
+    </div>
+
+    <p style="font-size:9px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;">
+      Illustrative sample only · Not connected to any EHR · Data is fictional · NexCura Preview v2.5
+    </p>
+  `;
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('chartDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').setAttribute('aria-hidden', 'false');
+  document.getElementById('chartDrawer').focus();
+  document.body.style.overflow = 'hidden';
+}
+
+function closeChart() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('chartDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+/* ── Keyboard: close drawer on Escape ──────────────────── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('chartDrawer').classList.contains('open')) {
+      closeChart();
+    }
+    if (document.getElementById('sidebar').classList.contains('mobile-open')) {
+      closeMobileSidebar();
+    }
+  }
+});
+
+/* ── Init ───────────────────────────────────────────────── */
+(function init() {
+  // Set aria-hidden on inactive sections
+  document.querySelectorAll('.section-view').forEach(s => {
+    if (!s.classList.contains('active')) s.setAttribute('aria-hidden', 'true');
+  });
+})();
+</script>
+
+</div><!-- /portalContent -->
+
+<script>
+  // Show portal content if already authenticated
+  if (sessionStorage.getItem('nexcura_clinician_auth') === 'authenticated') {
+    document.getElementById('portalContent').style.display = '';
+  }
+</script>
+
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

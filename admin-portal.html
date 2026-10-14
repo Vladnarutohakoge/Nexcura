@@ -1,0 +1,3497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console — NexCura Administration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────── */
+    /* ─── DESIGN TOKENS (CHARCOAL BLACK + TEAL THEME) ────────── */
+    :root {
+      --bg-main:           #171D24;  /* Charcoal Black */
+      --bg-sidebar:        #202830;  /* Deep Charcoal */
+      --bg-card:           #252F38;  /* Dark Slate */
+      --bg-input:          #303C46;  /* Slate Gray */
+      --btn-primary:       #174E55;  /* Deep Teal */
+      --accent-teal:       #36CFC9;  /* Bright Teal */
+      --text-main:         #F5F7FA;  /* Soft White */
+      --text-muted:        #D0D8DF;  /* Light Gray */
+      --border-color:      #465560;  /* Muted Slate */
+      --placeholder-color: #B5C0CA;  /* Muted Gray */
+      --success:           #45C99A;
+      --warning:           #F2C66D;
+      --error:             #FF7777;
+
+      --sidebar-w:         240px;
+
+      /* Compatibility aliases */
+      --teal:          #36CFC9;
+      --deep:          #174E55;
+      --navy:          #F5F7FA;
+      --mint:          #252F38;
+      --cream:         #171D24;
+      --ink:           #F5F7FA;
+      --muted:         #D0D8DF;
+      --line:          #465560;
+      --alert-red:     #FF7777;
+      --success-green: #45C99A;
+      --amber:         #F2C66D;
+    }
+
+    /* ─── RESET ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, select, input, textarea { font: inherit; color: var(--text-main); }
+    option { background: var(--bg-input); color: var(--text-main); }
+    img { max-width: 100%; display: block; }
+    h1,h2,h3,h4 { font-family: Manrope, sans-serif; letter-spacing: -0.5px; color: var(--text-main); }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+
+    /* ─── MODAL & TOAST ─────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; max-height: 90vh; color: var(--text-main);
+    }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-family: Manrope, sans-serif; font-weight: 700; font-size: 16px; color: var(--accent-teal); }
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
+    .modal-close:hover { color: var(--accent-teal); }
+    .modal-body { padding: 20px; overflow-y: auto; color: var(--text-main); }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; }
+
+    .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 100000; }
+    .admin-toast {
+      padding: 12px 16px; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 500; min-width: 250px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: translateY(20px); transition: opacity 0.3s, transform 0.3s;
+    }
+    .admin-toast.show { opacity: 1; transform: translateY(0); }
+    .admin-toast.success { background: var(--success); color: #0d281e; }
+    .admin-toast.warning { background: var(--warning); color: #3d2b00; }
+    .admin-toast.error { background: var(--error); color: #ffffff; }
+    .admin-toast.info { background: var(--btn-primary); color: var(--text-main); border: 1px solid var(--accent-teal); }
+
+    /* ─── DEMO / SAFETY BANNER ──────────────────────────────── */
+    .safety-banner {
+      background: var(--bg-sidebar);
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      border-bottom: 2px solid var(--accent-teal);
+    }
+    .safety-banner strong { color: var(--accent-teal); }
+
+    /* ─── APP SHELL ─────────────────────────────────────────── */
+    .app-shell {
+      display: flex;
+      min-height: calc(100vh - 44px);
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--bg-sidebar);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 44px;
+      height: calc(100vh - 44px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-right: 1px solid var(--border-color);
+    }
+    .sidebar-brand {
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .org-avatar {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      background: var(--btn-primary);
+      border: 1px solid var(--accent-teal);
+      display: grid; place-items: center;
+      font-family: Manrope, sans-serif;
+      font-weight: 800; font-size: 14px;
+      color: var(--accent-teal);
+      flex-shrink: 0;
+    }
+    .sidebar-brand-text { min-width: 0; }
+    .sidebar-brand-text strong {
+      display: block;
+      font-family: Manrope, sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+    }
+    .sidebar-brand-text small {
+      display: block;
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      letter-spacing: 0.06em;
+    }
+
+    .sidebar-nav { flex: 1; padding: 14px 0; }
+    .nav-section-label {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      opacity: 0.8;
+      padding: 12px 18px 5px;
+      text-transform: uppercase;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      border-radius: 0;
+    }
+    .nav-item:hover {
+      background: rgba(54,207,201,0.12);
+      color: var(--accent-teal);
+    }
+    .nav-item.active {
+      background: var(--btn-primary);
+      color: var(--accent-teal);
+      border-left-color: var(--accent-teal);
+    }
+    .nav-item:focus-visible {
+      outline: 2px solid var(--accent-teal);
+      outline-offset: -2px;
+    }
+    .nav-icon {
+      width: 18px; height: 18px;
+      display: grid; place-items: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--error);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center;
+    }
+    .nav-badge.amber { background: var(--warning); color: #3d2b00; }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-color);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .sidebar-footer strong { display: block; color: var(--text-main); font-size: 11px; margin-bottom: 2px; }
+
+    /* ─── TOP BAR ────────────────────────────────────────────── */
+    .top-bar {
+      height: 56px;
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 14px; }
+    .topbar-title {
+      font-family: Manrope, sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    .topbar-section-label {
+      font-size: 10px;
+      color: var(--accent-teal);
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .top-bar-right { display: flex; align-items: center; gap: 14px; }
+    .admin-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .admin-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--btn-primary);
+      color: var(--accent-teal);
+      border: 1px solid var(--accent-teal);
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 700;
+    }
+    .admin-chip strong { color: var(--text-main); font-size: 12px; }
+    .hamburger-btn {
+      display: none;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--accent-teal);
+      font-size: 20px;
+      padding: 4px;
+    }
+    .hamburger-btn:focus-visible { outline: 2px solid var(--accent-teal); border-radius: 3px; }
+
+    /* ─── MAIN CONTENT ──────────────────────────────────────── */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .content-area {
+      flex: 1;
+      padding: 28px 28px 48px;
+      overflow-y: auto;
+      background: var(--bg-main);
+    }
+
+    /* ─── SECTIONS ──────────────────────────────────────────── */
+    .section { display: none; background: var(--bg-main); }
+    .section.active { display: block; }
+
+    .section-title {
+      font-family: Manrope, sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--text-main);
+      letter-spacing: -0.6px;
+      margin-bottom: 4px;
+    }
+    .section-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+
+    /* ─── DEMO BANNER ───────────────────────────────────────── */
+    .demo-banner {
+      border-left: 3px solid var(--accent-teal);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-teal);
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 20px;
+    }
+    .demo-banner strong { color: var(--accent-teal); }
+
+    /* ─── METRIC CARDS ──────────────────────────────────────── */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px 16px;
+      border-top: 4px solid var(--accent-teal);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    .metric-card.red { border-top-color: var(--error); }
+    .metric-card.amber { border-top-color: var(--warning); }
+    .metric-card.green { border-top-color: var(--success); }
+    .metric-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .metric-card-value {
+      font-family: Manrope, sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin: 8px 0 4px;
+    }
+    .metric-card-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .metric-card-icon {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    /* ─── DASHBOARD GRID ────────────────────────────────────── */
+    .dashboard-lower {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    /* ─── PANEL ─────────────────────────────────────────────── */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px 18px 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    .panel-title {
+      font-family: Manrope, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-tag {
+      font-size: 8px;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* ─── BAR CHART (CSS-only) ──────────────────────────────── */
+    .bar-chart-wrap { padding: 0 4px; }
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 140px;
+      border-bottom: 1.5px solid var(--border-color);
+      margin-bottom: 8px;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+    .bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      background: var(--btn-primary);
+      border: 1px solid var(--accent-teal);
+      opacity: 0.85;
+      transition: opacity 0.2s;
+      position: relative;
+    }
+    .bar:hover { opacity: 1; background: var(--accent-teal); }
+    .bar.highlight { background: var(--accent-teal); opacity: 1; }
+    .bar-value {
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .bar-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .chart-labels {
+      display: flex;
+      gap: 10px;
+    }
+    .chart-labels span {
+      flex: 1;
+      font-size: 9px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .chart-note {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* ─── ACTIVITY FEED ─────────────────────────────────────── */
+    .activity-list { display: flex; flex-direction: column; gap: 0; }
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 11px;
+      color: var(--text-main);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+    .activity-dot.green { background: var(--success); }
+    .activity-dot.amber { background: var(--warning); }
+    .activity-dot.red   { background: var(--error); }
+    .activity-dot.blue  { background: var(--accent-teal); }
+    .activity-dot.teal  { background: var(--btn-primary); }
+    .activity-time {
+      font-size: 9px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+    .activity-text { flex: 1; line-height: 1.4; color: var(--text-main); }
+
+    /* ─── SYSTEM HEALTH ─────────────────────────────────────── */
+    .health-row {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .health-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .health-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .health-dot.online  { background: var(--success); box-shadow: 0 0 0 3px rgba(69,201,154,0.2); }
+    .health-dot.warning { background: var(--warning); box-shadow: 0 0 0 3px rgba(242,198,109,0.2); }
+    .health-info strong { display: block; font-size: 11px; font-weight: 700; color: var(--text-main); }
+    .health-info small  { font-size: 9px; color: var(--text-muted); }
+    .health-info small.online-text  { color: var(--success); }
+    .health-info small.warning-text { color: var(--warning); }
+
+    /* ─── TABLE STYLES ──────────────────────────────────────── */
+    .table-container { overflow-x: auto; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+    }
+    thead th {
+      background: var(--bg-input);
+      color: var(--accent-teal);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border-color);
+      text-align: left;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { color: var(--text-main); }
+    thead th .sort-icon { margin-left: 4px; opacity: 0.6; font-size: 9px; color: var(--accent-teal); }
+    tbody td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    tbody tr:hover { background: rgba(54,207,201,0.08); }
+
+    /* ─── BADGES ─────────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-green    { background: rgba(69,201,154,0.15); color: var(--success); border: 1px solid var(--success); }
+    .badge-red      { background: rgba(255,119,119,0.15); color: var(--error); border: 1px solid var(--error); }
+    .badge-amber    { background: rgba(242,198,109,0.15); color: var(--warning); border: 1px solid var(--warning); }
+    .badge-slate    { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-color); }
+    .badge-blue     { background: rgba(54,207,201,0.15); color: var(--accent-teal); border: 1px solid var(--accent-teal); }
+    .badge-teal     { background: rgba(23,78,85,0.4); color: var(--accent-teal); border: 1px solid var(--accent-teal); }
+    .badge-purple   { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid #a78bfa; }
+    .role-patient   { background: rgba(54,207,201,0.15); color: var(--accent-teal); border: 1px solid var(--accent-teal); }
+    .role-clinician { background: rgba(23,78,85,0.4); color: var(--accent-teal); border: 1px solid var(--accent-teal); }
+    .role-staff     { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid #a78bfa; }
+    .role-admin     { background: rgba(242,198,109,0.15); color: var(--warning); border: 1px solid var(--warning); }
+    .role-sysadmin  { background: rgba(255,119,119,0.15); color: var(--error); border: 1px solid var(--error); }
+
+    /* ─── ACTION BUTTONS ────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:focus-visible { outline: 2px solid var(--accent-teal); outline-offset: 2px; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--btn-primary); color: #fff; border: 1px solid var(--accent-teal); }
+    .btn-primary:hover { background: var(--accent-teal); color: var(--bg-main); }
+    .btn-secondary { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: var(--border-color); color: #fff; }
+    .btn-danger { background: rgba(255,119,119,0.15); color: var(--error); border: 1px solid var(--error); }
+    .btn-danger:hover { background: var(--error); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
+    .btn-ghost:hover { background: var(--bg-input); color: var(--text-main); }
+    .btn-sm { padding: 5px 9px; font-size: 10px; }
+
+    .action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .ml-auto { margin-left: auto; }
+
+    /* ─── SEARCH / FILTER BAR ───────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .filter-bar input,
+    .filter-bar select {
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-main);
+      background: var(--bg-input);
+    }
+    .filter-bar input:focus,
+    .filter-bar select:focus { outline: 2px solid var(--accent-teal); outline-offset: 1px; }
+    .search-input { flex: 1; min-width: 200px; }
+    .search-input::placeholder { color: var(--placeholder-color); }
+
+    /* ─── INLINE INVITE FORM ────────────────────────────────── */
+    .invite-form {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .invite-form.open { display: block; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-field label { font-size: 10px; font-weight: 700; color: var(--accent-teal); }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-input);
+      padding: 9px 11px;
+      font-size: 12px;
+      color: var(--text-main);
+    }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus { outline: 2px solid var(--accent-teal); outline-offset: 1px; }
+
+    /* ─── FACILITY CARDS ────────────────────────────────────── */
+    .facility-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .facility-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: box-shadow 0.2s;
+    }
+    .facility-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .facility-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .facility-name {
+      font-family: Manrope, sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+    .facility-address {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      margin-bottom: 12px;
+    }
+    .facility-meta {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+    .facility-stat { font-size: 11px; color: var(--text-muted); }
+    .facility-stat strong { color: var(--accent-teal); font-weight: 700; }
+    .facility-actions { display: flex; gap: 8px; }
+
+    /* ─── PERMISSIONS TABLE ─────────────────────────────────── */
+    .perm-check  { color: var(--success); font-size: 15px; }
+    .perm-cross  { color: var(--border-color); font-size: 15px; }
+
+    /* ─── AUDIT LOG ─────────────────────────────────────────── */
+    .audit-result-success { color: var(--success); font-weight: 700; font-size: 11px; }
+    .audit-result-failed  { color: var(--error);     font-weight: 700; font-size: 11px; }
+
+    /* ─── LANGUAGE TABLE ────────────────────────────────────── */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 36px; height: 20px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      left: 3px; top: 3px;
+      width: 14px; height: 14px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--btn-primary); border-color: var(--accent-teal); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background: var(--accent-teal); }
+    .toggle-switch input:focus-visible + .toggle-slider { outline: 2px solid var(--accent-teal); outline-offset: 2px; }
+
+    /* ─── REPORTS ────────────────────────────────────────────── */
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .report-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    .report-card-title {
+      font-family: Manrope, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .report-card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .date-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .date-row label { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+    .date-row input[type="date"] {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: var(--text-main);
+      background: var(--bg-input);
+    }
+    .date-row input[type="date"]:focus { outline: 2px solid var(--accent-teal); outline-offset: 1px; }
+
+    /* ─── TOAST / FLASH MESSAGE ─────────────────────────────── */
+    .toast {
+      display: none;
+      background: var(--btn-primary);
+      color: var(--text-main);
+      border: 1px solid var(--accent-teal);
+      font-size: 11px;
+      padding: 9px 14px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .toast.show { display: inline-block; }
+
+    /* ─── NOTE BOX ──────────────────────────────────────────── */
+    .note-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-teal);
+      border-radius: 0 5px 5px 0;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--text-main);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .dashboard-lower { grid-template-columns: 1fr; }
+      .health-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 860px) {
+      .facility-grid { grid-template-columns: 1fr; }
+      .report-grid   { grid-template-columns: 1fr; }
+      .form-grid     { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        width: 240px;
+        z-index: 150;
+        top: 44px;
+        height: calc(100% - 44px);
+        transition: left 0.25s;
+      }
+      .sidebar.open { left: 0; }
+      .hamburger-btn { display: block; }
+      .content-area { padding: 18px 15px 40px; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .health-row { grid-template-columns: 1fr; }
+      .top-bar { padding: 0 14px; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+    }
+    @media (max-width: 420px) {
+      .metric-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── LOGIN GATE ─────────────────────────────────────────────── -->
+<div id="loginGate" style="display:flex;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#171D24 0%,#202830 50%,#171D24 100%);align-items:center;justify-content:center;font-family:'DM Sans','Manrope',sans-serif;">
+  <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:48px 40px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.6);text-align:center;color:var(--text-main);">
+    <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#174E55,#36CFC9);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+      <span style="color:#fff;font-size:24px;font-weight:800;font-family:'Manrope',sans-serif;">NC</span>
+    </div>
+    <h1 style="font-family:'Manrope',sans-serif;font-size:1.5rem;color:var(--text-main);margin:0 0 6px;">Admin Console</h1>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin:0 0 28px;">Enter your credentials to access the administrator dashboard.</p>
+    <form id="loginForm" onsubmit="return handleLogin(event)" autocomplete="off">
+      <div style="text-align:left;margin-bottom:16px;">
+        <label for="loginUser" style="display:block;font-size:0.8rem;font-weight:600;color:var(--accent-teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Username</label>
+        <input id="loginUser" type="text" placeholder="Enter username" required
+               style="width:100%;padding:12px 14px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;font-size:0.95rem;color:var(--text-main);font-family:inherit;box-sizing:border-box;outline:none;transition:border 0.2s;"
+               onfocus="this.style.borderColor='var(--accent-teal)'" onblur="this.style.borderColor='var(--border-color)'">
+      </div>
+      <div style="text-align:left;margin-bottom:8px;">
+        <label for="loginPass" style="display:block;font-size:0.8rem;font-weight:600;color:var(--accent-teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Password</label>
+        <input id="loginPass" type="password" placeholder="Enter password" required
+               style="width:100%;padding:12px 14px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;font-size:0.95rem;color:var(--text-main);font-family:inherit;box-sizing:border-box;outline:none;transition:border 0.2s;"
+               onfocus="this.style.borderColor='var(--accent-teal)'" onblur="this.style.borderColor='var(--border-color)'">
+      </div>
+      <p id="loginError" style="color:var(--error);font-size:0.82rem;min-height:20px;margin:4px 0 16px;" aria-live="polite"></p>
+      <button type="submit"
+              style="width:100%;padding:13px;background:linear-gradient(135deg,#174E55,#36CFC9);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;transition:opacity 0.2s;"
+              onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        Sign In
+      </button>
+    </form>
+    <p style="color:var(--text-muted);font-size:0.75rem;margin-top:20px;">Demo credentials: <strong>admin</strong> / <strong>admin@123</strong></p>
+  </div>
+</div>
+
+<script>
+  // ── Auth Gate Logic ──
+  const PORTAL_KEY = 'nexcura_admin_auth';
+  const VALID_USER = 'admin';
+  const VALID_PASS = 'admin@123';
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if (user === VALID_USER && pass === VALID_PASS) {
+      sessionStorage.setItem(PORTAL_KEY, 'authenticated');
+      document.getElementById('loginGate').style.display = 'none';
+      document.getElementById('portalContent').style.display = '';
+    } else {
+      document.getElementById('loginError').textContent = '✕ Invalid username or password. Please try again.';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+    return false;
+  }
+
+  function signOut() {
+    sessionStorage.removeItem(PORTAL_KEY);
+    localStorage.removeItem(PORTAL_KEY);
+    document.cookie = `${PORTAL_KEY}=; Max-Age=0; path=/;`;
+    window.location.replace('login.html?role=admin');
+  }
+
+  // Auto-login if session exists
+  const isAdminAuth = sessionStorage.getItem(PORTAL_KEY) === 'authenticated' ||
+                      localStorage.getItem(PORTAL_KEY) === 'authenticated' ||
+                      document.cookie.includes(PORTAL_KEY + '=authenticated');
+  if (isAdminAuth) {
+    sessionStorage.setItem(PORTAL_KEY, 'authenticated');
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('portalContent').style.display = '';
+  } else {
+    window.location.replace('login.html?role=admin');
+  }
+</script>
+
+<!-- ─── PORTAL CONTENT (hidden until authenticated) ──────────── -->
+<div id="portalContent" style="display:none;">
+
+<!-- ─── SAFETY BANNER ────────────────────────────────────────── -->
+<div class="safety-banner" role="banner" aria-label="Administrator console notice">
+  <strong>⚠ ADMINISTRATOR CONSOLE PREVIEW.</strong>
+  Sample interface content only. No changes are saved.
+  Access controls, audit logging, and data protection must be implemented by a secure backend before production use.
+</div>
+
+<!-- ─── APP SHELL ─────────────────────────────────────────────── -->
+<div class="app-shell">
+
+  <!-- ─── SIDEBAR ───────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Admin console navigation">
+    <div class="sidebar-brand">
+      <div class="org-avatar" aria-hidden="true">NC</div>
+      <div class="sidebar-brand-text">
+        <strong>Admin Console</strong>
+        <small>NexCura Platform</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">System</div>
+      <a href="/" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        Back to Home
+      </a>
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" data-section="dashboard" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">⊞</span>
+        Dashboard
+      </button>
+
+      <div class="nav-section-label">Management</div>
+      <button class="nav-item" data-section="users">
+        <span class="nav-icon" aria-hidden="true">👤</span>
+        User Management
+      </button>
+      <button class="nav-item" data-section="facilities">
+        <span class="nav-icon" aria-hidden="true">🏥</span>
+        Facilities
+      </button>
+      <button class="nav-item" data-section="roles">
+        <span class="nav-icon" aria-hidden="true">🔑</span>
+        Role &amp; Access Policies
+        <span class="nav-badge amber">12</span>
+      </button>
+
+      <div class="nav-section-label">Compliance</div>
+      <button class="nav-item" data-section="audit">
+        <span class="nav-icon" aria-hidden="true">📋</span>
+        Audit Log
+        <span class="nav-badge">3</span>
+      </button>
+
+      <div class="nav-section-label">Configuration</div>
+      <button class="nav-item" data-section="language">
+        <span class="nav-icon" aria-hidden="true">🌐</span>
+        Language Config
+      </button>
+      <button class="nav-item" data-section="reports">
+        <span class="nav-icon" aria-hidden="true">📊</span>
+        Reports
+      </button>
+
+      <div class="nav-section-label">Operations</div>
+      <button class="nav-item" data-section="departments">
+        <span class="nav-icon" aria-hidden="true">🏢</span>
+        Departments
+      </button>
+      <button class="nav-item" data-section="inventory">
+        <span class="nav-icon" aria-hidden="true">📦</span>
+        Inventory & Equipment
+      </button>
+      <button class="nav-item" data-section="billing">
+        <span class="nav-icon" aria-hidden="true">💰</span>
+        Billing & Finance
+      </button>
+
+      <div class="nav-section-label">Engagement</div>
+      <button class="nav-item" data-section="notifications">
+        <span class="nav-icon" aria-hidden="true">🔔</span>
+        Notifications
+        <span class="nav-badge">5</span>
+      </button>
+      <button class="nav-item" data-section="feedback">
+        <span class="nav-icon" aria-hidden="true">💬</span>
+        Feedback & Complaints
+        <span class="nav-badge amber">8</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong>Dr. A. Sharma</strong>
+      System Administrator · v2.4.1
+      <button onclick="signOut()" style="display:block;margin-top:10px;width:100%;padding:8px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;cursor:pointer;font-size:0.8rem;font-family:inherit;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">⎋ Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN AREA ──────────────────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- TOP BAR -->
+    <header class="top-bar" role="banner">
+      <div class="top-bar-left">
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-controls="sidebar" aria-expanded="false">
+          ☰
+        </button>
+        <span class="topbar-title">NexCura Administration</span>
+        <span class="topbar-section-label" id="topbarLabel" aria-live="polite">Dashboard</span>
+      </div>
+      <div class="top-bar-right">
+        <div class="admin-chip">
+          <div class="admin-avatar" aria-hidden="true">AS</div>
+          <div>
+            <strong>Dr. A. Sharma</strong>
+            <div style="font-size:9px;color:var(--muted)">System Admin</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area" id="mainContent" tabindex="-1">
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 1. DASHBOARD                                           -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section active" id="section-dashboard" aria-labelledby="dash-heading">
+        <h1 class="section-title" id="dash-heading">Dashboard</h1>
+        <p class="section-subtitle">Platform overview · Last refreshed 23 Sep 2026 at 15:45</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Illustrative sample only.</strong> All figures shown below are representative sample data and do not reflect any real user, patient, or organisational information.
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="metric-grid" role="list" aria-label="Key platform metrics">
+          <div class="metric-card" role="listitem">
+            <div class="metric-card-icon" aria-hidden="true">👥</div>
+            <div class="metric-card-label">Total Users</div>
+            <div class="metric-card-value">284</div>
+            <div class="metric-card-sub">+14 this month</div>
+          </div>
+          <div class="metric-card green" role="listitem">
+            <div class="metric-card-icon" aria-hidden="true">🏥</div>
+            <div class="metric-card-label">Active Facilities</div>
+            <div class="metric-card-value">6</div>
+            <div class="metric-card-sub">All operational</div>
+          </div>
+          <div class="metric-card amber" role="listitem">
+            <div class="metric-card-icon" aria-hidden="true">🔍</div>
+            <div class="metric-card-label">Pending Access Reviews</div>
+            <div class="metric-card-value">12</div>
+            <div class="metric-card-sub">Due within 7 days</div>
+          </div>
+          <div class="metric-card red" role="listitem">
+            <div class="metric-card-icon" aria-hidden="true">🚨</div>
+            <div class="metric-card-label">Open Audit Alerts</div>
+            <div class="metric-card-value">3</div>
+            <div class="metric-card-sub">Flagged for review</div>
+          </div>
+        </div>
+
+        <!-- Charts + Activity -->
+        <div class="dashboard-lower">
+          <!-- Bar Chart -->
+          <div class="panel">
+            <div class="panel-title">
+              Weekly Appointment Requests
+              <span class="panel-tag">Sample data — week of 16–22 Sep 2026</span>
+            </div>
+            <div class="bar-chart-wrap" role="img" aria-label="Bar chart: weekly appointment requests. Mon 38, Tue 52, Wed 61, Thu 47, Fri 58, Sat 29, Sun 14.">
+              <div class="bar-chart">
+                <div class="bar-col">
+                  <span class="bar-value">38</span>
+                  <div class="bar" style="height:54%;" title="Monday: 38 appointments"></div>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-value">52</span>
+                  <div class="bar" style="height:74%;" title="Tuesday: 52 appointments"></div>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-value">61</span>
+                  <div class="bar highlight" style="height:88%;" title="Wednesday: 61 appointments (highest)"></div>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-value">47</span>
+                  <div class="bar" style="height:67%;" title="Thursday: 47 appointments"></div>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-value">58</span>
+                  <div class="bar" style="height:83%;" title="Friday: 58 appointments"></div>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-value">29</span>
+                  <div class="bar" style="height:41%;" title="Saturday: 29 appointments"></div>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-value">14</span>
+                  <div class="bar" style="height:20%;" title="Sunday: 14 appointments"></div>
+                </div>
+              </div>
+              <div class="chart-labels" aria-hidden="true">
+                <span>Mon</span><span>Tue</span><span>Wed</span>
+                <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+              <p class="chart-note">
+                <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--success-green);vertical-align:middle;margin-right:4px;" aria-hidden="true"></span>Highlighted bar = peak day &nbsp;|&nbsp;
+                <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--teal);vertical-align:middle;margin-right:4px;" aria-hidden="true"></span>Other days
+              </p>
+            </div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="panel">
+            <div class="panel-title">Recent Activity</div>
+            <div class="activity-list" role="feed" aria-label="Recent platform activity">
+              <div class="activity-item" role="article">
+                <div class="activity-dot teal" aria-label="Role update event"></div>
+                <div class="activity-text">User role updated — <strong>J. Nair</strong> — promoted to Clinician</div>
+                <div class="activity-time">2 min ago</div>
+              </div>
+              <div class="activity-item" role="article">
+                <div class="activity-dot green" aria-label="Facility added event"></div>
+                <div class="activity-text">New facility added — <strong>Koramangala Clinic</strong></div>
+                <div class="activity-time">1 hr ago</div>
+              </div>
+              <div class="activity-item" role="article">
+                <div class="activity-dot amber" aria-label="Access review event"></div>
+                <div class="activity-text">Access review pending — <strong>R. Mehta</strong> · expires 25 Sep</div>
+                <div class="activity-time">3 hr ago</div>
+              </div>
+              <div class="activity-item" role="article">
+                <div class="activity-dot red" aria-label="Audit alert event"></div>
+                <div class="activity-text">Audit alert raised — repeated failed login · <strong>P. Krishnan</strong></div>
+                <div class="activity-time">5 hr ago</div>
+              </div>
+              <div class="activity-item" role="article">
+                <div class="activity-dot blue" aria-label="Language config event"></div>
+                <div class="activity-text">Language config updated — <strong>Kannada</strong> set to Active</div>
+                <div class="activity-time">Yesterday</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Health -->
+        <h2 style="font-family:Manrope;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;">System Health</h2>
+        <div class="health-row" role="list" aria-label="System service health status">
+          <div class="health-card" role="listitem">
+            <div class="health-dot online" aria-label="Online"></div>
+            <div class="health-info">
+              <strong>Auth Service</strong>
+              <small class="online-text">● Online — 99.98% uptime</small>
+            </div>
+          </div>
+          <div class="health-card" role="listitem">
+            <div class="health-dot online" aria-label="Online"></div>
+            <div class="health-info">
+              <strong>Records Service</strong>
+              <small class="online-text">● Online — responding normally</small>
+            </div>
+          </div>
+          <div class="health-card" role="listitem">
+            <div class="health-dot online" aria-label="Online"></div>
+            <div class="health-info">
+              <strong>AI Assistant</strong>
+              <small class="online-text">● Online — model v3.1 active</small>
+            </div>
+          </div>
+          <div class="health-card" role="listitem">
+            <div class="health-dot warning" aria-label="Warning — check required"></div>
+            <div class="health-info">
+              <strong>Trial Sync</strong>
+              <small class="warning-text">⚠ Last synced 6 h ago — check required</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 2. USER MANAGEMENT                                     -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section" id="section-users" aria-labelledby="users-heading">
+        <h1 class="section-title" id="users-heading">User Management</h1>
+        <p class="section-subtitle">Manage platform accounts, roles, and access levels.</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Sample data — no real accounts.</strong> All names, email addresses, and account details shown here are fictional and illustrative only.
+        </div>
+
+        <!-- Controls -->
+        <div class="action-row">
+          <button class="btn btn-primary" id="inviteToggleBtn" aria-expanded="false" aria-controls="inviteForm">
+            ＋ Invite User
+          </button>
+          <button class="btn btn-secondary" aria-label="Export user list (preview only)">
+            ↓ Export
+          </button>
+          <span class="ml-auto" style="font-size:11px;color:var(--muted);align-self:center;">284 total accounts</span>
+        </div>
+
+        <!-- Invite Form -->
+        <div class="invite-form" id="inviteForm" aria-live="polite" role="region" aria-label="Invite new user form">
+          <h2 style="font-family:Manrope;font-weight:700;font-size:14px;color:var(--navy);margin-bottom:14px;">Invite New User</h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="inviteFirst">First Name</label>
+              <input type="text" id="inviteFirst" placeholder="e.g. Arjun" autocomplete="off" />
+            </div>
+            <div class="form-field">
+              <label for="inviteLast">Last Name</label>
+              <input type="text" id="inviteLast" placeholder="e.g. Pillai" autocomplete="off" />
+            </div>
+            <div class="form-field">
+              <label for="inviteEmail">Email Address</label>
+              <input type="email" id="inviteEmail" placeholder="user@example.com" autocomplete="off" />
+            </div>
+            <div class="form-field">
+              <label for="inviteRole">Assign Role</label>
+              <select id="inviteRole">
+                <option value="">Select role…</option>
+                <option value="patient">Patient</option>
+                <option value="clinician">Clinician</option>
+                <option value="staff">Staff</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="inviteFacility">Facility</label>
+              <select id="inviteFacility">
+                <option value="">Select facility…</option>
+                <option>City Health Centre</option>
+                <option>Whitefield Clinic</option>
+                <option>Indiranagar Diagnostic</option>
+                <option>Electronic City Unit</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn-primary btn-sm" onclick="sendUserInvitation()" type="button">Send Invitation</button>
+            <button class="btn btn-ghost btn-sm" onclick="closeInviteForm()" type="button">Cancel</button>
+            <span class="toast" id="inviteToast" role="status" aria-live="assertive">User invited successfully.</span>
+          </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="filter-bar" role="search" aria-label="Filter users">
+          <input type="search" class="search-input" id="userSearch" placeholder="Search by name or email…" aria-label="Search users by name or email" />
+          <select aria-label="Filter by role" id="roleFilter">
+            <option value="all">All Roles</option>
+            <option value="patient">Patient</option>
+            <option value="clinician">Clinician</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select aria-label="Filter by status" id="userStatusFilter">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <!-- Users Table -->
+        <div class="panel">
+          <div class="table-container">
+            <table aria-label="Platform user accounts — illustrative sample data">
+              <thead>
+                <tr>
+                  <th scope="col">Name <span class="sort-icon" aria-hidden="true">↕</span></th>
+                  <th scope="col">Email <span class="sort-icon" aria-hidden="true">↕</span></th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Last Login <span class="sort-icon" aria-hidden="true">↕</span></th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>J. Nair</strong></td>
+                  <td>j.nair@example.com</td>
+                  <td><span class="badge role-clinician">Clinician</span></td>
+                  <td><span class="badge badge-green">Active</span></td>
+                  <td>23 Sep 2026, 14:22</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit J. Nair">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate J. Nair">Deactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>R. Mehta</strong></td>
+                  <td>r.mehta@example.com</td>
+                  <td><span class="badge role-admin">Admin</span></td>
+                  <td><span class="badge badge-amber">Pending Review</span></td>
+                  <td>22 Sep 2026, 09:05</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit R. Mehta">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate R. Mehta">Deactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>P. Krishnan</strong></td>
+                  <td>p.krishnan@example.com</td>
+                  <td><span class="badge role-patient">Patient</span></td>
+                  <td><span class="badge badge-green">Active</span></td>
+                  <td>21 Sep 2026, 18:43</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit P. Krishnan">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate P. Krishnan">Deactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>S. Rao</strong></td>
+                  <td>s.rao@example.com</td>
+                  <td><span class="badge role-staff">Staff</span></td>
+                  <td><span class="badge badge-green">Active</span></td>
+                  <td>23 Sep 2026, 11:18</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit S. Rao">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate S. Rao">Deactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>A. Gupta</strong></td>
+                  <td>a.gupta@example.com</td>
+                  <td><span class="badge role-clinician">Clinician</span></td>
+                  <td><span class="badge badge-slate">Inactive</span></td>
+                  <td>10 Aug 2026, 09:00</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit A. Gupta">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Reactivate A. Gupta">Reactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>M. Iyer</strong></td>
+                  <td>m.iyer@example.com</td>
+                  <td><span class="badge role-patient">Patient</span></td>
+                  <td><span class="badge badge-green">Active</span></td>
+                  <td>23 Sep 2026, 08:30</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit M. Iyer">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate M. Iyer">Deactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>T. Verma</strong></td>
+                  <td>t.verma@example.com</td>
+                  <td><span class="badge role-staff">Staff</span></td>
+                  <td><span class="badge badge-green">Active</span></td>
+                  <td>22 Sep 2026, 17:55</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit T. Verma">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate T. Verma">Deactivate</button></td>
+                </tr>
+                <tr>
+                  <td><strong>D. Bhat</strong></td>
+                  <td>d.bhat@example.com</td>
+                  <td><span class="badge role-admin">Admin</span></td>
+                  <td><span class="badge badge-green">Active</span></td>
+                  <td>23 Sep 2026, 15:01</td>
+                  <td><button class="btn btn-secondary btn-sm" aria-label="Edit D. Bhat">Edit</button> <button class="btn btn-ghost btn-sm" aria-label="Deactivate D. Bhat">Deactivate</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;font-size:10px;color:var(--muted);">
+            <span>Showing 8 of 284 accounts</span>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" aria-label="Previous page">← Prev</button>
+              <button class="btn btn-ghost btn-sm" aria-label="Next page">Next →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 3. FACILITIES                                          -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section" id="section-facilities" aria-labelledby="facilities-heading">
+        <h1 class="section-title" id="facilities-heading">Facilities</h1>
+        <p class="section-subtitle">Manage enrolled healthcare facilities and their service configurations.</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Illustrative sample only.</strong> Facility names and details shown are fictional and do not represent real healthcare organisations.
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" aria-label="Add a new facility">＋ Add Facility</button>
+          <button class="btn btn-secondary" aria-label="Export facilities list">↓ Export</button>
+        </div>
+
+        <div class="facility-grid">
+          <!-- Facility 1 -->
+          <article class="facility-card" aria-label="City Health Centre facility card">
+            <div class="facility-header">
+              <div>
+                <div class="facility-name">City Health Centre</div>
+                <div class="facility-address">📍 MG Road, Bengaluru — 560001</div>
+              </div>
+              <span class="badge badge-green">Active</span>
+            </div>
+            <div class="facility-meta">
+              <div class="facility-stat"><strong>7</strong> Departments</div>
+              <div class="facility-stat"><strong>14</strong> Services</div>
+              <div class="facility-stat"><strong>43</strong> Staff</div>
+            </div>
+            <div class="facility-actions">
+              <button class="btn btn-secondary btn-sm" aria-label="Edit City Health Centre">✏ Edit</button>
+              <button class="btn btn-ghost btn-sm" aria-label="View City Health Centre details">View Details</button>
+            </div>
+          </article>
+
+          <!-- Facility 2 -->
+          <article class="facility-card" aria-label="Whitefield Clinic facility card">
+            <div class="facility-header">
+              <div>
+                <div class="facility-name">Whitefield Clinic</div>
+                <div class="facility-address">📍 EPIP Zone, Whitefield, Bengaluru — 560066</div>
+              </div>
+              <span class="badge badge-green">Active</span>
+            </div>
+            <div class="facility-meta">
+              <div class="facility-stat"><strong>4</strong> Departments</div>
+              <div class="facility-stat"><strong>9</strong> Services</div>
+              <div class="facility-stat"><strong>21</strong> Staff</div>
+            </div>
+            <div class="facility-actions">
+              <button class="btn btn-secondary btn-sm" aria-label="Edit Whitefield Clinic">✏ Edit</button>
+              <button class="btn btn-ghost btn-sm" aria-label="View Whitefield Clinic details">View Details</button>
+            </div>
+          </article>
+
+          <!-- Facility 3 -->
+          <article class="facility-card" aria-label="Indiranagar Diagnostic facility card">
+            <div class="facility-header">
+              <div>
+                <div class="facility-name">Indiranagar Diagnostic</div>
+                <div class="facility-address">📍 100 Feet Road, Indiranagar, Bengaluru — 560038</div>
+              </div>
+              <span class="badge badge-green">Active</span>
+            </div>
+            <div class="facility-meta">
+              <div class="facility-stat"><strong>3</strong> Departments</div>
+              <div class="facility-stat"><strong>6</strong> Services</div>
+              <div class="facility-stat"><strong>15</strong> Staff</div>
+            </div>
+            <div class="facility-actions">
+              <button class="btn btn-secondary btn-sm" aria-label="Edit Indiranagar Diagnostic">✏ Edit</button>
+              <button class="btn btn-ghost btn-sm" aria-label="View Indiranagar Diagnostic details">View Details</button>
+            </div>
+          </article>
+
+          <!-- Facility 4 -->
+          <article class="facility-card" aria-label="Electronic City Unit facility card">
+            <div class="facility-header">
+              <div>
+                <div class="facility-name">Electronic City Unit</div>
+                <div class="facility-address">📍 Phase 1, Electronic City, Bengaluru — 560100</div>
+              </div>
+              <span class="badge badge-amber">Under Review</span>
+            </div>
+            <div class="facility-meta">
+              <div class="facility-stat"><strong>5</strong> Departments</div>
+              <div class="facility-stat"><strong>11</strong> Services</div>
+              <div class="facility-stat"><strong>28</strong> Staff</div>
+            </div>
+            <div class="facility-actions">
+              <button class="btn btn-secondary btn-sm" aria-label="Edit Electronic City Unit">✏ Edit</button>
+              <button class="btn btn-ghost btn-sm" aria-label="View Electronic City Unit details">View Details</button>
+            </div>
+          </article>
+        </div>
+
+        <p style="font-size:10px;color:var(--muted);text-align:right;">Showing 4 of 6 facilities · <button class="btn btn-ghost btn-sm" style="display:inline;">View all</button></p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 4. ROLE & ACCESS POLICIES                              -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section" id="section-roles" aria-labelledby="roles-heading">
+        <h1 class="section-title" id="roles-heading">Role &amp; Access Policies</h1>
+        <p class="section-subtitle">Read-only view of current role-permission matrix. Changes require authorised review.</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Illustrative sample only.</strong> This matrix is representative. Actual permission sets must be defined by your organisation's security policy.
+        </div>
+
+        <div class="note-box" role="note">
+          <strong>⚠ Important:</strong> Permission changes must be reviewed by an authorised administrator and logged in the audit trail before taking effect. This view is display-only.
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            Permission Matrix
+            <span class="panel-tag">Read-only — changes require admin review</span>
+          </div>
+          <div class="table-container">
+            <table aria-label="Role permission matrix — illustrative sample">
+              <thead>
+                <tr>
+                  <th scope="col" style="min-width:130px;">Role</th>
+                  <th scope="col">View Own Records</th>
+                  <th scope="col">View Assigned Patients</th>
+                  <th scope="col">Edit Clinical Notes</th>
+                  <th scope="col">Manage Users</th>
+                  <th scope="col">Configure Org</th>
+                  <th scope="col">Access Audit Log</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="badge role-patient">Patient</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                </tr>
+                <tr>
+                  <td><span class="badge role-clinician">Clinician</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                </tr>
+                <tr>
+                  <td><span class="badge role-staff">Staff</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                </tr>
+                <tr>
+                  <td><span class="badge role-admin">Admin</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-cross" aria-label="Not permitted">✗</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                </tr>
+                <tr>
+                  <td><span class="badge role-sysadmin">System Admin</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                  <td><span class="perm-check" aria-label="Permitted">✓</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:10px;color:var(--muted);margin-top:14px;line-height:1.6;">
+            ✓ = permission granted &nbsp;·&nbsp; ✗ = not granted &nbsp;·&nbsp;
+            Pending access reviews: <strong style="color:#a07010;">12 accounts</strong>
+          </p>
+        </div>
+
+        <div class="action-row" style="margin-top:14px;">
+          <button class="btn btn-secondary" aria-label="Request permission change (preview only)" >Request Permission Change</button>
+          <button class="btn btn-ghost" aria-label="Download policy document">↓ Download Policy PDF</button>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 5. AUDIT LOG                                           -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section" id="section-audit" aria-labelledby="audit-heading">
+        <h1 class="section-title" id="audit-heading">Audit Log</h1>
+        <p class="section-subtitle">Immutable record of platform events — flagged items require administrator review.</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Illustrative sample only.</strong> Log entries, IP addresses, and user identifiers are fictional. Real audit systems must be implemented in a secure backend.
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar" role="search" aria-label="Filter audit log">
+          <input type="date" id="auditFromDate" aria-label="From date" value="2026-09-16" />
+          <span style="font-size:11px;color:var(--muted);">to</span>
+          <input type="date" id="auditToDate" aria-label="To date"   value="2026-09-23" />
+          <select id="auditEventType" aria-label="Filter by event type">
+            <option value="all">All Event Types</option>
+            <option value="login">Login</option>
+            <option value="record-access">Record Access</option>
+            <option value="config-change">Config Change</option>
+            <option value="role-change">Role Change</option>
+          </select>
+          <input type="search" id="auditUserSearch" class="search-input" placeholder="Filter by user…" aria-label="Filter by user" style="max-width:180px;" />
+          <button class="btn btn-primary btn-sm" id="auditApplyBtn" aria-label="Apply audit log filters">Apply</button>
+          <button class="btn btn-ghost btn-sm ml-auto" id="exportBtn" aria-label="Export audit log">↓ Export Log</button>
+        </div>
+        <span class="toast" id="exportToast" role="status" aria-live="polite">Exporting audit log...</span>
+
+        <div class="panel">
+          <div class="table-container">
+            <table aria-label="Audit log — illustrative sample entries">
+              <thead>
+                <tr>
+                  <th scope="col">Timestamp <span class="sort-icon" aria-hidden="true">↕</span></th>
+                  <th scope="col">User</th>
+                  <th scope="col">Event Type</th>
+                  <th scope="col">Resource</th>
+                  <th scope="col">IP Address</th>
+                  <th scope="col">Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-23 15:32:04</td>
+                  <td>j.nair@example.com</td>
+                  <td><span class="badge badge-blue">Login</span></td>
+                  <td>Auth / Session</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-23 14:58:11</td>
+                  <td>d.bhat@example.com</td>
+                  <td><span class="badge badge-teal">Role Change</span></td>
+                  <td>User / j.nair</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-23 13:45:30</td>
+                  <td>p.krishnan@example.com</td>
+                  <td><span class="badge badge-slate">Record Access</span></td>
+                  <td>Records / Summary</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-23 12:10:08</td>
+                  <td>unknown@example.com</td>
+                  <td><span class="badge badge-red">Login</span></td>
+                  <td>Auth / Session</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-failed">✗ Failed</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-23 11:05:55</td>
+                  <td>s.rao@example.com</td>
+                  <td><span class="badge badge-amber">Config Change</span></td>
+                  <td>Org / Language</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-22 17:44:22</td>
+                  <td>r.mehta@example.com</td>
+                  <td><span class="badge badge-blue">Login</span></td>
+                  <td>Auth / Session</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-22 16:30:19</td>
+                  <td>a.gupta@example.com</td>
+                  <td><span class="badge badge-red">Login</span></td>
+                  <td>Auth / Session</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-failed">✗ Failed</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-22 14:22:01</td>
+                  <td>d.bhat@example.com</td>
+                  <td><span class="badge badge-amber">Config Change</span></td>
+                  <td>Facility / Koramangala</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-21 10:15:44</td>
+                  <td>m.iyer@example.com</td>
+                  <td><span class="badge badge-slate">Record Access</span></td>
+                  <td>Records / Prescriptions</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+                <tr>
+                  <td style="white-space:nowrap;font-size:11px;">2026-09-20 09:00:33</td>
+                  <td>t.verma@example.com</td>
+                  <td><span class="badge badge-teal">Role Change</span></td>
+                  <td>User / m.iyer</td>
+                  <td>192.168.x.x</td>
+                  <td><span class="audit-result-success">✓ Success</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;font-size:10px;color:var(--muted);">
+            <span>Showing 10 of 1,482 log entries</span>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" aria-label="Previous page">← Prev</button>
+              <button class="btn btn-ghost btn-sm" aria-label="Next page">Next →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 6. LANGUAGE CONFIGURATION                              -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section" id="section-language" aria-labelledby="lang-heading">
+        <h1 class="section-title" id="lang-heading">Language Configuration</h1>
+        <p class="section-subtitle">Manage platform-supported languages and content review status.</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Illustrative sample only.</strong> Toggle states and review statuses shown are representative and do not affect the live platform in this preview.
+        </div>
+
+        <div class="note-box" role="note">
+          <strong>⚠ Content Review Requirement:</strong> Consent forms, emergency information, and all clinical content require qualified human review before a language can be activated for patient use.
+          Activation without review is not permitted.
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" aria-label="Add a new language">＋ Add Language</button>
+        </div>
+
+        <div class="panel">
+          <div class="table-container">
+            <table aria-label="Platform language configurations — illustrative sample">
+              <thead>
+                <tr>
+                  <th scope="col">Language</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Default</th>
+                  <th scope="col">High-impact Content Reviewed</th>
+                  <th scope="col">Last Updated</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>English</strong> <span style="font-size:9px;color:var(--muted);">(en-IN)</span></td>
+                  <td>
+                    <label class="toggle-switch" aria-label="English language active status toggle">
+                      <input type="checkbox" checked class="lang-status-toggle" aria-label="English active" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-green" style="margin-left:8px;">Active</span>
+                  </td>
+                  <td><span class="badge badge-teal">Default</span></td>
+                  <td><span class="badge badge-green">✓ Yes</span></td>
+                  <td>15 Sep 2026</td>
+                  <td><button class="btn btn-ghost btn-sm" aria-label="Edit English configuration">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Hindi</strong> <span style="font-size:9px;color:var(--muted);">(hi-IN)</span></td>
+                  <td>
+                    <label class="toggle-switch" aria-label="Hindi language active status toggle">
+                      <input type="checkbox" checked class="lang-status-toggle" aria-label="Hindi active" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-green" style="margin-left:8px;">Active</span>
+                  </td>
+                  <td>—</td>
+                  <td><span class="badge badge-green">✓ Yes</span></td>
+                  <td>12 Sep 2026</td>
+                  <td><button class="btn btn-ghost btn-sm" aria-label="Edit Hindi configuration">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Kannada</strong> <span style="font-size:9px;color:var(--muted);">(kn-IN)</span></td>
+                  <td>
+                    <label class="toggle-switch" aria-label="Kannada language active status toggle">
+                      <input type="checkbox" checked class="lang-status-toggle" aria-label="Kannada active" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-green" style="margin-left:8px;">Active</span>
+                  </td>
+                  <td>—</td>
+                  <td><span class="badge badge-amber">⏳ Pending</span></td>
+                  <td>20 Sep 2026</td>
+                  <td><button class="btn btn-ghost btn-sm" aria-label="Edit Kannada configuration">Edit</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Telugu</strong> <span style="font-size:9px;color:var(--muted);">(te-IN)</span></td>
+                  <td>
+                    <label class="toggle-switch" aria-label="Telugu language active status toggle">
+                      <input type="checkbox" class="lang-status-toggle" aria-label="Telugu active" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-slate" style="margin-left:8px;">Inactive</span>
+                  </td>
+                  <td>—</td>
+                  <td><span class="badge badge-red">✗ Not Reviewed</span></td>
+                  <td>18 Sep 2026</td>
+                  <td><button class="btn btn-ghost btn-sm" aria-label="Edit Telugu configuration">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:10px;color:var(--muted);margin-top:14px;line-height:1.6;">
+            Languages marked <em>Pending</em> or <em>Not Reviewed</em> must not be used for consent, emergency, or clinical content until a qualified human reviewer approves all high-impact strings.
+          </p>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- 7. REPORTS                                             -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <section class="section" id="section-reports" aria-labelledby="reports-heading">
+        <h1 class="section-title" id="reports-heading">Reports</h1>
+        <p class="section-subtitle">Generate and preview operational reports. All outputs are for review purposes only.</p>
+
+        <div class="demo-banner" role="note">
+          <strong>Illustrative sample only.</strong> No real data is generated, downloaded, or transmitted in this preview interface.
+        </div>
+
+        <!-- Report Cards -->
+        <div class="report-grid">
+          <!-- Appointment Volume -->
+          <div class="report-card">
+            <div class="report-card-title">📅 Appointment Volume</div>
+            <div class="report-card-desc">Total appointment requests by facility and week, broken down by appointment type.</div>
+            <div class="date-row">
+              <label for="rpt1From">From</label>
+              <input type="date" id="rpt1From" value="2026-09-01" aria-label="Appointment Volume report from date" />
+              <label for="rpt1To">To</label>
+              <input type="date" id="rpt1To" value="2026-09-23" aria-label="Appointment Volume report to date" />
+            </div>
+            <button class="btn btn-primary btn-sm" id="apptReportBtn" aria-label="Generate Appointment Volume report">Generate Report</button>
+          </div>
+
+          <!-- User Activity -->
+          <div class="report-card">
+            <div class="report-card-title">👤 User Activity</div>
+            <div class="report-card-desc">Login frequency, session durations, and feature usage across user roles.</div>
+            <div class="date-row">
+              <label for="rpt2From">From</label>
+              <input type="date" id="rpt2From" value="2026-09-01" aria-label="User Activity report from date" />
+              <label for="rpt2To">To</label>
+              <input type="date" id="rpt2To" value="2026-09-23" aria-label="User Activity report to date" />
+            </div>
+            <button class="btn btn-primary btn-sm" id="userReportBtn" aria-label="Generate User Activity report">Generate Report</button>
+          </div>
+
+          <!-- Audit Summary -->
+          <div class="report-card">
+            <div class="report-card-title">📋 Audit Summary</div>
+            <div class="report-card-desc">Aggregated count of audit events by type, flagging anomalies and failed-access events.</div>
+            <div class="date-row">
+              <label for="rpt3From">From</label>
+              <input type="date" id="rpt3From" value="2026-09-01" aria-label="Audit Summary report from date" />
+              <label for="rpt3To">To</label>
+              <input type="date" id="rpt3To" value="2026-09-23" aria-label="Audit Summary report to date" />
+            </div>
+            <button class="btn btn-primary btn-sm" id="auditReportBtn" aria-label="Generate Audit Summary report">Generate Report</button>
+          </div>
+
+          <!-- Trial Referral Report -->
+          <div class="report-card">
+            <div class="report-card-title">🔬 Trial Referral Report</div>
+            <div class="report-card-desc">Summary of clinical trial referral touchpoints and opt-in rates within the platform trial module.</div>
+            <div class="date-row">
+              <label for="rpt4From">From</label>
+              <input type="date" id="rpt4From" value="2026-09-01" aria-label="Trial Referral report from date" />
+              <label for="rpt4To">To</label>
+              <input type="date" id="rpt4To" value="2026-09-23" aria-label="Trial Referral report to date" />
+            </div>
+            <button class="btn btn-primary btn-sm" id="trialReportBtn" aria-label="Generate Trial Referral report">Generate Report</button>
+          </div>
+        </div>
+
+        <!-- Sample Appointment Volume Output -->
+        <div class="panel" id="apptReportOutput" style="display:none;" aria-live="polite" aria-label="Report output">
+          <div class="panel-title" id="reportOutputTitle">
+            <span id="reportOutputHeading">Appointment Volume Report — Generated Output</span>
+            <span class="panel-tag" id="reportOutputTag">1 Sep 2026 – 23 Sep 2026</span>
+          </div>
+          <div class="note-box" role="note" style="margin-bottom:12px;">
+            <strong>Report generated.</strong> Operational summary data is ready for preview and export.
+          </div>
+          <div class="table-container">
+            <table id="reportTable" aria-label="Generated report output table">
+              <thead id="reportThead">
+                <tr>
+                  <th scope="col">Facility</th>
+                  <th scope="col">Week</th>
+                  <th scope="col">In-person</th>
+                  <th scope="col">Teleconsult</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">vs. Prior Week</th>
+                </tr>
+              </thead>
+              <tbody id="reportTbody">
+                <tr>
+                  <td>City Health Centre</td>
+                  <td>Wk 1 (1–7 Sep)</td>
+                  <td>84</td>
+                  <td>31</td>
+                  <td><strong>115</strong></td>
+                  <td><span style="color:var(--success-green);font-weight:700;">▲ +8%</span></td>
+                </tr>
+                <tr>
+                  <td>City Health Centre</td>
+                  <td>Wk 2 (8–14 Sep)</td>
+                  <td>91</td>
+                  <td>33</td>
+                  <td><strong>124</strong></td>
+                  <td><span style="color:var(--success-green);font-weight:700;">▲ +7.8%</span></td>
+                </tr>
+                <tr>
+                  <td>Whitefield Clinic</td>
+                  <td>Wk 1 (1–7 Sep)</td>
+                  <td>47</td>
+                  <td>18</td>
+                  <td><strong>65</strong></td>
+                  <td><span style="color:var(--muted);">— 0%</span></td>
+                </tr>
+                <tr>
+                  <td>Whitefield Clinic</td>
+                  <td>Wk 2 (8–14 Sep)</td>
+                  <td>52</td>
+                  <td>22</td>
+                  <td><strong>74</strong></td>
+                  <td><span style="color:var(--success-green);font-weight:700;">▲ +13.8%</span></td>
+                </tr>
+                <tr>
+                  <td>Indiranagar Diagnostic</td>
+                  <td>Wk 1 (1–7 Sep)</td>
+                  <td>28</td>
+                  <td>9</td>
+                  <td><strong>37</strong></td>
+                  <td><span style="color:var(--alert-red);font-weight:700;">▼ -4.1%</span></td>
+                </tr>
+                <tr>
+                  <td>Electronic City Unit</td>
+                  <td>Wk 1 (1–7 Sep)</td>
+                  <td>38</td>
+                  <td>14</td>
+                  <td><strong>52</strong></td>
+                  <td><span style="color:var(--success-green);font-weight:700;">▲ +2.0%</span></td>
+                </tr>
+              </tbody>
+              <tfoot id="reportTfoot">
+                <tr style="background:var(--bg-input);border-top:2px solid var(--border-color);">
+                  <td colspan="2"><strong>Total (all facilities)</strong></td>
+                  <td><strong>340</strong></td>
+                  <td><strong>127</strong></td>
+                  <td><strong>467</strong></td>
+                  <td><span style="color:var(--success-green);font-weight:700;">▲ +6.4%</span></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px;align-items:center;">
+            <button class="btn btn-ghost btn-sm" id="reportCsvBtn" aria-label="Download report as CSV">↓ CSV</button>
+            <button class="btn btn-ghost btn-sm" id="reportPdfBtn" aria-label="Download report as PDF">↓ PDF</button>
+            <span style="font-size:10px;color:var(--muted);" id="reportDownloadNote">Export report in standard CSV or PDF format.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── DEPARTMENT MANAGEMENT ──────────────────────────── -->
+      <section class="section" id="section-departments" aria-labelledby="dept-heading">
+        <h1 class="section-title" id="dept-heading">Department Management</h1>
+        <p class="section-subtitle">Manage hospital departments, assign Heads of Department, and track staff allocation.</p>
+        <div class="demo-banner"><strong>Operations Module</strong> — Organize and manage all hospital departments.</div>
+
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="openAdminModal('Add Department','<div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Department Name</label><input type=\'text\' placeholder=\'e.g. Cardiology\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Head of Department</label><input type=\'text\' placeholder=\'Dr. Name\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Floor / Wing</label><input type=\'text\' placeholder=\'3rd Floor, East Wing\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Staff Count</label><input type=\'number\' value=\'25\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Department added successfully\", \"success\")\'>Add Department</button>')">＋ Add Department</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadFile('Department,HOD,Staff,Floor,Status\nCardiology,Dr. A. Reddy,42,3rd Floor East,Active\nNeurology,Dr. P. Sharma,35,4th Floor West,Active\nPediatrics,Dr. M. Patel,28,2nd Floor South,Active\nEmergency Medicine,Dr. R. Kumar,55,Ground Floor,Active\nOncology,Dr. K. Rao,38,5th Floor,Active\nOrthopedics,Dr. S. Gupta,22,3rd Floor West,Active\nRadiology,Dr. V. Nair,18,1st Floor Basement,Active\nPharmacy,Dr. L. Hegde,15,Ground Floor Annex,Active','departments.csv','text/csv')">↓ Export</button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead><tr><th>Department</th><th>Head of Department</th><th>Staff</th><th>Floor/Wing</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Cardiology</strong></td><td>Dr. Ananya Reddy</td><td>42</td><td>3rd Floor, East Wing</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Cardiology department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Neurology</strong></td><td>Dr. Priya Sharma</td><td>35</td><td>4th Floor, West Wing</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Neurology department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Pediatrics</strong></td><td>Dr. Meena Patel</td><td>28</td><td>2nd Floor, South Wing</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Pediatrics department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Emergency Medicine</strong></td><td>Dr. Rajesh Kumar</td><td>55</td><td>Ground Floor</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Emergency department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Oncology</strong></td><td>Dr. Kavitha Rao</td><td>38</td><td>5th Floor</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Oncology department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Orthopedics</strong></td><td>Dr. Suresh Gupta</td><td>22</td><td>3rd Floor, West Wing</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Orthopedics department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Radiology</strong></td><td>Dr. Vikas Nair</td><td>18</td><td>1st Floor, Basement</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Radiology department', 'info')">Edit</button></td></tr>
+              <tr><td><strong>Pharmacy</strong></td><td>Dr. Lakshmi Hegde</td><td>15</td><td>Ground Floor, Annex</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Editing Pharmacy department', 'info')">Edit</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ─── INVENTORY & EQUIPMENT ─────────────────────────── -->
+      <section class="section" id="section-inventory" aria-labelledby="inv-heading">
+        <h1 class="section-title" id="inv-heading">Inventory &amp; Equipment</h1>
+        <p class="section-subtitle">Track medical equipment, supplies, and maintenance schedules across all facilities.</p>
+
+        <div class="metric-grid" style="margin-bottom:22px;">
+          <div class="metric-card"><div class="metric-card-icon">📦</div><div class="metric-card-label">Total Items</div><div class="metric-card-value">2,847</div><div class="metric-card-sub">Across 6 facilities</div></div>
+          <div class="metric-card green"><div class="metric-card-icon">✅</div><div class="metric-card-label">Operational</div><div class="metric-card-value">2,691</div><div class="metric-card-sub">94.5% availability</div></div>
+          <div class="metric-card amber"><div class="metric-card-icon">🔧</div><div class="metric-card-label">Under Maintenance</div><div class="metric-card-value">112</div><div class="metric-card-sub">14 overdue</div></div>
+          <div class="metric-card red"><div class="metric-card-icon">⚠️</div><div class="metric-card-label">Critical Low Stock</div><div class="metric-card-value">44</div><div class="metric-card-sub">Reorder required</div></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="openAdminModal('Add Equipment','<div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Equipment Name</label><input type=\'text\' placeholder=\'e.g. Ventilator\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Category</label><select style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'><option>Diagnostic</option><option>Therapeutic</option><option>Monitoring</option><option>Surgical</option><option>Consumable</option></select></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Quantity</label><input type=\'number\' value=\'1\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Location</label><input type=\'text\' placeholder=\'Ward/Floor\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Equipment added\", \"success\")\'>Add</button>')">＋ Add Equipment</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadFile('Item,Category,Qty,Location,Status,Next Maintenance\nVentilator V-300,Therapeutic,24,ICU,Operational,15 Oct 2026\nMRI Scanner 3T,Diagnostic,2,Radiology,Operational,20 Oct 2026\nDefibrillator,Emergency,18,ER/ICU,Operational,01 Nov 2026\nInfusion Pump,Therapeutic,85,All Wards,12 Under Maintenance,10 Oct 2026\nSurgical Lights LED,Surgical,16,OT Complex,Operational,30 Nov 2026','inventory.csv','text/csv')">↓ Export</button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead><tr><th>Equipment</th><th>Category</th><th>Qty</th><th>Location</th><th>Status</th><th>Next Maintenance</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Ventilator V-300</strong></td><td>Therapeutic</td><td>24</td><td>ICU Units</td><td><span class="badge badge-green">Operational</span></td><td>15 Oct 2026</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Scheduling maintenance for Ventilator V-300', 'info')">Schedule</button></td></tr>
+              <tr><td><strong>MRI Scanner 3T</strong></td><td>Diagnostic</td><td>2</td><td>Radiology Dept</td><td><span class="badge badge-green">Operational</span></td><td>20 Oct 2026</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Scheduling maintenance for MRI Scanner', 'info')">Schedule</button></td></tr>
+              <tr><td><strong>Defibrillator AED</strong></td><td>Emergency</td><td>18</td><td>ER / ICU / Wards</td><td><span class="badge badge-green">Operational</span></td><td>01 Nov 2026</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Scheduling maintenance', 'info')">Schedule</button></td></tr>
+              <tr><td><strong>Infusion Pump IV</strong></td><td>Therapeutic</td><td>85</td><td>All Wards</td><td><span class="badge" style="background:var(--amber);color:#5a3a00;">12 in Maintenance</span></td><td>10 Oct 2026</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Viewing maintenance details', 'info')">Details</button></td></tr>
+              <tr><td><strong>Surgical LED Lights</strong></td><td>Surgical</td><td>16</td><td>OT Complex</td><td><span class="badge badge-green">Operational</span></td><td>30 Nov 2026</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Scheduling maintenance', 'info')">Schedule</button></td></tr>
+              <tr><td><strong>Patient Monitors</strong></td><td>Monitoring</td><td>120</td><td>All Wards / ICU</td><td><span class="badge" style="background:#fee2e2;color:#991b1b;">8 Critical</span></td><td>05 Oct 2026</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Urgent reorder initiated', 'warning')">Reorder</button></td></tr>
+              <tr><td><strong>Syringes (Box 100)</strong></td><td>Consumable</td><td>340</td><td>Central Store</td><td><span class="badge" style="background:#fee2e2;color:#991b1b;">Low Stock</span></td><td>—</td><td><button class="btn btn-ghost btn-xs" onclick="showAdminToast('Purchase order created', 'success')">Reorder</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ─── BILLING & FINANCE ─────────────────────────────── -->
+      <section class="section" id="section-billing" aria-labelledby="billing-heading">
+        <h1 class="section-title" id="billing-heading">Billing &amp; Finance</h1>
+        <p class="section-subtitle">Revenue overview, pending invoices, and payment tracking across all facilities.</p>
+
+        <div class="metric-grid" style="margin-bottom:22px;">
+          <div class="metric-card green"><div class="metric-card-icon">💰</div><div class="metric-card-label">Monthly Revenue</div><div class="metric-card-value">₹4.8Cr</div><div class="metric-card-sub">↑ 12% vs last month</div></div>
+          <div class="metric-card"><div class="metric-card-icon">📄</div><div class="metric-card-label">Pending Invoices</div><div class="metric-card-value">347</div><div class="metric-card-sub">₹1.2Cr outstanding</div></div>
+          <div class="metric-card amber"><div class="metric-card-icon">⏳</div><div class="metric-card-label">Overdue (30+ days)</div><div class="metric-card-value">89</div><div class="metric-card-sub">₹38L overdue</div></div>
+          <div class="metric-card green"><div class="metric-card-icon">✅</div><div class="metric-card-label">Collection Rate</div><div class="metric-card-value">92.3%</div><div class="metric-card-sub">Target: 95%</div></div>
+        </div>
+
+        <div class="panel" style="margin-bottom:18px;">
+          <div class="panel-title">Recent Transactions <span class="panel-tag">Last 7 days</span></div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead><tr><th>Invoice #</th><th>Patient</th><th>Department</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody>
+                <tr><td><strong>INV-2026-4521</strong></td><td>Ramesh K.</td><td>Cardiology</td><td>₹1,85,000</td><td><span class="badge badge-green">Paid</span></td><td>25 Sep 2026</td></tr>
+                <tr><td><strong>INV-2026-4520</strong></td><td>Priya M.</td><td>Orthopedics</td><td>₹2,40,000</td><td><span class="badge" style="background:var(--amber);color:#5a3a00;">Pending</span></td><td>24 Sep 2026</td></tr>
+                <tr><td><strong>INV-2026-4519</strong></td><td>Anil S.</td><td>Neurology</td><td>₹3,15,000</td><td><span class="badge badge-green">Paid</span></td><td>24 Sep 2026</td></tr>
+                <tr><td><strong>INV-2026-4518</strong></td><td>Lakshmi R.</td><td>Oncology</td><td>₹4,50,000</td><td><span class="badge" style="background:#fee2e2;color:#991b1b;">Overdue</span></td><td>20 Sep 2026</td></tr>
+                <tr><td><strong>INV-2026-4517</strong></td><td>Suresh G.</td><td>Emergency</td><td>₹75,000</td><td><span class="badge badge-green">Paid</span></td><td>23 Sep 2026</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="showAdminToast('Invoice generation is a premium feature', 'info')">＋ Create Invoice</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadFile('Invoice,Patient,Department,Amount,Status,Date\nINV-4521,Ramesh K.,Cardiology,185000,Paid,25 Sep 2026\nINV-4520,Priya M.,Orthopedics,240000,Pending,24 Sep 2026\nINV-4519,Anil S.,Neurology,315000,Paid,24 Sep 2026','billing_report.csv','text/csv')">↓ Export CSV</button>
+        </div>
+      </section>
+
+      <!-- ─── NOTIFICATIONS & ALERTS ────────────────────────── -->
+      <section class="section" id="section-notifications" aria-labelledby="notif-heading">
+        <h1 class="section-title" id="notif-heading">Notifications &amp; Alerts</h1>
+        <p class="section-subtitle">System-wide notification management and alert configuration.</p>
+
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="openAdminModal('Send Broadcast','<div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Recipients</label><select style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'><option>All Users</option><option>Clinicians Only</option><option>Staff Only</option><option>Patients Only</option><option>Admins Only</option></select></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Priority</label><select style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'><option>Normal</option><option>High</option><option>Critical</option></select></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Subject</label><input type=\'text\' placeholder=\'Notification subject\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></div><div class=\'form-field\' style=\'margin-bottom:10px;\'><label>Message</label><textarea rows=\'4\' placeholder=\'Notification message...\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></textarea></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Broadcast notification sent\", \"success\")\'>Send</button>')">📢 Send Broadcast</button>
+          <button class="btn btn-ghost btn-sm" onclick="showAdminToast('All notifications marked as read', 'success')">✓ Mark All Read</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="panel" style="border-left:4px solid #ef4444;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><strong style="color:#991b1b;">🚨 CRITICAL: ICU Bed Capacity at 95%</strong><br><span style="font-size:11px;color:var(--muted);">Bengaluru Central — 2 hours ago</span></div>
+              <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Alert acknowledged', 'success')">Acknowledge</button>
+            </div>
+          </div>
+          <div class="panel" style="border-left:4px solid var(--amber);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><strong style="color:#92400e;">⚠ Equipment Maintenance Overdue: MRI Scanner #2</strong><br><span style="font-size:11px;color:var(--muted);">Mysuru Campus — 5 hours ago</span></div>
+              <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Maintenance scheduled', 'success')">Schedule</button>
+            </div>
+          </div>
+          <div class="panel" style="border-left:4px solid var(--teal);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><strong style="color:var(--navy);">📋 New Staff Onboarding: 5 clinicians pending orientation</strong><br><span style="font-size:11px;color:var(--muted);">HR Department — Today</span></div>
+              <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Viewing details', 'info')">View</button>
+            </div>
+          </div>
+          <div class="panel" style="border-left:4px solid var(--success-green);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><strong style="color:var(--navy);">✅ Monthly Compliance Report Generated</strong><br><span style="font-size:11px;color:var(--muted);">System — Yesterday</span></div>
+              <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Downloading report', 'info')">Download</button>
+            </div>
+          </div>
+          <div class="panel" style="border-left:4px solid #a78bfa;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><strong style="color:var(--navy);">💬 New Patient Feedback Received (8 unread)</strong><br><span style="font-size:11px;color:var(--muted);">Feedback Module — 3 hours ago</span></div>
+              <button class="btn btn-ghost btn-xs" onclick="document.querySelector('[data-section=feedback]').click()">View Feedback</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── FEEDBACK & COMPLAINTS ─────────────────────────── -->
+      <section class="section" id="section-feedback" aria-labelledby="feedback-heading">
+        <h1 class="section-title" id="feedback-heading">Feedback &amp; Complaints</h1>
+        <p class="section-subtitle">Review, respond to, and manage patient and visitor feedback.</p>
+
+        <div class="metric-grid" style="margin-bottom:22px;">
+          <div class="metric-card"><div class="metric-card-icon">💬</div><div class="metric-card-label">Total Feedback</div><div class="metric-card-value">248</div><div class="metric-card-sub">This month</div></div>
+          <div class="metric-card green"><div class="metric-card-icon">⭐</div><div class="metric-card-label">Avg. Rating</div><div class="metric-card-value">4.3</div><div class="metric-card-sub">/ 5.0 stars</div></div>
+          <div class="metric-card green"><div class="metric-card-icon">✅</div><div class="metric-card-label">Response Rate</div><div class="metric-card-value">87%</div><div class="metric-card-sub">↑ 5% vs last month</div></div>
+          <div class="metric-card red"><div class="metric-card-icon">⚠️</div><div class="metric-card-label">Open Complaints</div><div class="metric-card-value">12</div><div class="metric-card-sub">3 critical</div></div>
+        </div>
+
+        <!-- Feedback Filters -->
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;">
+          <select id="feedbackTypeFilter" style="padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:12px;" onchange="filterFeedback()">
+            <option value="all">All Types</option>
+            <option value="appreciation">Appreciation</option>
+            <option value="complaint">Complaint</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="feedback">General Feedback</option>
+          </select>
+          <select id="feedbackStatusFilter" style="padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:12px;" onchange="filterFeedback()">
+            <option value="all">All Status</option>
+            <option value="new">New</option>
+            <option value="reviewed">Reviewed</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="downloadFile('Date,Name,Type,Department,Rating,Subject,Status\n25 Sep 2026,Meera Nair,Appreciation,Cardiology,5,Outstanding cardiac care,Reviewed\n24 Sep 2026,Ravi Menon,Complaint,Emergency,2,Long wait time in ER,In Progress\n23 Sep 2026,Sunita Rao,Suggestion,General,4,Improve parking,New\n22 Sep 2026,Prakash G.,Appreciation,Pediatrics,5,Wonderful NICU team,Resolved\n21 Sep 2026,Anita K.,Complaint,Pharmacy,1,Medication error,In Progress\n20 Sep 2026,Deepa S.,Suggestion,Radiology,3,Online report access,New\n19 Sep 2026,Vijay M.,Feedback,General,4,Overall experience,Reviewed\n18 Sep 2026,Lakshmi P.,Appreciation,Oncology,5,Compassionate care,Resolved','feedback_export.csv','text/csv')">↓ Export CSV</button>
+          <a href="feedback.html" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;margin-left:auto;">🔗 Public Feedback Page</a>
+        </div>
+
+        <!-- Feedback Cards -->
+        <div id="feedbackList" style="display:flex;flex-direction:column;gap:14px;">
+
+          <!-- Feedback 1: Appreciation -->
+          <div class="panel feedback-card" data-type="appreciation" data-status="reviewed" style="border-left:4px solid var(--success-green);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Meera Nair</strong>
+                  <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Appreciation</span>
+                  <span style="background:#e0f2fe;color:#0369a1;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Reviewed</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Cardiology · 25 Sep 2026 · <span style="color:#eab308;">★★★★★</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Outstanding cardiac care</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">The entire cardiology team, especially Dr. Ananya Reddy, provided exceptional care during my father's bypass surgery. The nursing staff was attentive and compassionate throughout the recovery.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" onclick="openAdminModal('Reply to Meera Nair','<div class=\'form-field\'><label>Your Response</label><textarea rows=\'4\' placeholder=\'Write your response...\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></textarea></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Response sent to Meera Nair\", \"success\")\'>Send Reply</button>')">Reply</button>
+                <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Marked as resolved', 'success')">Resolve</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 2: Complaint -->
+          <div class="panel feedback-card" data-type="complaint" data-status="in-progress" style="border-left:4px solid var(--alert-red);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Ravi Menon</strong>
+                  <span style="background:#fee2e2;color:#991b1b;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Complaint</span>
+                  <span style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">In Progress</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Emergency · 24 Sep 2026 · <span style="color:#eab308;">★★☆☆☆</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Long wait time in Emergency Room</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">Had to wait over 3 hours in the ER despite presenting with severe chest pain. The triage process needs significant improvement. Staff seemed overwhelmed and understaffed.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" onclick="openAdminModal('Reply to Ravi Menon','<div class=\'form-field\'><label>Your Response</label><textarea rows=\'4\' placeholder=\'Write your response...\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'>Dear Mr. Menon, we sincerely apologize for the extended wait time. We are reviewing our ER staffing protocols to prevent such occurrences.</textarea></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Response sent\", \"success\")\'>Send Reply</button>')">Reply</button>
+                <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Escalated to Emergency HOD', 'warning')">Escalate</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 3: Suggestion -->
+          <div class="panel feedback-card" data-type="suggestion" data-status="new" style="border-left:4px solid var(--amber);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Sunita Rao</strong>
+                  <span style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Suggestion</span>
+                  <span style="background:#e0f2fe;color:#0369a1;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">New</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">General · 23 Sep 2026 · <span style="color:#eab308;">★★★★☆</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Improve visitor parking facilities</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">The parking area is always congested, especially during visiting hours. Consider adding a multi-level parking structure or implementing a valet service for patients' families.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" onclick="openAdminModal('Reply to Sunita Rao','<div class=\'form-field\'><label>Your Response</label><textarea rows=\'4\' placeholder=\'Write your response...\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'></textarea></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Response sent\", \"success\")\'>Send Reply</button>')">Reply</button>
+                <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Marked as reviewed', 'success')">Mark Reviewed</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 4: Appreciation -->
+          <div class="panel feedback-card" data-type="appreciation" data-status="resolved" style="border-left:4px solid var(--success-green);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Prakash Govindan</strong>
+                  <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Appreciation</span>
+                  <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Resolved</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Pediatrics · 22 Sep 2026 · <span style="color:#eab308;">★★★★★</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Wonderful NICU team</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">Our premature baby received world-class care in the NICU. Dr. Meena Patel and her team were incredibly supportive and kept us informed at every step. Forever grateful.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" style="color:var(--success-green);">✓ Resolved</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 5: Complaint -->
+          <div class="panel feedback-card" data-type="complaint" data-status="in-progress" style="border-left:4px solid var(--alert-red);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Anita Kulkarni</strong>
+                  <span style="background:#fee2e2;color:#991b1b;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Complaint</span>
+                  <span style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">In Progress</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Pharmacy · 21 Sep 2026 · <span style="color:#eab308;">★☆☆☆☆</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Medication dispensing error</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">Was given incorrect dosage of prescribed medication. This is a serious safety concern that needs immediate attention. The pharmacist did not verify the prescription properly.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Escalated to Pharmacy HOD and Quality team', 'warning')">Escalate</button>
+                <button class="btn btn-ghost btn-xs" onclick="openAdminModal('Reply to Anita Kulkarni','<div class=\'form-field\'><label>Response</label><textarea rows=\'4\' style=\'width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;\'>Dear Ms. Kulkarni, we deeply regret this incident. Patient safety is our top priority. We have initiated an investigation and will implement corrective measures immediately.</textarea></div>','<button class=\'btn btn-ghost\' onclick=\'closeAdminModal()\'>Cancel</button><button class=\'btn btn-primary\' onclick=\'closeAdminModal(); showAdminToast(\"Response sent\", \"success\")\'>Send</button>')">Reply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 6: Suggestion -->
+          <div class="panel feedback-card" data-type="suggestion" data-status="new" style="border-left:4px solid var(--amber);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Deepa Shetty</strong>
+                  <span style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Suggestion</span>
+                  <span style="background:#e0f2fe;color:#0369a1;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">New</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Radiology · 20 Sep 2026 · <span style="color:#eab308;">★★★☆☆</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Enable online access to radiology reports</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">It would be very convenient if patients could access their X-ray and MRI reports through the patient portal instead of having to visit the hospital to collect physical copies.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" onclick="showAdminToast('Forwarded to IT department', 'success')">Forward to IT</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 7: General Feedback -->
+          <div class="panel feedback-card" data-type="feedback" data-status="reviewed" style="border-left:4px solid #6366f1;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Vijay Mathur</strong>
+                  <span style="background:#e0e7ff;color:#3730a3;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Feedback</span>
+                  <span style="background:#e0f2fe;color:#0369a1;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Reviewed</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">General Medicine · 19 Sep 2026 · <span style="color:#eab308;">★★★★☆</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Overall positive experience</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">Good hospital with competent doctors. The reception area could be less crowded and the billing process could be more streamlined. Otherwise, a quality healthcare institution.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" style="color:var(--success-green);">✓ Reviewed</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback 8: Appreciation -->
+          <div class="panel feedback-card" data-type="appreciation" data-status="resolved" style="border-left:4px solid var(--success-green);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <strong>Lakshmi Priya</strong>
+                  <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Appreciation</span>
+                  <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Resolved</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Oncology · 18 Sep 2026 · <span style="color:#eab308;">★★★★★</span></div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Compassionate cancer care</div>
+                <p style="font-size:12px;color:#475569;line-height:1.5;">Dr. Kavitha Rao and the oncology team provided extraordinary compassion during my mother's treatment. The palliative care team was also incredibly supportive. Thank you NexCura.</p>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-xs" style="color:var(--success-green);">✓ Resolved</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Feedback Form (for in-admin submission) -->
+        <div class="panel" style="margin-top:22px;">
+          <div class="panel-title">Submit New Feedback <span class="panel-tag">Internal / Walk-in</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-field"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Name</label><input type="text" placeholder="Patient / Visitor name" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:12px;"></div>
+            <div class="form-field"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Email</label><input type="email" placeholder="email@example.com" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:12px;"></div>
+            <div class="form-field"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Department</label>
+              <select style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:12px;">
+                <option>Select Department</option><option>Emergency</option><option>Cardiology</option><option>Neurology</option><option>Pediatrics</option><option>General Medicine</option><option>Pharmacy</option><option>Radiology</option><option>Oncology</option><option>Orthopedics</option><option>Other</option>
+              </select>
+            </div>
+            <div class="form-field"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Type</label>
+              <select style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:12px;">
+                <option>Select Type</option><option>Feedback</option><option>Complaint</option><option>Suggestion</option><option>Appreciation</option>
+              </select>
+            </div>
+            <div class="form-field" style="grid-column:1/-1;"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Rating</label>
+              <div id="adminStarRating" style="display:flex;gap:4px;font-size:24px;cursor:pointer;color:#d1d5db;" onclick="handleStarClick(event)">
+                <span data-star="1">★</span><span data-star="2">★</span><span data-star="3">★</span><span data-star="4">★</span><span data-star="5">★</span>
+              </div>
+            </div>
+            <div class="form-field"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Subject</label><input type="text" placeholder="Brief subject" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:12px;"></div>
+            <div class="form-field"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Attachment</label><input type="file" style="width:100%;padding:6px;border:1px solid var(--line);border-radius:6px;font-size:12px;"></div>
+            <div class="form-field" style="grid-column:1/-1;"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Message</label><textarea rows="4" placeholder="Detailed feedback message..." style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:12px;"></textarea></div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-primary btn-sm" onclick="showAdminToast('Feedback submitted successfully!', 'success')">Submit Feedback</button>
+            <button class="btn btn-ghost btn-sm" onclick="showAdminToast('Form cleared', 'info')">Clear</button>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /content-area -->
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
+<!-- ─── MOBILE OVERLAY ──────────────────────────────────────── -->
+<div id="sidebarOverlay"
+     style="display:none;position:fixed;inset:0;background:rgba(10,30,30,0.45);z-index:140;"
+     aria-hidden="true"></div>
+
+<!-- ─── JAVASCRIPT ──────────────────────────────────────────── -->
+<script>
+  /* ── Sidebar Navigation ──────────────────────────────────── */
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('.section');
+  const topbarLabel = document.getElementById('topbarLabel');
+
+  const sectionLabels = {
+    dashboard:     'Dashboard',
+    users:         'User Management',
+    facilities:    'Facilities',
+    roles:         'Role & Access Policies',
+    audit:         'Audit Log',
+    language:      'Language Configuration',
+    reports:       'Reports',
+    departments:   'Department Management',
+    inventory:     'Inventory & Equipment',
+    billing:       'Billing & Finance',
+    notifications: 'Notifications & Alerts',
+    feedback:      'Feedback & Complaints',
+  };
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const target = item.dataset.section;
+
+      // Update nav active state
+      navItems.forEach(n => { n.classList.remove('active'); n.removeAttribute('aria-current'); });
+      item.classList.add('active');
+      item.setAttribute('aria-current', 'page');
+
+      // Show target section
+      sections.forEach(s => s.classList.remove('active'));
+      const targetSection = document.getElementById('section-' + target);
+      if (targetSection) {
+        targetSection.classList.add('active');
+        // Move focus to main for screen readers
+        const mainContent = document.getElementById('mainContent');
+        mainContent.focus();
+      }
+
+      // Update top bar label
+      topbarLabel.textContent = sectionLabels[target] || target;
+
+      // Close mobile sidebar
+      closeSidebar();
+    });
+  });
+
+  /* ── Mobile Hamburger ────────────────────────────────────── */
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  hamburgerBtn.addEventListener('click', () => {
+    const isOpen = sidebar.classList.toggle('open');
+    hamburgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    overlay.style.display = isOpen ? 'block' : 'none';
+    overlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    if (isOpen) sidebar.querySelector('.nav-item.active').focus();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
+  });
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  /* ── Invite Form Toggle ──────────────────────────────────── */
+  const inviteToggleBtn = document.getElementById('inviteToggleBtn');
+  const inviteForm = document.getElementById('inviteForm');
+
+  inviteToggleBtn.addEventListener('click', () => {
+    const isOpen = inviteForm.classList.toggle('open');
+    inviteToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    inviteToggleBtn.textContent = isOpen ? '✕ Close Form' : '＋ Invite User';
+    if (isOpen) document.getElementById('inviteFirst').focus();
+  });
+
+  function closeInviteForm() {
+    inviteForm.classList.remove('open');
+    inviteToggleBtn.setAttribute('aria-expanded', 'false');
+    inviteToggleBtn.textContent = '＋ Invite User';
+    inviteToggleBtn.focus();
+  }
+
+  function showInviteToast() {
+    const toast = document.getElementById('inviteToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  /* ── Export Audit Log ──────────────────────────────────── */
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const csvContent = 'Timestamp,User,Event Type,Module,IP Address,Result\n' +
+      '2026-09-23 15:42:11,j.nair@example.com,Role Change,User / Roles,192.168.x.x,Success\n' +
+      '2026-09-23 15:00:55,r.mehta@example.com,Login,Auth / Session,192.168.x.x,Success\n' +
+      '2026-09-23 14:30:12,j.nair@example.com,Login,Auth / Session,192.168.x.x,Success\n' +
+      '2026-09-23 13:45:30,p.krishnan@example.com,Record Access,Records / Summary,192.168.x.x,Success\n' +
+      '2026-09-23 12:10:08,unknown@example.com,Login,Auth / Session,192.168.x.x,Failed\n' +
+      '2026-09-23 11:05:55,s.rao@example.com,Config Change,Org / Language,192.168.x.x,Success\n' +
+      '2026-09-22 17:44:22,r.mehta@example.com,Login,Auth / Session,192.168.x.x,Success\n' +
+      '2026-09-22 16:30:19,a.gupta@example.com,Login,Auth / Session,192.168.x.x,Failed\n' +
+      '2026-09-22 14:22:01,d.bhat@example.com,Config Change,Facility / Koramangala,192.168.x.x,Success\n' +
+      '2026-09-21 10:15:44,m.iyer@example.com,Record Access,Records / Prescriptions,192.168.x.x,Success\n' +
+      '2026-09-20 09:00:33,t.verma@example.com,Role Change,User / m.iyer,192.168.x.x,Success';
+    downloadFile(csvContent, 'audit_log.csv', 'text/csv');
+  });
+
+  /* ── Appointment Report Button ───────────────────────────── */
+  document.getElementById('apptReportBtn').addEventListener('click', () => {
+    const output = document.getElementById('apptReportOutput');
+    output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    output.style.outline = '2px solid var(--teal)';
+    setTimeout(() => { output.style.outline = ''; }, 1500);
+  });
+
+  /* ── Toggle switch labels (a11y) ─────────────────────────── */
+  document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', e => {
+      // In this preview, prevent actual state change but allow visual feedback
+      // Real implementation would POST to backend
+    });
+  });
+
+  /* ── Table sorting (visual feedback only) ───────────────── */
+  document.querySelectorAll('thead th').forEach(th => {
+    th.setAttribute('role', 'columnheader');
+    th.setAttribute('aria-sort', 'none');
+    th.setAttribute('tabindex', '0');
+    th.addEventListener('click', () => {
+      const current = th.getAttribute('aria-sort');
+      // Reset siblings
+      th.closest('thead').querySelectorAll('th').forEach(t => {
+        t.setAttribute('aria-sort', 'none');
+        const icon = t.querySelector('.sort-icon');
+        if (icon) icon.textContent = '↕';
+      });
+      // Toggle this one
+      if (current === 'none' || current === 'descending') {
+        th.setAttribute('aria-sort', 'ascending');
+        const icon = th.querySelector('.sort-icon');
+        if (icon) icon.textContent = '↑';
+      } else {
+        th.setAttribute('aria-sort', 'descending');
+        const icon = th.querySelector('.sort-icon');
+        if (icon) icon.textContent = '↓';
+      }
+    });
+    th.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); th.click(); }
+    });
+  });
+</script>
+
+</div><!-- /portalContent -->
+
+<script>
+  // Show portal content if already authenticated
+  if (sessionStorage.getItem('nexcura_admin_auth') === 'authenticated' ||
+      localStorage.getItem('nexcura_admin_auth') === 'authenticated' ||
+      document.cookie.includes('nexcura_admin_auth=authenticated')) {
+    document.getElementById('portalContent').style.display = '';
+  }
+</script>
+
+<!-- ─── MODAL & TOAST ──────────────────────────────────────── -->
+<div id="adminModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Modal</div>
+      <button class="modal-close" onclick="closeAdminModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+<div id="toastContainer" class="toast-container"></div>
+
+
+<script>
+window.alert = function(msg) {
+  showAdminToast(msg, 'info');
+};
+
+function showAdminToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = `admin-toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  toast.offsetHeight; // trigger reflow
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function openAdminModal(title, bodyHtml, footerHtml) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHtml;
+  document.getElementById('modalFooter').innerHTML = footerHtml;
+  document.getElementById('adminModal').classList.add('active');
+}
+
+function closeAdminModal() {
+  document.getElementById('adminModal').classList.remove('active');
+}
+
+/* ── Pure Client-Side Valid PDF Binary Generator ──────────────── */
+function createPdfBlob(title, subtitle, metaLine, headers, rows) {
+  function escapePdf(str) {
+    if (!str) return '';
+    return String(str).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  }
+  const lines = [
+    'BT',
+    '/F1 16 Tf',
+    '50 750 Td',
+    `(${escapePdf(title)}) Tj`,
+    '/F1 11 Tf',
+    '0 -22 Td',
+    `(${escapePdf(subtitle)}) Tj`,
+    '/F2 9 Tf',
+    '0 -18 Td',
+    `(${escapePdf(metaLine)}) Tj`,
+    '/F1 9 Tf',
+    '0 -12 Td',
+    '(---------------------------------------------------------------------------------------------------------------------------------) Tj'
+  ];
+
+  if (headers && headers.length) {
+    lines.push('/F1 10 Tf', '0 -20 Td', `(${escapePdf(headers.join('   |   '))}) Tj`);
+    lines.push('/F1 9 Tf', '0 -10 Td', '(---------------------------------------------------------------------------------------------------------------------------------) Tj');
+  }
+
+  lines.push('/F2 9 Tf', '0 -16 Td');
+  if (rows && rows.length) {
+    rows.forEach(r => {
+      const rowText = Array.isArray(r) ? r.join('   |   ') : String(r);
+      lines.push(`(${escapePdf(rowText)}) Tj`, '0 -14 Td');
+    });
+  }
+  lines.push('ET');
+
+  const streamData = lines.join('\n');
+  const streamLen = streamData.length;
+
+  const objects = [
+    '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n',
+    '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n',
+    '3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>\nendobj\n',
+    `4 0 obj\n<< /Length ${streamLen} >>\nstream\n${streamData}\nendstream\nendobj\n`,
+    '5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n',
+    '6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n'
+  ];
+
+  let header = '%PDF-1.4\n';
+  let offsets = [0];
+  let curr = header.length;
+  let body = '';
+
+  for (let i = 0; i < objects.length; i++) {
+    offsets.push(curr);
+    body += objects[i];
+    curr += objects[i].length;
+  }
+
+  let xrefOffset = curr;
+  let xref = `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (let i = 1; i < offsets.length; i++) {
+    xref += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+  }
+
+  let trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
+  let fullPdf = header + body + xref + trailer;
+
+  return new Blob([fullPdf], { type: 'application/pdf' });
+}
+
+function downloadFile(content, fileName, mimeType) {
+  let blob;
+  if (content instanceof Blob) {
+    blob = content;
+  } else {
+    blob = new Blob([content], { type: mimeType });
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showAdminToast(`Downloaded ${fileName}`, 'success');
+}
+
+/* ── 1. User Management Functions ────────────────────────────── */
+function sendUserInvitation() {
+  const first = document.getElementById('inviteFirst').value.trim();
+  const last = document.getElementById('inviteLast').value.trim();
+  const email = document.getElementById('inviteEmail').value.trim();
+  const roleVal = document.getElementById('inviteRole').value || 'clinician';
+  const roleName = roleVal.charAt(0).toUpperCase() + roleVal.slice(1);
+
+  if (!first || !email) {
+    showAdminToast('Please provide at least a first name and email address.', 'warning');
+    return;
+  }
+
+  const fullName = last ? `${first} ${last}` : first;
+  const tbody = document.querySelector('#section-users tbody');
+  if (tbody) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${fullName}</strong></td>
+      <td>${email}</td>
+      <td><span class="badge role-${roleVal.toLowerCase()}">${roleName}</span></td>
+      <td><span class="badge badge-green">Active</span></td>
+      <td>Just now</td>
+      <td>
+        <button class="btn btn-secondary btn-sm" aria-label="Edit ${fullName}">Edit</button>
+        <button class="btn btn-ghost btn-sm" aria-label="Deactivate ${fullName}">Deactivate</button>
+      </td>
+    `;
+    tbody.prepend(tr);
+  }
+
+  document.getElementById('inviteFirst').value = '';
+  document.getElementById('inviteLast').value = '';
+  document.getElementById('inviteEmail').value = '';
+  document.getElementById('inviteRole').value = '';
+  document.getElementById('inviteFacility').value = '';
+  closeInviteForm();
+  showAdminToast(`Invitation sent and ${fullName} added successfully.`, 'success');
+}
+
+function applyUserFilters() {
+  const search = (document.getElementById('userSearch')?.value || '').toLowerCase().trim();
+  const role = (document.getElementById('roleFilter')?.value || 'all').toLowerCase();
+  const status = (document.getElementById('userStatusFilter')?.value || 'all').toLowerCase();
+
+  const rows = document.querySelectorAll('#section-users tbody tr');
+  rows.forEach(r => {
+    const name = r.cells[0]?.textContent.toLowerCase() || '';
+    const email = r.cells[1]?.textContent.toLowerCase() || '';
+    const userRole = r.cells[2]?.textContent.toLowerCase() || '';
+    const userStatus = r.cells[3]?.textContent.toLowerCase() || '';
+
+    const matchSearch = !search || name.includes(search) || email.includes(search);
+    const matchRole = (role === 'all') || userRole.includes(role);
+    const matchStatus = (status === 'all') ||
+      (status === 'active' && userStatus.includes('active')) ||
+      (status === 'inactive' && (userStatus.includes('inactive') || userStatus.includes('pending')));
+
+    r.style.display = (matchSearch && matchRole && matchStatus) ? '' : 'none';
+  });
+}
+
+document.getElementById('userSearch')?.addEventListener('input', applyUserFilters);
+document.getElementById('roleFilter')?.addEventListener('change', applyUserFilters);
+document.getElementById('userStatusFilter')?.addEventListener('change', applyUserFilters);
+
+/* ── 2. Audit Log Filter Function ────────────────────────────── */
+function applyAuditFilters() {
+  const eventType = (document.getElementById('auditEventType')?.value || 'all').toLowerCase();
+  const userSearch = (document.getElementById('auditUserSearch')?.value || '').toLowerCase().trim();
+  const fromDate = document.getElementById('auditFromDate')?.value || '';
+  const toDate = document.getElementById('auditToDate')?.value || '';
+
+  const rows = document.querySelectorAll('#section-audit tbody tr');
+  let matchCount = 0;
+
+  rows.forEach(r => {
+    const timestamp = r.cells[0]?.textContent || '';
+    const datePart = timestamp.split(' ')[0] || '';
+    const user = r.cells[1]?.textContent.toLowerCase() || '';
+    const event = r.cells[2]?.textContent.toLowerCase() || '';
+
+    let matchEvent = (eventType === 'all');
+    if (eventType === 'login' && event.includes('login')) matchEvent = true;
+    if (eventType === 'record-access' && event.includes('record access')) matchEvent = true;
+    if (eventType === 'config-change' && event.includes('config change')) matchEvent = true;
+    if (eventType === 'role-change' && event.includes('role change')) matchEvent = true;
+
+    const matchUser = !userSearch || user.includes(userSearch);
+    let matchDate = true;
+    if (fromDate && datePart && datePart < fromDate) matchDate = false;
+    if (toDate && datePart && datePart > toDate) matchDate = false;
+
+    if (matchEvent && matchUser && matchDate) {
+      r.style.display = '';
+      matchCount++;
+    } else {
+      r.style.display = 'none';
+    }
+  });
+
+  showAdminToast(`Filters applied: ${matchCount} matching audit entries found.`, 'success');
+}
+
+document.getElementById('auditApplyBtn')?.addEventListener('click', applyAuditFilters);
+
+/* ── 3. Language Toggle Switches ──────────────────────────────── */
+document.querySelectorAll('.lang-status-toggle').forEach(chk => {
+  chk.addEventListener('change', e => {
+    const td = e.target.closest('td');
+    const badge = td ? td.querySelector('.badge') : null;
+    const langRow = e.target.closest('tr');
+    const langName = langRow ? langRow.cells[0]?.querySelector('strong')?.textContent : 'Language';
+
+    if (e.target.checked) {
+      if (badge) {
+        badge.className = 'badge badge-green';
+        badge.textContent = 'Active';
+      }
+      showAdminToast(`${langName} enabled successfully.`, 'success');
+    } else {
+      if (badge) {
+        badge.className = 'badge badge-slate';
+        badge.textContent = 'Inactive';
+      }
+      showAdminToast(`${langName} set to Inactive.`, 'info');
+    }
+  });
+});
+
+/* ── 4. Dynamic Report Generation & Export ────────────────────── */
+const REPORTS_DATA = {
+  appointment: {
+    title: 'Appointment Volume Report',
+    fileName: 'NexCura_Appointment_Volume_Report_2026',
+    headers: ['Facility', 'Week', 'In-person', 'Teleconsult', 'Total', 'vs. Prior Week'],
+    rows: [
+      ['City Health Centre', 'Wk 1 (1–7 Sep)', '84', '31', '115', '▲ +8%'],
+      ['City Health Centre', 'Wk 2 (8–14 Sep)', '91', '33', '124', '▲ +7.8%'],
+      ['Whitefield Clinic', 'Wk 1 (1–7 Sep)', '47', '18', '65', '— 0%'],
+      ['Whitefield Clinic', 'Wk 2 (8–14 Sep)', '52', '22', '74', '▲ +13.8%'],
+      ['Indiranagar Diagnostic', 'Wk 1 (1–7 Sep)', '28', '9', '37', '▼ -4.1%'],
+      ['Electronic City Unit', 'Wk 1 (1–7 Sep)', '38', '14', '52', '▲ +2.0%']
+    ],
+    foot: ['Total (all facilities)', '', '340', '127', '467', '▲ +6.4%']
+  },
+  user_activity: {
+    title: 'User Activity & Engagement Report',
+    fileName: 'NexCura_User_Activity_Report_2026',
+    headers: ['User Role', 'Active Users', 'Avg Session Duration', 'Logins (Monthly)', 'Primary Module', 'Status'],
+    rows: [
+      ['Clinicians', '84', '28.4 mins', '2,491', 'Encounter Workspace', 'Optimal'],
+      ['Nursing Staff', '112', '42.1 mins', '4,812', 'Bed & Vitals Desk', 'High Activity'],
+      ['Administrators', '18', '19.5 mins', '640', 'Console & Audit', 'Normal'],
+      ['Patients / Members', '1,420', '8.2 mins', '3,920', 'Appointments & Rx', 'Active'],
+      ['Lab Technicians', '34', '22.0 mins', '1,120', 'Diagnostics Portal', 'Normal']
+    ],
+    foot: ['Platform Total', '1,668 Active', '24.0 mins avg', '12,983 Total', 'Multi-portal', '99.98% Health']
+  },
+  audit_summary: {
+    title: 'Audit & Compliance Summary Report',
+    fileName: 'NexCura_Audit_Summary_Report_2026',
+    headers: ['Event Category', 'Total Occurrences', 'Successful', 'Failed / Anomaly', 'Risk Classification', 'Review Action'],
+    rows: [
+      ['User Authentication', '8,412', '8,290', '122 (1.45%)', 'Low - Monitored', 'Auto-mitigated'],
+      ['Patient Record Access', '14,890', '14,888', '2 (0.01%)', 'Medium - Flagged', 'Clinician verified'],
+      ['Configuration Changes', '64', '64', '0 (0%)', 'Low - Admin', 'Logged in Ledger'],
+      ['Role & Privilege Updates', '18', '18', '0 (0%)', 'High - Authorized', 'Dual-admin signed'],
+      ['Emergency Override Triggers', '5', '5', '0 (0%)', 'Critical - Acute', 'Audit completed']
+    ],
+    foot: ['Aggregate Audit Volume', '23,389 Events', '23,265 OK', '124 Flagged', 'Zero Breaches', '100% Retained']
+  },
+  trial_referral: {
+    title: 'Clinical Trial Referral & Screenings Report',
+    fileName: 'NexCura_Trial_Referral_Report_2026',
+    headers: ['Study Condition', 'Registry NCT ID', 'Candidate Screenings', 'Eligible Matches', 'Consented', 'Conversion'],
+    rows: [
+      ['Hypertension Phase III', 'NCT04832167', '48', '19', '14', '73.7% Consent'],
+      ['Type 2 Diabetes Glycemic Care', 'NCT05119204', '62', '24', '18', '75.0% Consent'],
+      ['Cardiac Electrophysiology Review', 'NCT04981123', '35', '12', '9', '75.0% Consent'],
+      ['Oncology Targeted Immunotherapy', 'NCT05249011', '28', '8', '7', '87.5% Consent'],
+      ['Pulmonary Rehabilitation Study', 'NCT05023944', '22', '11', '8', '72.7% Consent']
+    ],
+    foot: ['Total Trials Portfolio', '5 Key Studies', '195 Screened', '74 Eligible', '56 Enrolled', '75.7% Aggregate']
+  }
+};
+
+let currentActiveReport = 'appointment';
+
+function renderReport(reportKey, fromDate, toDate) {
+  const data = REPORTS_DATA[reportKey] || REPORTS_DATA.appointment;
+  currentActiveReport = reportKey;
+
+  const headingEl = document.getElementById('reportOutputHeading');
+  const tagEl = document.getElementById('reportOutputTag');
+  const theadEl = document.getElementById('reportThead');
+  const tbodyEl = document.getElementById('reportTbody');
+  const tfootEl = document.getElementById('reportTfoot');
+  const outputEl = document.getElementById('apptReportOutput');
+
+  if (headingEl) headingEl.textContent = `${data.title} — Generated Output`;
+  if (tagEl) tagEl.textContent = `${fromDate || '1 Sep 2026'} – ${toDate || '23 Sep 2026'}`;
+
+  if (theadEl) {
+    theadEl.innerHTML = `<tr>${data.headers.map(h => `<th scope="col">${h}</th>`).join('')}</tr>`;
+  }
+
+  if (tbodyEl) {
+    tbodyEl.innerHTML = data.rows.map(row => `
+      <tr>
+        ${row.map((cell, idx) => {
+          if (idx === 0) return `<td><strong>${cell}</strong></td>`;
+          if (cell.includes('▲')) return `<td><span style="color:var(--success-green);font-weight:700;">${cell}</span></td>`;
+          if (cell.includes('▼')) return `<td><span style="color:var(--alert-red);font-weight:700;">${cell}</span></td>`;
+          return `<td>${cell}</td>`;
+        }).join('')}
+      </tr>
+    `).join('');
+  }
+
+  if (tfootEl) {
+    tfootEl.innerHTML = `
+      <tr style="background:var(--bg-input);border-top:2px solid var(--border-color);">
+        <td colspan="2"><strong>${data.foot[0]}</strong></td>
+        ${data.foot.slice(2).map(c => `<td><strong>${c}</strong></td>`).join('')}
+      </tr>
+    `;
+  }
+
+  if (outputEl) {
+    outputEl.style.display = 'block';
+    outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    outputEl.style.outline = '2px solid var(--teal)';
+    setTimeout(() => { outputEl.style.outline = ''; }, 1500);
+  }
+
+  showAdminToast(`${data.title} generated successfully.`, 'success');
+}
+
+// Hook up Generate Report buttons
+document.getElementById('apptReportBtn')?.addEventListener('click', () => {
+  const from = document.getElementById('rpt1From')?.value;
+  const to = document.getElementById('rpt1To')?.value;
+  renderReport('appointment', from, to);
+});
+
+document.getElementById('userReportBtn')?.addEventListener('click', () => {
+  const from = document.getElementById('rpt2From')?.value;
+  const to = document.getElementById('rpt2To')?.value;
+  renderReport('user_activity', from, to);
+});
+
+document.getElementById('auditReportBtn')?.addEventListener('click', () => {
+  const from = document.getElementById('rpt3From')?.value;
+  const to = document.getElementById('rpt3To')?.value;
+  renderReport('audit_summary', from, to);
+});
+
+document.getElementById('trialReportBtn')?.addEventListener('click', () => {
+  const from = document.getElementById('rpt4From')?.value;
+  const to = document.getElementById('rpt4To')?.value;
+  renderReport('trial_referral', from, to);
+});
+
+// Report CSV Export
+document.getElementById('reportCsvBtn')?.addEventListener('click', () => {
+  const data = REPORTS_DATA[currentActiveReport] || REPORTS_DATA.appointment;
+  let csv = data.headers.join(',') + '\n';
+  data.rows.forEach(r => {
+    csv += r.map(c => `"${c.replace(/"/g, '""')}"`).join(',') + '\n';
+  });
+  if (data.foot) {
+    csv += data.foot.map(c => `"${c.replace(/"/g, '""')}"`).join(',') + '\n';
+  }
+  downloadFile(csv, `${data.fileName}.csv`, 'text/csv');
+});
+
+// Report PDF Export
+document.getElementById('reportPdfBtn')?.addEventListener('click', () => {
+  const data = REPORTS_DATA[currentActiveReport] || REPORTS_DATA.appointment;
+  const from = '2026-09-01';
+  const to = '2026-09-23';
+  const meta = `NexCura Clinical & Administrative Intelligence   Reporting Period: ${from} to ${to}`;
+
+  const pdfBlob = createPdfBlob(
+    data.title,
+    'NexCura Healthcare System Official Operations Summary',
+    meta,
+    data.headers,
+    data.rows
+  );
+  downloadFile(pdfBlob, `${data.fileName}.pdf`, 'application/pdf');
+});
+
+/* ── 5. Global Delegated Click Handler for all UI Actions ─────── */
+document.addEventListener('click', e => {
+  const target = e.target;
+  const btn = target.closest('button, .btn');
+  if (!btn) return;
+  const text = btn.textContent.trim();
+
+  // -- User Management: Edit --
+  if (text === 'Edit' && btn.closest('#section-users')) {
+    const row = btn.closest('tr');
+    if (!row) return;
+    const name = row.cells[0]?.textContent.trim() || '';
+    const email = row.cells[1]?.textContent.trim() || '';
+    const roleText = row.cells[2]?.textContent.trim() || 'Clinician';
+
+    const bodyHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">User Name</label><input type="text" id="editUserName" value="${name}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Email Address</label><input type="email" id="editUserEmail" value="${email}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Role</label>
+        <select id="editUserRole" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option ${roleText.toLowerCase()==='patient'?'selected':''}>Patient</option>
+          <option ${roleText.toLowerCase()==='clinician'?'selected':''}>Clinician</option>
+          <option ${roleText.toLowerCase()==='staff'?'selected':''}>Staff</option>
+          <option ${roleText.toLowerCase()==='admin'?'selected':''}>Admin</option>
+        </select>
+      </div>
+    `;
+    const footerHtml = `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveUserEditBtn">Save Changes</button>
+    `;
+    openAdminModal('Edit User Details', bodyHtml, footerHtml);
+
+    document.getElementById('saveUserEditBtn')?.addEventListener('click', () => {
+      const newName = document.getElementById('editUserName')?.value.trim() || name;
+      const newEmail = document.getElementById('editUserEmail')?.value.trim() || email;
+      const newRole = document.getElementById('editUserRole')?.value || roleText;
+
+      row.cells[0].innerHTML = `<strong>${newName}</strong>`;
+      row.cells[1].textContent = newEmail;
+      row.cells[2].innerHTML = `<span class="badge role-${newRole.toLowerCase()}">${newRole}</span>`;
+      closeAdminModal();
+      showAdminToast(`User ${newName} updated successfully.`, 'success');
+    });
+  }
+
+  // -- User Management: Deactivate / Reactivate --
+  if ((text === 'Deactivate' || text === 'Reactivate') && btn.closest('#section-users')) {
+    const row = btn.closest('tr');
+    if (!row) return;
+    const name = row.cells[0]?.textContent.trim() || 'this user';
+    const isDeactivating = (text === 'Deactivate');
+
+    const bodyHtml = `<p style="font-size:13px;line-height:1.6;color:var(--text-main);">Are you sure you want to <strong>${isDeactivating ? 'deactivate' : 'reactivate'}</strong> ${name}? ${isDeactivating ? 'The user will lose access to system consoles until restored.' : 'The account will regain its default permissions.'}</p>`;
+    const footerHtml = `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-${isDeactivating ? 'danger' : 'primary'}" id="confirmUserStatusBtn">${isDeactivating ? 'Deactivate Account' : 'Reactivate Account'}</button>
+    `;
+    openAdminModal(`${isDeactivating ? 'Deactivate' : 'Reactivate'} User Account`, bodyHtml, footerHtml);
+
+    document.getElementById('confirmUserStatusBtn')?.addEventListener('click', () => {
+      if (isDeactivating) {
+        row.cells[3].innerHTML = '<span class="badge badge-slate">Inactive</span>';
+        btn.textContent = 'Reactivate';
+      } else {
+        row.cells[3].innerHTML = '<span class="badge badge-green">Active</span>';
+        btn.textContent = 'Deactivate';
+      }
+      closeAdminModal();
+      showAdminToast(`Account status updated for ${name}.`, 'success');
+    });
+  }
+
+  // -- User Management: Export All Users --
+  if (text.includes('Export') && btn.closest('#section-users')) {
+    const rows = document.querySelectorAll('#section-users tbody tr');
+    let csv = 'Name,Email,Role,Status,Last Login\n';
+    rows.forEach(r => {
+      const name = r.cells[0]?.textContent.trim() || '';
+      const email = r.cells[1]?.textContent.trim() || '';
+      const role = r.cells[2]?.textContent.trim() || '';
+      const status = r.cells[3]?.textContent.trim() || '';
+      const lastLogin = r.cells[4]?.textContent.trim() || '';
+      csv += `"${name}","${email}","${role}","${status}","${lastLogin}"\n`;
+    });
+    downloadFile(csv, 'NexCura_Users_Directory_2026.csv', 'text/csv');
+  }
+
+  // -- Facilities: Add Facility --
+  if (text === '＋ Add Facility') {
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Facility Name</label><input type="text" id="newFacName" placeholder="e.g. Koramangala Specialty Centre" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Address</label><input type="text" id="newFacAddr" placeholder="e.g. 80ft Road, 4th Block, Bengaluru" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Departments Count</label><input type="number" id="newFacDepts" value="5" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Staff Allocation</label><input type="number" id="newFacStaff" value="32" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Status</label>
+        <select id="newFacStatus" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option value="Active">Active</option>
+          <option value="Under Review">Under Review</option>
+        </select>
+      </div>
+    `;
+    const footerHtml = `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveNewFacilityBtn">Add Facility</button>
+    `;
+    openAdminModal('Enrol New Healthcare Facility', formHtml, footerHtml);
+
+    document.getElementById('saveNewFacilityBtn')?.addEventListener('click', () => {
+      const name = document.getElementById('newFacName')?.value.trim();
+      const addr = document.getElementById('newFacAddr')?.value.trim();
+      const depts = document.getElementById('newFacDepts')?.value.trim() || '4';
+      const staff = document.getElementById('newFacStaff')?.value.trim() || '25';
+      const status = document.getElementById('newFacStatus')?.value || 'Active';
+
+      if (!name) {
+        showAdminToast('Please provide a facility name.', 'warning');
+        return;
+      }
+
+      const grid = document.querySelector('.facility-grid');
+      if (grid) {
+        const article = document.createElement('article');
+        article.className = 'facility-card';
+        article.innerHTML = `
+          <div class="facility-header">
+            <div>
+              <div class="facility-name">${name}</div>
+              <div class="facility-address">📍 ${addr || 'Bengaluru Campus'}</div>
+            </div>
+            <span class="badge ${status==='Active'?'badge-green':'badge-amber'}">${status}</span>
+          </div>
+          <div class="facility-meta">
+            <div class="facility-stat"><strong>${depts}</strong> Departments</div>
+            <div class="facility-stat"><strong>12</strong> Services</div>
+            <div class="facility-stat"><strong>${staff}</strong> Staff</div>
+          </div>
+          <div class="facility-actions">
+            <button class="btn btn-secondary btn-sm" aria-label="Edit ${name}">✏ Edit</button>
+            <button class="btn btn-ghost btn-sm" aria-label="View ${name} details">View Details</button>
+          </div>
+        `;
+        grid.prepend(article);
+      }
+      closeAdminModal();
+      showAdminToast(`Facility "${name}" enrolled successfully.`, 'success');
+    });
+  }
+
+  // -- Facilities: Edit Facility --
+  if (text.includes('Edit') && btn.closest('.facility-card')) {
+    const card = btn.closest('.facility-card');
+    const nameEl = card.querySelector('.facility-name');
+    const addrEl = card.querySelector('.facility-address');
+    const currentName = nameEl?.textContent.trim() || '';
+    const currentAddr = (addrEl?.textContent.trim() || '').replace(/^📍\s*/, '');
+
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Facility Name</label><input type="text" id="editFacName" value="${currentName}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Address</label><input type="text" id="editFacAddr" value="${currentAddr}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+    `;
+    openAdminModal('Edit Facility Details', formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveEditFacilityBtn">Save Changes</button>
+    `);
+
+    document.getElementById('saveEditFacilityBtn')?.addEventListener('click', () => {
+      const updatedName = document.getElementById('editFacName')?.value.trim() || currentName;
+      const updatedAddr = document.getElementById('editFacAddr')?.value.trim() || currentAddr;
+      if (nameEl) nameEl.textContent = updatedName;
+      if (addrEl) addrEl.textContent = `📍 ${updatedAddr}`;
+      closeAdminModal();
+      showAdminToast(`Facility "${updatedName}" updated successfully.`, 'success');
+    });
+  }
+
+  // -- Facilities: View Details --
+  if (text === 'View Details' && btn.closest('.facility-card')) {
+    const card = btn.closest('.facility-card');
+    const name = card.querySelector('.facility-name')?.textContent.trim() || 'Facility';
+    const addr = card.querySelector('.facility-address')?.textContent.trim() || '';
+    const stats = Array.from(card.querySelectorAll('.facility-stat')).map(s => s.textContent.trim()).join(' · ');
+
+    const bodyHtml = `
+      <h3 style="font-family:Manrope;color:var(--accent-teal);font-size:16px;margin-bottom:6px;">${name}</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">${addr}</p>
+      <div style="background:var(--bg-input);border:1px solid var(--border-color);padding:12px;border-radius:6px;font-size:12px;margin-bottom:14px;color:var(--text-main);">
+        <strong style="color:var(--accent-teal);">Operational Overview:</strong> ${stats}
+      </div>
+      <ul style="font-size:12px;color:var(--text-main);line-height:1.7;padding-left:18px;">
+        <li>24/7 Level-1 Emergency & Trauma Unit Active</li>
+        <li>Real-Time Electronic Health Record (EHR) synchronization online</li>
+        <li>Integrated Telehealth & Outpatient Consultation wings</li>
+        <li>Central Pharmacy and Diagnostic Imaging Suites fully staffed</li>
+      </ul>
+    `;
+    openAdminModal('Facility Specifications & Overview', bodyHtml, '<button class="btn btn-ghost" onclick="closeAdminModal()">Close</button>');
+  }
+
+  // -- Facilities: Export Facilities --
+  if (text.includes('Export') && btn.closest('#section-facilities')) {
+    const cards = document.querySelectorAll('.facility-card');
+    let csv = 'Facility Name,Address,Status,Departments,Staff\n';
+    cards.forEach(c => {
+      const name = c.querySelector('.facility-name')?.textContent.trim() || '';
+      const addr = (c.querySelector('.facility-address')?.textContent.trim() || '').replace(/^📍\s*/, '');
+      const status = c.querySelector('.badge')?.textContent.trim() || 'Active';
+      const stats = Array.from(c.querySelectorAll('.facility-stat')).map(s => s.textContent.trim());
+      csv += `"${name}","${addr}","${status}","${stats[0] || ''}","${stats[2] || ''}"\n`;
+    });
+    downloadFile(csv, 'NexCura_Facilities_Directory_2026.csv', 'text/csv');
+  }
+
+  // -- Facilities: View All --
+  if (text === 'View all' && btn.closest('#section-facilities')) {
+    showAdminToast('Displaying all 6 enrolled hospital campuses.', 'info');
+  }
+
+  // -- Roles: Request Permission Change --
+  if (text === 'Request Permission Change') {
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Role / Policy Target</label>
+        <select id="permRoleTarget" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option>Clinician</option>
+          <option>Hospital Staff</option>
+          <option>Patient</option>
+          <option>System Administrator</option>
+        </select>
+      </div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Requested Permission Adjustment</label>
+        <input type="text" id="permScope" placeholder="e.g. Grant audit log export to department heads" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+      </div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Clinical & Security Justification</label>
+        <textarea id="permJustification" rows="4" placeholder="Detail the business or compliance justification..." style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></textarea>
+      </div>
+    `;
+    openAdminModal('Request Access Policy Revision', formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="submitPolicyReqBtn">Submit Request</button>
+    `);
+
+    document.getElementById('submitPolicyReqBtn')?.addEventListener('click', () => {
+      closeAdminModal();
+      showAdminToast('Permission change request submitted for administrative review.', 'success');
+    });
+  }
+
+  // -- Roles: Download Policy PDF --
+  if (text.includes('Download Policy PDF')) {
+    const headers = ['Role Identifier', 'Record Scope', 'Clinical Notes', 'User Management', 'Org Settings', 'Audit Log'];
+    const rows = [
+      ['Patient Role', 'Own Records Only', 'Read-Only Access', 'Permission Denied', 'Permission Denied', 'Permission Denied'],
+      ['Clinician Role', 'Assigned Ward & Patients', 'Full SOAP Notes Edit', 'Permission Denied', 'Permission Denied', 'Permission Denied'],
+      ['Staff Role', 'Assigned Shift & Floor', 'Vitals & Intake Edit', 'Permission Denied', 'Permission Denied', 'Permission Denied'],
+      ['Admin Role', 'System-Wide Operations', 'Full Audit View', 'Full CRUD Control', 'Department Setup', 'Full Audit Log Access'],
+      ['System Administrator', 'Global Enterprise Scope', 'Enterprise Oversight', 'Security Privileges', 'System Configuration', 'Full Cryptographic Audit']
+    ];
+    const pdfBlob = createPdfBlob(
+      'NexCura Role & Access Control Policy Matrix',
+      'Information Security Governance & Compliance Framework v2.4.1',
+      `Effective: September 2026   Classification: Internal Healthcare Security`,
+      headers,
+      rows
+    );
+    downloadFile(pdfBlob, 'NexCura_Access_Policy_2026.pdf', 'application/pdf');
+  }
+
+  // -- Language: Add Language --
+  if (text === '＋ Add Language') {
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Language Name</label><input type="text" id="newLangName" placeholder="e.g. Tamil" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Locale Code</label><input type="text" id="newLangCode" placeholder="e.g. ta-IN" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Clinical Content Review Status</label>
+        <select id="newLangReview" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option value="pending">⏳ Pending Review</option>
+          <option value="reviewed">✓ Yes (Reviewed)</option>
+          <option value="not_reviewed">✗ Not Reviewed</option>
+        </select>
+      </div>
+    `;
+    openAdminModal('Add Supported Platform Language', formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveNewLangBtn">Save Language</button>
+    `);
+
+    document.getElementById('saveNewLangBtn')?.addEventListener('click', () => {
+      const name = document.getElementById('newLangName')?.value.trim();
+      const code = document.getElementById('newLangCode')?.value.trim() || 'ta-IN';
+      const review = document.getElementById('newLangReview')?.value;
+
+      if (!name) {
+        showAdminToast('Please provide a language name.', 'warning');
+        return;
+      }
+
+      const tbody = document.querySelector('#section-language tbody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        const reviewBadge = review === 'reviewed' ?
+          '<span class="badge badge-green">✓ Yes</span>' :
+          (review === 'pending' ? '<span class="badge badge-amber">⏳ Pending</span>' : '<span class="badge badge-red">✗ Not Reviewed</span>');
+
+        tr.innerHTML = `
+          <td><strong>${name}</strong> <span style="font-size:9px;color:var(--muted);">(${code})</span></td>
+          <td>
+            <label class="toggle-switch" aria-label="${name} language active status toggle">
+              <input type="checkbox" checked class="lang-status-toggle" aria-label="${name} active" />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="badge badge-green" style="margin-left:8px;">Active</span>
+          </td>
+          <td>—</td>
+          <td>${reviewBadge}</td>
+          <td>Today</td>
+          <td><button class="btn btn-ghost btn-sm" aria-label="Edit ${name} configuration">Edit</button></td>
+        `;
+        tbody.appendChild(tr);
+
+        // Bind toggle
+        tr.querySelector('.lang-status-toggle')?.addEventListener('change', e => {
+          const badge = tr.querySelector('td:nth-child(2) .badge');
+          if (e.target.checked) {
+            if (badge) { badge.className = 'badge badge-green'; badge.textContent = 'Active'; }
+            showAdminToast(`${name} enabled.`, 'success');
+          } else {
+            if (badge) { badge.className = 'badge badge-slate'; badge.textContent = 'Inactive'; }
+            showAdminToast(`${name} disabled.`, 'info');
+          }
+        });
+      }
+      closeAdminModal();
+      showAdminToast(`Language "${name}" added to configuration matrix.`, 'success');
+    });
+  }
+
+  // -- Language: Edit Language --
+  if (text === 'Edit' && btn.closest('#section-language')) {
+    const row = btn.closest('tr');
+    const langName = row.cells[0]?.querySelector('strong')?.textContent.trim() || 'Language';
+
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Language Configuration</label><input type="text" id="editLangName" value="${langName}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Clinical String Verification</label>
+        <select id="editLangReviewed" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option value="yes">✓ Yes - Verified by Authorized Translator</option>
+          <option value="pending">⏳ Pending Review</option>
+          <option value="no">✗ Not Reviewed</option>
+        </select>
+      </div>
+    `;
+    openAdminModal(`Edit ${langName} Configuration`, formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveEditLangBtn">Save Settings</button>
+    `);
+
+    document.getElementById('saveEditLangBtn')?.addEventListener('click', () => {
+      const reviewVal = document.getElementById('editLangReviewed')?.value;
+      if (row.cells[3]) {
+        if (reviewVal === 'yes') row.cells[3].innerHTML = '<span class="badge badge-green">✓ Yes</span>';
+        else if (reviewVal === 'pending') row.cells[3].innerHTML = '<span class="badge badge-amber">⏳ Pending</span>';
+        else row.cells[3].innerHTML = '<span class="badge badge-red">✗ Not Reviewed</span>';
+      }
+      closeAdminModal();
+      showAdminToast(`${langName} settings updated.`, 'success');
+    });
+  }
+
+  // -- Pagination Buttons --
+  if ((text.includes('Prev') || text.includes('Next')) && btn.closest('.section')) {
+    showAdminToast('All records displayed on current view.', 'info');
+  }
+
+  // -- Department Management: Edit --
+  if (text === 'Edit' && btn.closest('#section-departments')) {
+    const row = btn.closest('tr');
+    const deptName = row.cells[0]?.textContent.trim() || '';
+    const hod = row.cells[1]?.textContent.trim() || '';
+    const staff = row.cells[2]?.textContent.trim() || '25';
+    const floor = row.cells[3]?.textContent.trim() || '';
+
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Department</label><input type="text" id="editDeptName" value="${deptName}" readonly style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-muted);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Head of Department</label><input type="text" id="editDeptHod" value="${hod}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Floor / Wing</label><input type="text" id="editDeptFloor" value="${floor}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Staff Allocation</label><input type="number" id="editDeptStaff" value="${staff}" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+    `;
+    openAdminModal(`Edit Department: ${deptName}`, formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveDeptEditBtn">Save Changes</button>
+    `);
+
+    document.getElementById('saveDeptEditBtn')?.addEventListener('click', () => {
+      row.cells[1].textContent = document.getElementById('editDeptHod')?.value.trim() || hod;
+      row.cells[2].textContent = document.getElementById('editDeptStaff')?.value.trim() || staff;
+      row.cells[3].textContent = document.getElementById('editDeptFloor')?.value.trim() || floor;
+      closeAdminModal();
+      showAdminToast(`Department "${deptName}" updated successfully.`, 'success');
+    });
+  }
+
+  // -- Inventory: Schedule, Details, Reorder --
+  if (text === 'Schedule' && btn.closest('#section-inventory')) {
+    const row = btn.closest('tr');
+    const eqName = row.cells[0]?.textContent.trim() || 'Equipment';
+
+    const formHtml = `
+      <p style="font-size:12px;margin-bottom:12px;color:var(--text-main);">Schedule preventive maintenance for <strong>${eqName}</strong>.</p>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Maintenance Date</label><input type="date" id="maintDate" value="2026-11-15" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Assigned Biomedical Technician</label><input type="text" id="maintTech" value="Technician Lead (Biomed)" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+    `;
+    openAdminModal(`Schedule Maintenance: ${eqName}`, formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveMaintBtn">Confirm Schedule</button>
+    `);
+
+    document.getElementById('saveMaintBtn')?.addEventListener('click', () => {
+      const d = document.getElementById('maintDate')?.value;
+      if (row.cells[5] && d) row.cells[5].textContent = d;
+      closeAdminModal();
+      showAdminToast(`Maintenance scheduled for ${eqName}.`, 'success');
+    });
+  }
+
+  if (text === 'Details' && btn.closest('#section-inventory')) {
+    const row = btn.closest('tr');
+    const eqName = row.cells[0]?.textContent.trim() || 'Equipment';
+    openAdminModal(`Equipment Profile: ${eqName}`, `
+      <p style="font-size:12px;line-height:1.6;margin-bottom:10px;color:var(--text-main);"><strong style="color:var(--accent-teal);">Item:</strong> ${eqName}<br><strong style="color:var(--accent-teal);">Category:</strong> Therapeutic / Critical Care<br><strong style="color:var(--accent-teal);">Operational State:</strong> Verified & Calibrated</p>
+      <div style="background:var(--bg-input);border:1px solid var(--border-color);padding:10px;border-radius:6px;font-size:11px;color:var(--text-main);">
+        Last calibration passed: 15 Aug 2026<br>
+        Service contract: Active with OEM Medical Support<br>
+        Next regulatory inspection: 10 Dec 2026
+      </div>
+    `, '<button class="btn btn-ghost" onclick="closeAdminModal()">Close</button>');
+  }
+
+  if (text === 'Reorder' && btn.closest('#section-inventory')) {
+    const row = btn.closest('tr');
+    const eqName = row.cells[0]?.textContent.trim() || 'Item';
+    if (row.cells[4]) {
+      row.cells[4].innerHTML = '<span class="badge badge-teal">PO Dispatched</span>';
+    }
+    showAdminToast(`Emergency purchase order dispatched for ${eqName}.`, 'success');
+  }
+
+  // -- Billing: Create Invoice --
+  if (text === '＋ Create Invoice') {
+    const formHtml = `
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Patient Name</label><input type="text" id="invPatient" placeholder="e.g. Ramesh Kumar" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Department</label>
+        <select id="invDept" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option>Cardiology</option><option>Neurology</option><option>Orthopedics</option><option>Emergency</option><option>General Medicine</option>
+        </select>
+      </div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Amount (₹)</label><input type="number" id="invAmt" value="45000" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;"></div>
+      <div class="form-field" style="margin-bottom:10px;"><label style="color:var(--accent-teal);">Status</label>
+        <select id="invStatus" style="width:100%;padding:8px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:4px;">
+          <option value="Paid">Paid</option>
+          <option value="Pending">Pending</option>
+        </select>
+      </div>
+    `;
+    openAdminModal('Create New Billing Invoice', formHtml, `
+      <button class="btn btn-ghost" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveInvoiceBtn">Generate Invoice</button>
+    `);
+
+    document.getElementById('saveInvoiceBtn')?.addEventListener('click', () => {
+      const patient = document.getElementById('invPatient')?.value.trim();
+      const dept = document.getElementById('invDept')?.value || 'Cardiology';
+      const amt = parseFloat(document.getElementById('invAmt')?.value || '0').toLocaleString('en-IN');
+      const status = document.getElementById('invStatus')?.value || 'Paid';
+
+      if (!patient) {
+        showAdminToast('Please provide a patient name.', 'warning');
+        return;
+      }
+
+      const tbody = document.querySelector('#section-billing tbody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        const randId = Math.floor(1000 + Math.random() * 9000);
+        tr.innerHTML = `
+          <td><strong>INV-2026-${randId}</strong></td>
+          <td>${patient}</td>
+          <td>${dept}</td>
+          <td>₹${amt}</td>
+          <td><span class="badge ${status==='Paid'?'badge-green':'badge-amber'}">${status}</span></td>
+          <td>Today</td>
+        `;
+        tbody.prepend(tr);
+      }
+      closeAdminModal();
+      showAdminToast(`Invoice generated for ${patient}.`, 'success');
+    });
+  }
+
+  // -- Feedback: Resolve & Reply --
+  if (text === 'Resolve' && btn.closest('.feedback-card')) {
+    const card = btn.closest('.feedback-card');
+    card.setAttribute('data-status', 'resolved');
+    const statusSpan = card.querySelector('.feedback-card span:nth-of-type(2)');
+    if (statusSpan) {
+      statusSpan.style.background = '#dcfce7';
+      statusSpan.style.color = '#166534';
+      statusSpan.textContent = 'Resolved';
+    }
+    btn.outerHTML = '<button class="btn btn-ghost btn-xs" style="color:var(--success-green);">✓ Resolved</button>';
+    showAdminToast('Feedback marked as resolved.', 'success');
+  }
+
+  if (text === 'Escalate' && btn.closest('.feedback-card')) {
+    const card = btn.closest('.feedback-card');
+    card.setAttribute('data-status', 'in-progress');
+    showAdminToast('Feedback escalated to department leadership and quality assurance.', 'warning');
+  }
+});
+
+/* ── 6. Feedback Star Rating Interaction ─────────────────────── */
+let currentFeedbackRating = 5;
+
+function handleStarClick(e) {
+  const star = e.target.closest('[data-star]');
+  if (!star) return;
+  const rating = parseInt(star.getAttribute('data-star'), 10);
+  currentFeedbackRating = rating;
+
+  const container = document.getElementById('adminStarRating');
+  if (!container) return;
+  const stars = container.querySelectorAll('[data-star]');
+  stars.forEach((s, idx) => {
+    s.style.color = (idx < rating) ? '#eab308' : '#d1d5db';
+  });
+}
+
+function filterFeedback() {
+  const typeFilter = document.getElementById('feedbackTypeFilter')?.value || 'all';
+  const statusFilter = document.getElementById('feedbackStatusFilter')?.value || 'all';
+  const cards = document.querySelectorAll('.feedback-card');
+  cards.forEach(card => {
+    const cardType = card.getAttribute('data-type');
+    const cardStatus = card.getAttribute('data-status');
+    const matchesType = (typeFilter === 'all' || cardType === typeFilter);
+    const matchesStatus = (statusFilter === 'all' || cardStatus === statusFilter);
+    card.style.display = (matchesType && matchesStatus) ? 'block' : 'none';
+  });
+}
+</script>
+
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

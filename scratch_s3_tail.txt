@@ -1,0 +1,140 @@
+/* ── Open patient chart drawer ──────────────────────────── */
+function openChart(id) {
+  window.activePatientId = id;
+  const p = PATIENTS[id];
+  if (!p) return;
+
+  document.getElementById('drawerAvatar').textContent = p.initials;
+  document.getElementById('drawerTitle').textContent  = 'Patient Chart — ' + p.name;
+  document.getElementById('drawerSubtitle').textContent = 'ID: ' + p.id + ' · Next: ' + p.nextAppt;
+
+  const body = document.getElementById('drawerBody');
+  body.innerHTML = `
+    <div class="drawer-disclaimer" id="drawerDisclaimer" role="note">
+      ⚠ SAMPLE DATA — Not connected to any real patient record or EHR system
+    </div>
+
+    <!-- Demographics -->
+    <div class="drawer-section">
+      <h4>Demographics</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><small>Full Name (Anonymised)</small><strong>${escHtml(p.name)} <span class="sample-tag">Sample</span></strong></div>
+        <div class="detail-item"><small>Patient ID</small><strong>${escHtml(p.id)}</strong></div>
+        <div class="detail-item"><small>Date of Birth</small><strong>${escHtml(p.dob)}</strong></div>
+        <div class="detail-item"><small>Sex (Patient-reported)</small><strong>${escHtml(p.sex)}</strong></div>
+        <div class="detail-item"><small>Contact Phone</small><strong>${escHtml(p.phone)}</strong></div>
+        <div class="detail-item"><small>Email</small><strong>${escHtml(p.email)}</strong></div>
+        <div class="detail-item"><small>Address</small><strong>${escHtml(p.address)}</strong></div>
+        <div class="detail-item"><small>Primary Clinician</small><strong>${escHtml(p.gp)}</strong></div>
+      </div>
+    </div>
+
+    <!-- Active Conditions -->
+    <div class="drawer-section">
+      <h4>Active Conditions (Patient-reported)</h4>
+      <div>${p.conditions.map(c => `<span class="condition-tag">${escHtml(c)}</span>`).join('')}</div>
+      <p style="font-size:10px;color:var(--muted);margin-top:8px;">Conditions are self-reported in pre-visit intake. Clinical confirmation required.</p>
+    </div>
+
+    <!-- Medications -->
+    <div class="drawer-section">
+      <h4>Current Medications</h4>
+      <div>${p.medications.map(m => `
+        <div class="med-item">
+          <div>
+            <div class="med-name">${escHtml(m.name)}</div>
+            <div class="med-dose">${escHtml(m.dose)} · ${escHtml(m.freq)}</div>
+          </div>
+          <span class="badge badge-teal">Active</span>
+        </div>
+      `).join('')}</div>
+    </div>
+
+    <!-- Allergies -->
+    <div class="drawer-section">
+      <h4>Allergies &amp; Intolerances</h4>
+      <div>${p.allergies.map(a => `<span class="allergy-badge">⚠ ${escHtml(a)}</span>`).join('')}</div>
+    </div>
+
+    <!-- Last Results -->
+    <div class="drawer-section">
+      <h4>Last Results <span class="sample-tag">Illustrative values</span></h4>
+      <div>${p.results.map(r => `
+        <div class="result-row">
+          <div>
+            <div class="result-name">${escHtml(r.name)}</div>
+            <div class="result-ref">Ref: ${escHtml(r.ref)} · ${escHtml(r.date)}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="result-val">${escHtml(r.value)}</div>
+            ${r.flag ? '<div class="result-flag">⚑ Flagged for review</div>' : '<div style="color:var(--success-green);font-size:10px;">✓ Within range</div>'}
+          </div>
+        </div>
+      `).join('')}</div>
+    </div>
+
+    <!-- Encounter Notes -->
+    <div class="drawer-section">
+      <h4>Encounter Notes</h4>
+      ${p.encounters.map(e => `
+        <div class="encounter-item">
+          <div class="enc-date">${escHtml(e.date)}</div>
+          <div class="enc-body">
+            <strong>${escHtml(e.title)}</strong>
+            <p>${escHtml(e.note)}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="btn-row" style="padding-top:4px;">
+      <button class="btn btn-primary btn-sm"
+              onclick="switchSection('encounter', document.querySelector('[data-section=encounter]'));closeChart();">
+        📝 Open SOAP Note
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="window.print()">
+        🖨 Print Summary
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="closeChart()">
+        ✕ Close
+      </button>
+    </div>
+
+    <p style="font-size:9px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;">
+      Illustrative sample only · Not connected to any EHR · Data is fictional · NexCura Preview v2.5
+    </p>
+  `;
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('chartDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').setAttribute('aria-hidden', 'false');
+  document.getElementById('chartDrawer').focus();
+  document.body.style.overflow = 'hidden';
+}
+
+function closeChart() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('chartDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+/* ── Keyboard: close drawer on Escape ──────────────────── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('chartDrawer').classList.contains('open')) {
+      closeChart();
+    }
+    if (document.getElementById('sidebar').classList.contains('mobile-open')) {
+      closeMobileSidebar();
+    }
+  }
+});
+
+/* ── Init ───────────────────────────────────────────────── */
+(function init() {
+  // Set aria-hidden on inactive sections
+  document.querySelectorAll('.section-view').forEach(s => {
+    if (!s.classList.contains('active')) s.setAttribute('aria-hidden', 'true');
+  });
+})();

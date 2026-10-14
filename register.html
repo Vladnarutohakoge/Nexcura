@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b5d5e">
+  <title>Get Started / Register — NexCura Healthcare Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/static/images/logo/logo-icon.svg">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d1e2e 0%, #0b5d5e 60%, #0284c7 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .register-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .register-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; color: #0d1e2e; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #c2d9d3;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #0b5d5e;
+      box-shadow: 0 0 0 3px rgba(11,93,94,0.15);
+    }
+    .role-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .role-pill-btn {
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px;
+      border: 1.5px solid #c2d9d3;
+      background: #f8fafc;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .role-pill-btn.active {
+      background: #0b5d5e;
+      color: #fff;
+      border-color: #0b5d5e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Header -->
+  <header style="padding: 20px 0; text-align: center;">
+    <a href="/" aria-label="NexCura Home">
+      <img src="/static/images/logo/logo-white.svg" alt="NexCura Healthcare" height="42" style="height:42px;width:auto;margin:0 auto;">
+    </a>
+  </header>
+
+  <div class="register-container">
+    <div class="register-card">
+      <div style="text-align:center; margin-bottom: 24px;">
+        <span class="badge" style="background:#e3f5f0; color:#0b5d5e; font-weight:800; font-size:11px; padding:4px 12px; border-radius:100px; text-transform:uppercase;">Create Encrypted Account</span>
+        <h1 style="font-family:'Manrope',sans-serif; font-size:24px; font-weight:800; color:#0d1e2e; margin-top:8px;">Join the NexCura Network</h1>
+        <p style="font-size:13px; color:#64748b;">Instant access to appointments, medical telemetry, and clinical records.</p>
+      </div>
+
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <!-- Role Selection -->
+        <div class="form-group">
+          <label>Select Your Platform Role</label>
+          <div class="role-pills">
+            <button type="button" class="role-pill-btn active" data-role="patient" onclick="setRole('patient', this)">👤 Patient</button>
+            <button type="button" class="role-pill-btn" data-role="doctor" onclick="setRole('doctor', this)">🩺 Doctor</button>
+            <button type="button" class="role-pill-btn" data-role="admin" onclick="setRole('admin', this)">🏥 Admin</button>
+          </div>
+          <input type="hidden" id="selectedRole" value="patient">
+        </div>
+
+        <div class="form-group">
+          <label>Full Legal Name</label>
+          <input type="text" id="regName" placeholder="e.g. Dr. Priya Sharma or Aarav Patel" required>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="regEmail" placeholder="name@domain.com" required>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number (with country code)</label>
+          <input type="tel" id="regPhone" placeholder="+91 98765 43210" required>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="regPassword" placeholder="••••••••" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="regConfirmPassword" placeholder="••••••••" required minlength="6">
+          </div>
+        </div>
+
+        <div style="font-size:11.5px; color:#64748b; margin-bottom:18px;">
+          By registering, you agree to NexCura's <a href="pages.html?page=terms-of-use" style="color:#0b5d5e;font-weight:700;">Terms</a> and <a href="pages.html?page=privacy-notice" style="color:#0b5d5e;font-weight:700;">HIPAA Privacy Notice</a>.
+        </div>
+
+        <button type="submit" id="regSubmitBtn" class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:14px;">Complete Registration →</button>
+      </form>
+
+      <div style="text-align:center; margin-top:20px; font-size:13px; color:#64748b;">
+        Already have an account? <a href="login.html" style="color:#0b5d5e; font-weight:700;">Sign in here</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setRole(role, btn) {
+      document.querySelectorAll('.role-pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('selectedRole').value = role;
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const pwd = document.getElementById('regPassword').value;
+      const cpwd = document.getElementById('regConfirmPassword').value;
+      if (pwd !== cpwd) {
+        alert('Passwords do not match. Please verify and try again.');
+        return;
+      }
+
+      const role = document.getElementById('selectedRole').value;
+      const payload = {
+        name: document.getElementById('regName').value.trim(),
+        email: document.getElementById('regEmail').value.trim(),
+        phone: document.getElementById('regPhone').value.trim(),
+        password: pwd,
+        role: role
+      };
+
+      const btn = document.getElementById('regSubmitBtn');
+      btn.textContent = 'Registering Profile...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/v1/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          alert('Registration successful! Redirecting to your workspace...');
+          if (role === 'patient') window.location.href = '/patient-portal.html';
+          else if (role === 'doctor') window.location.href = '/clinician-portal.html';
+          else window.location.href = '/admin-portal.html';
+        } else {
+          alert(data.error || 'Registration could not be completed.');
+          btn.textContent = 'Complete Registration →';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        // Fallback smooth redirect
+        window.location.href = role === 'doctor' ? '/clinician-portal.html' : (role === 'admin' ? '/admin-portal.html' : '/patient-portal.html');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+
+'use strict';
+
+/* ── Section labels for top bar ─────────────────────────── */
+const SECTION_LABELS = {
+  dashboard:  'Dashboard — Today\'s Overview',
+  patients:   'Patient List — Sample Data',
+  encounter:  'Encounter Workspace — SOAP Note',
+  trials:     'Trial Discovery — ClinicalTrials.gov (Sample)',
+  referrals:  'Referrals — Outgoing Tracker',
+  tasks:      'Follow-Up Tasks — Action List',
+};
+
+/* ── Switch visible section ─────────────────────────────── */
+function switchSection(id, btn) {
+  // Hide all sections
+  document.querySelectorAll('.section-view').forEach(s => {
+    s.classList.remove('active');
+    s.setAttribute('aria-hidden', 'true');
+  });
+  // Show target
+  const target = document.getElementById('section-' + id);
+  if (target) {
+    target.classList.add('active');
+    target.removeAttribute('aria-hidden');
+    target.focus && target.setAttribute('tabindex','-1');
+  }
+
+  // Update nav items
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    n.removeAttribute('aria-current');
+  });
+  // Find the matching button (could be passed directly or be a nav-item)
+  const navBtn = document.querySelector(`.nav-item[data-section="${id}"]`);
+  if (navBtn) {
+    navBtn.classList.add('active');
+    navBtn.setAttribute('aria-current', 'page');
+  }
+
+  // Update topbar label
+  document.getElementById('active-section-label').textContent = SECTION_LABELS[id] || '';
+
+  // Close mobile sidebar
+  closeMobileSidebar();
+
+  // Scroll to top
+  document.getElementById('pageContent').scrollTop = 0;
+}
+
+/* ── Mobile sidebar ─────────────────────────────────────── */
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.getElementById('menuToggle');
+  const isOpen = sidebar.classList.toggle('mobile-open');
+  btn.setAttribute('aria-expanded', isOpen);
+}
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar.classList.contains('mobile-open')) {
+    sidebar.classList.remove('mobile-open');
+    document.getElementById('menuToggle').setAttribute('aria-expanded', 'false');
+  }
+}
+
+/* ── Global preview message ─────────────────────────────── */
+let toastTimer = null;
+
+// Dropdown toggle handling
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.topbar-btn')) {
+    document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('show'));
+  }
+});
+
+function showPreviewMsg(el, customMsg) {
+  const toast = document.getElementById('globalToast');
+  if(customMsg) toast.textContent = customMsg; else toast.textContent = 'ℹ Preview only — no action is taken. This interface is not connected to any clinical system.'; toast.style.display = 'block';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 4000);
+}
+
+/* ── SOAP actions ───────────────────────────────────────── */
+
+function soapAction(type) {
+  const toast = document.getElementById('soap-toast');
+  const btn = event.currentTarget;
+  const origText = btn.innerHTML;
+  
+  btn.innerHTML = (type === 'draft') ? '⏳ Saving...' : '⏳ Signing...';
+  
+  setTimeout(() => {
+    btn.innerHTML = (type === 'draft') ? '✓ Saved' : '✓ Signed';
+    toast.textContent = (type === 'draft') ? `Draft saved at ${new Date().toLocaleTimeString()}` : `Note signed successfully at ${new Date().toLocaleTimeString()}`;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      btn.innerHTML = origText;
+      toast.classList.remove('show');
+    }, 4000);
+  }, 800);
+}
+
+
+/* ── Patient filter ─────────────────────────────────────── */
+
+function filterPatients(q) {
+  const rows = document.querySelectorAll('#patientTableBody tr');
+  const lower = q.toLowerCase();
+  rows.forEach(row => {
+    const nameCell = row.cells[0]?.textContent.toLowerCase() || '';
+    const concernCell = row.cells[4]?.textContent.toLowerCase() || '';
+    row.style.display = (nameCell.includes(lower) || concernCell.includes(lower)) ? '' : 'none';
+  });
+}
+);
+}
+
+/* ── Trial search ───────────────────────────────────────── */
+
+function trialSearch() {
+  const condition = document.getElementById('trial-condition').value || 'Unknown Condition';
+  const label = document.getElementById('trial-results-label');
+  label.innerHTML = `<strong>Fetching results for: ${escHtml(condition)}...</strong>`;
+  
+  fetch('/api/v1/trials/search?condition=' + encodeURIComponent(condition))
+    .then(res => res.ok ? res.json() : [])
+    .then(data => {
+      label.innerHTML = `<strong>Results for: ${escHtml(condition)}</strong>`;
+      const container = document.getElementById('trialResults');
+      if(data && data.length > 0) {
+        container.innerHTML = data.map(trial => `
+          <article class="trial-card">
+            <div class="trial-card-head">
+              <div>
+                <div class="trial-nct">${escHtml(trial.nct_id || 'N/A')}</div>
+                <h3 class="trial-title">${escHtml(trial.title || 'Untitled Trial')}</h3>
+              </div>
+              <span class="badge badge-green" style="white-space:nowrap;flex-shrink:0;">${escHtml(trial.status || 'Recruiting')}</span>
+            </div>
+            <div class="trial-meta">
+              <span class="badge badge-teal">${escHtml(trial.phase || 'Phase Unknown')}</span>
+            </div>
+            <div class="trial-eligibility">
+              <strong>Eligibility Summary</strong>
+              ${escHtml(trial.eligibility || 'No summary available')}
+            </div>
+            <div class="trial-card-actions">
+              <button class="btn btn-ghost btn-sm" onclick="trialAction('criteria')">📄 View Full Criteria</button>
+              <button class="btn btn-secondary btn-sm" onclick="trialAction('save')">🔖 Save for Patient</button>
+            </div>
+          </article>
+        `).join('');
+      } else {
+        container.innerHTML = '<p>No trials found for this condition.</p>';
+      }
+    })
+    .catch(err => {
+      label.innerHTML = `<strong>Error fetching trials</strong>`;
+      console.error(err);
+    });
+}
+function escHtml(s) {
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+
+/* ── Trial card actions ─────────────────────────────────── */
+function trialAction(type) {
+  const toast = document.getElementById('trial-toast');
+  if (type === 'save') {
+    toast.textContent = '🔖 Preview only — trial saved to session view only. Not persisted. Study team must confirm eligibility before any patient contact.';
+  } else {
+    toast.textContent = '📄 Full criteria view is a preview placeholder. Verify current criteria at ClinicalTrials.gov before clinical use.';
+  }
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 7000);
+}
+
+/* ── Task toggle ────────────────────────────────────────── */
+function toggleTask(taskId, checkbox) {
+  const item = document.getElementById(taskId);
+  item.classList.toggle('done', checkbox.checked);
+  const toast = document.getElementById('task-toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
+/* ── Patient chart data ─────────────────────────────────── */

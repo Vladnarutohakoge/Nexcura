@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" width="280" height="64" fill="none" role="img" aria-label="NexCura Logo">
+  <defs>
+    <!-- Core Brand Gradients -->
+    <linearGradient id="nc-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b5d5e" />
+      <stop offset="50%" stop-color="#00b4b6" />
+      <stop offset="100%" stop-color="#14d2b8" />
+    </linearGradient>
+
+    <linearGradient id="nc-grad-secondary" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#17324d" />
+      <stop offset="60%" stop-color="#0b5d5e" />
+      <stop offset="100%" stop-color="#00d2b4" />
+    </linearGradient>
+
+    <linearGradient id="nc-grad-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d2b4" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+
+    <linearGradient id="nc-grad-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0b5d5e" />
+      <stop offset="100%" stop-color="#009688" />
+    </linearGradient>
+
+    <!-- Ambient Glow Filter -->
+    <filter id="nc-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="nc-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0b5d5e" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  <!-- ════ ICON EMBLEM (Modern Health-Tech Cross + Helix Flow) ════ -->
+  <g transform="translate(6, 6)" filter="url(#nc-shadow)">
+    <!-- Base Glow Pod / Pill Container -->
+    <rect x="0" y="0" width="52" height="52" rx="16" fill="url(#nc-grad-primary)" opacity="0.1" />
+    <rect x="0.5" y="0.5" width="51" height="51" rx="15.5" stroke="url(#nc-grad-primary)" stroke-opacity="0.3" stroke-width="1" />
+
+    <!-- Dimensional Health-Cross & Interlocking Helix Nodes -->
+    <!-- Vertical Medical Pillar with Soft Caps -->
+    <path d="M 26 11 C 28.2 11 30 12.8 30 15 L 30 37 C 30 39.2 28.2 41 26 41 C 23.8 41 22 39.2 22 37 L 22 15 C 22 12.8 23.8 11 26 11 Z" 
+          fill="url(#nc-grad-secondary)" />
+
+    <!-- Horizontal Care Balance Arm -->
+    <path d="M 13 26 C 13 23.8 14.8 22 17 22 L 35 22 C 37.2 22 39 23.8 39 26 C 39 28.2 37.2 30 35 30 L 17 30 C 14.8 30 13 28.2 13 26 Z" 
+          fill="url(#nc-grad-primary)" opacity="0.9" />
+
+    <!-- Connected Bio-Vital Pulse Loop (DNA / Infinity Arc) -->
+    <path d="M 17 33 C 14 26 21 16 31 16 C 37 16 41 20 41 26 C 41 33 33 37 25 37" 
+          stroke="url(#nc-grad-accent)" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.95" />
+
+    <!-- Central Precision Core Node (Tech Luster) -->
+    <circle cx="26" cy="26" r="4.5" fill="#ffffff" filter="url(#nc-glow)" />
+    <circle cx="26" cy="26" r="2.5" fill="url(#nc-grad-primary)" />
+
+    <!-- Radiant Satellite Care Pulse Dots -->
+    <circle cx="39" cy="15" r="2" fill="#00d2b4" />
+    <circle cx="13" cy="37" r="1.5" fill="#38bdf8" />
+  </g>
+
+  <!-- ════ WORDMARK (Modern Geometric Healthcare-Tech Typography) ════ -->
+  <g transform="translate(72, 41)">
+    <!-- 'Nex' in Authoritative Navy Slate -->
+    <text font-family="'Manrope', -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-weight="800" 
+          font-size="28" 
+          letter-spacing="-0.8px" 
+          fill="#123b3d">
+      Nex
+    </text>
+
+    <!-- 'Cura' in Vibrant Luminous Teal Gradient -->
+    <text x="56" y="0" 
+          font-family="'Manrope', -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-weight="600" 
+          font-size="28" 
+          letter-spacing="-0.5px" 
+          fill="url(#nc-grad-text)">
+      Cura
+    </text>
+
+    <!-- Subtle Tech Pulse Spark on top of the 'a' -->
+    <circle cx="120" cy="-21" r="2.5" fill="#00d2b4" filter="url(#nc-glow)" />
+
+    <!-- Modern Tagline / Subtitle -->
+    <text x="1" y="14" 
+          font-family="'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-weight="600" 
+          font-size="8.5" 
+          letter-spacing="0.18em" 
+          text-transform="uppercase" 
+          fill="#627d7e">
+      INTELLIGENT CARE PLATFORM
+    </text>
+  </g>
+</svg>

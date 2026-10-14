@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b5d5e">
+  <title>Hospitals &amp; Clinical Network — NexCura Healthcare Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/static/images/logo/logo-icon.svg">
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0d1e2e 0%, #0b5d5e 60%, #0284c7 100%);
+      color: #fff;
+      padding: 70px 0 50px;
+      text-align: center;
+      position: relative;
+    }
+    .page-hero h1 { font-family: 'Manrope', sans-serif; font-size: clamp(32px, 4vw, 48px); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { font-size: 16px; color: #e2e8f0; max-width: 680px; margin: 0 auto; line-height: 1.6; }
+    .search-filter-box {
+      max-width: 700px;
+      margin: 30px auto 0;
+      display: flex;
+      gap: 12px;
+    }
+    .search-filter-box input {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.95);
+      font-size: 14px;
+      outline: none;
+      color: #0d1e2e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="brand-link" aria-label="NexCura Home">
+        <img src="/static/images/logo/logo.svg" alt="NexCura Healthcare" height="42" style="height:42px;width:auto;display:block;">
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/care-services" class="nav-link">Care &amp; Services</a>
+        <a href="/hospitals-network" class="nav-link active">Hospitals &amp; Network</a>
+        <a href="/about" class="nav-link">About Us</a>
+        <a href="/clinical-tools" class="nav-link">Clinical Tools</a>
+        <a href="/healthcare-insights" class="nav-link">Healthcare Insights</a>
+        <a href="/feedback" class="nav-link">Feedback</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="/login" class="btn btn-outline btn-sm">Login</a>
+        <a href="/register" class="btn btn-primary btn-sm">Get Started ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="section-eyebrow" style="background:rgba(255,255,255,0.18);color:#fff;">TERTIARY &amp; QUATERNARY CAMPUSES</div>
+      <h1>NexCura Connected Hospital Network</h1>
+      <p>Explore 6 quaternary medical institutes across India with live bed telemetry, trauma status, board-certified clinical departments, and interactive GPS radar.</p>
+      
+      <div class="search-filter-box">
+        <input type="text" id="hospSearchInput" placeholder="Search by hospital name, city, department, or procedure..." />
+        <button class="btn btn-primary" style="padding:0 26px;border-radius:100px;">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hospital Grid Section -->
+  <section class="section-pad" style="background:linear-gradient(180deg, #f0fdfa 0%, #e0f2fe 100%);">
+    <div class="container">
+      <!-- City Filter Bar -->
+      <div class="city-filter-bar">
+        <button class="city-btn active" data-city="all">All Hospitals (6)</button>
+        <button class="city-btn" data-city="bengaluru">Bengaluru</button>
+        <button class="city-btn" data-city="mysuru">Mysuru</button>
+        <button class="city-btn" data-city="mangaluru">Mangaluru</button>
+        <button class="city-btn" data-city="hyderabad">Hyderabad</button>
+        <button class="city-btn" data-city="chennai">Chennai</button>
+        <button class="city-btn" data-city="mumbai">Mumbai</button>
+      </div>
+
+      <!-- Hospital Cards -->
+      <div class="hospitals-grid" id="hospitalCardsGrid">
+        <!-- 1. Bengaluru -->
+        <article class="hospital-card" data-city="bengaluru">
+          <div class="hosp-image-wrap">
+            <img src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&w=700&q=80" alt="NexCura Central Super-Specialty Medical Institute">
+            <span class="hosp-badge-emergency">🚨 24/7 Level 1 Trauma</span>
+            <span class="hosp-city-pill">Bengaluru HQ</span>
+          </div>
+          <div class="hosp-body">
+            <h3 class="hosp-title">NexCura Central Super-Specialty Medical Institute</h3>
+            <div class="hosp-location">📍 Indiranagar, Bengaluru, Karnataka</div>
+            <div style="font-size:12px;color:#0b5d5e;font-weight:700;margin-bottom:8px;">🛏 650 Beds · 90 ICU Units (14 Available)</div>
+            <div class="hosp-departments">
+              <small>Key Departments</small>
+              <div class="dept-tags">
+                <span class="dept-tag">Robotic Surgery</span>
+                <span class="dept-tag">Cardiology</span>
+                <span class="dept-tag">Neurology</span>
+                <span class="dept-tag">Organ Transplant</span>
+              </div>
+            </div>
+            <div class="hosp-footer">
+              <span class="hosp-rating">⭐ 4.95 (3.4k Reviews)</span>
+              <button class="btn btn-outline btn-sm" onclick="window.open('https://maps.google.com')">Get Directions ↗</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. Mysuru -->
+        <article class="hospital-card" data-city="mysuru">
+          <div class="hosp-image-wrap">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=700&q=80" alt="NexCura Royal Heritage Multi-Specialty Hospital">
+            <span class="hosp-badge-emergency">🚨 24/7 Emergency</span>
+            <span class="hosp-city-pill">Mysuru</span>
+          </div>
+          <div class="hosp-body">
+            <h3 class="hosp-title">NexCura Royal Heritage Multi-Specialty Hospital</h3>
+            <div class="hosp-location">📍 Yadavagiri, Mysuru, Karnataka</div>
+            <div style="font-size:12px;color:#0b5d5e;font-weight:700;margin-bottom:8px;">🛏 380 Beds · 45 ICU Units (9 Available)</div>
+            <div class="hosp-departments">
+              <small>Key Departments</small>
+              <div class="dept-tags">
+                <span class="dept-tag">General Medicine</span>
+                <span class="dept-tag">Orthopedics</span>
+                <span class="dept-tag">Cardiology</span>
+                <span class="dept-tag">Critical Care</span>
+              </div>
+            </div>
+            <div class="hosp-footer">
+              <span class="hosp-rating">⭐ 4.88 (1.8k Reviews)</span>
+              <button class="btn btn-outline btn-sm" onclick="window.open('https://maps.google.com')">Get Directions ↗</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. Mangaluru -->
+        <article class="hospital-card" data-city="mangaluru">
+          <div class="hosp-image-wrap">
+            <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=80" alt="NexCura Coastal Advanced Health & Research Pavilion">
+            <span class="hosp-badge-emergency">🚨 24/7 Trauma Ready</span>
+            <span class="hosp-city-pill">Mangaluru</span>
+          </div>
+          <div class="hosp-body">
+            <h3 class="hosp-title">NexCura Coastal Advanced Health Pavilion</h3>
+            <div class="hosp-location">📍 Kadri Hills, Mangaluru, Karnataka</div>
+            <div style="font-size:12px;color:#0b5d5e;font-weight:700;margin-bottom:8px;">🛏 320 Beds · 35 ICU Units (6 Available)</div>
+            <div class="hosp-departments">
+              <small>Key Departments</small>
+              <div class="dept-tags">
+                <span class="dept-tag">Nephrology</span>
+                <span class="dept-tag">Pulmonology</span>
+                <span class="dept-tag">Trauma Care</span>
+                <span class="dept-tag">Dialysis</span>
+              </div>
+            </div>
+            <div class="hosp-footer">
+              <span class="hosp-rating">⭐ 4.90 (1.4k Reviews)</span>
+              <button class="btn btn-outline btn-sm" onclick="window.open('https://maps.google.com')">Get Directions ↗</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4. Hyderabad -->
+        <article class="hospital-card" data-city="hyderabad">
+          <div class="hosp-image-wrap">
+            <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=700&q=80" alt="NexCura Children's & Women's Advanced Pavilion">
+            <span class="hosp-badge-emergency">🚨 Level 4 NICU Active</span>
+            <span class="hosp-city-pill">Hyderabad</span>
+          </div>
+          <div class="hosp-body">
+            <h3 class="hosp-title">NexCura Children's &amp; Women's Advanced Pavilion</h3>
+            <div class="hosp-location">📍 HITEC City, Madhapur, Hyderabad</div>
+            <div style="font-size:12px;color:#0b5d5e;font-weight:700;margin-bottom:8px;">🛏 450 Beds · 60 NICU/PICU Units (11 Available)</div>
+            <div class="hosp-departments">
+              <small>Key Departments</small>
+              <div class="dept-tags">
+                <span class="dept-tag">Pediatrics</span>
+                <span class="dept-tag">Maternal-Fetal</span>
+                <span class="dept-tag">Pediatric Heart</span>
+                <span class="dept-tag">Neonatology</span>
+              </div>
+            </div>
+            <div class="hosp-footer">
+              <span class="hosp-rating">⭐ 4.96 (2.2k Reviews)</span>
+              <button class="btn btn-outline btn-sm" onclick="window.open('https://maps.google.com')">Get Directions ↗</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5. Chennai -->
+        <article class="hospital-card" data-city="chennai">
+          <div class="hosp-image-wrap">
+            <img src="https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=700&q=80" alt="NexCura Neuro-Spine & Robotic Surgery Center">
+            <span class="hosp-badge-emergency">🚨 24/7 Stroke Unit</span>
+            <span class="hosp-city-pill">Chennai</span>
+          </div>
+          <div class="hosp-body">
+            <h3 class="hosp-title">NexCura Neuro-Spine &amp; Robotic Surgery Center</h3>
+            <div class="hosp-location">📍 Alwarpet, Chennai, Tamil Nadu</div>
+            <div style="font-size:12px;color:#0b5d5e;font-weight:700;margin-bottom:8px;">🛏 520 Beds · 75 ICU Units (18 Available)</div>
+            <div class="hosp-departments">
+              <small>Key Departments</small>
+              <div class="dept-tags">
+                <span class="dept-tag">Neurosurgery</span>
+                <span class="dept-tag">Spine Care</span>
+                <span class="dept-tag">Stroke Code</span>
+                <span class="dept-tag">Rehabilitation</span>
+              </div>
+            </div>
+            <div class="hosp-footer">
+              <span class="hosp-rating">⭐ 4.93 (2.9k Reviews)</span>
+              <button class="btn btn-outline btn-sm" onclick="window.open('https://maps.google.com')">Get Directions ↗</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6. Mumbai -->
+        <article class="hospital-card" data-city="mumbai">
+          <div class="hosp-image-wrap">
+            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=700&q=80" alt="NexCura Oncology & Genomic Precision Hospital">
+            <span class="hosp-badge-emergency">🚨 CyberKnife Active</span>
+            <span class="hosp-city-pill">Mumbai</span>
+          </div>
+          <div class="hosp-body">
+            <h3 class="hosp-title">NexCura Oncology &amp; Genomic Precision Hospital</h3>
+            <div class="hosp-location">📍 Bandra Kurla Complex (BKC), Mumbai</div>
+            <div style="font-size:12px;color:#0b5d5e;font-weight:700;margin-bottom:8px;">🛏 580 Beds · 80 ICU Units (12 Available)</div>
+            <div class="hosp-departments">
+              <small>Key Departments</small>
+              <div class="dept-tags">
+                <span class="dept-tag">Medical Oncology</span>
+                <span class="dept-tag">Proton Therapy</span>
+                <span class="dept-tag">CAR-T Cell</span>
+                <span class="dept-tag">Genomics</span>
+              </div>
+            </div>
+            <div class="hosp-footer">
+              <span class="hosp-rating">⭐ 4.91 (2.5k Reviews)</span>
+              <button class="btn btn-outline btn-sm" onclick="window.open('https://maps.google.com')">Get Directions ↗</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div class="footer-brand">
+          <img src="/static/images/logo/logo-white.svg" alt="NexCura Logo" height="38">
+          <p>NexCura is an AI-powered hospital intelligence and patient assistance platform connecting patients, doctors, and hospitals.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="/">Home</a>
+          <a href="/care-services">Care &amp; Services</a>
+          <a href="/hospitals-network">Hospitals &amp; Network</a>
+          <a href="/about">About Us</a>
+          <a href="/clinical-tools">Clinical Tools</a>
+          <a href="/feedback">Feedback</a>
+        </div>
+        <div class="footer-col">
+          <h4>Patient Portals</h4>
+          <a href="/patient-portal.html">Patient Dashboard</a>
+          <a href="/patient-portal.html#appointments">Book Appointments</a>
+          <a href="/ai-assistant.html">AI Assistant</a>
+        </div>
+        <div class="footer-col">
+          <h4>Clinical Network</h4>
+          <a href="/clinician-portal.html">Clinician Suite</a>
+          <a href="/admin-portal.html">Admin Console</a>
+          <a href="/staff-portal.html">Staff Workspace</a>
+        </div>
+      </div>
+      <div class="footer-bottom-bar">
+        <span>© 2026 NexCura. All rights reserved.</span>
+        <span>For medical emergencies, immediately dial 112.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

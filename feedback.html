@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCura - Submit Feedback</title>
+    <style>
+        :root {
+            --teal: #0b5d5e;
+            --teal-light: #128284;
+            --navy: #17324d;
+            --mint: #dff1e9;
+            --cream: #fafaf6;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', 'Manrope', sans-serif;
+            background-color: var(--cream);
+            color: var(--navy);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--teal);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        p.subtitle {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(11, 93, 94, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 0.25rem;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            font-size: 2rem;
+            color: var(--gray-300);
+            margin: 0;
+            transition: color 0.2s;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: var(--warning);
+        }
+
+        button.submit-btn {
+            background-color: var(--teal);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.submit-btn:hover {
+            background-color: var(--teal-light);
+        }
+
+        button.submit-btn:disabled {
+            background-color: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success Animation Container */
+        #success-container {
+            display: none;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .success-icon {
+            color: var(--success);
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #success-container h2 {
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        #success-container p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--teal);
+            color: var(--teal);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--teal);
+            color: var(--white);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+        </svg>
+        NexCura
+    </a>
+    <a href="/" style="font-size: 1rem; font-weight: 500;">Back to Home</a>
+</header>
+
+<div class="container">
+    <div class="card" id="form-card">
+        <h1>We Value Your Feedback</h1>
+        <p class="subtitle">Help us improve our services by sharing your experience with NexCura.</p>
+
+        <form id="feedbackForm">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="john@example.com">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department" name="department" required>
+                        <option value="" disabled selected>Select a department...</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Neurology">Neurology</option>
+                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="General Medicine">General Medicine</option>
+                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="Radiology">Radiology</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type">Feedback Category</label>
+                    <select id="type" name="type" required>
+                        <option value="" disabled selected>Select category...</option>
+                        <option value="Website">Website</option>
+                        <option value="Hospital">Hospital</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Appointment">Appointment</option>
+                        <option value="AI Assistant">AI Assistant</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Rating</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5" required />
+                    <label for="star5" title="5 stars">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" title="4 stars">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" title="3 stars">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" title="2 stars">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" title="1 star">★</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" required placeholder="Brief summary of your feedback">
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" required placeholder="Please provide details..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="attachment">Attachment (Optional)</label>
+                <input type="file" id="attachment" name="attachment" accept="image/*,.pdf,.doc,.docx">
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text">Submit Feedback</span>
+                <div class="spinner" id="btnSpinner"></div>
+            </button>
+        </form>
+    </div>
+
+    <div class="card" id="success-container">
+        <div class="success-icon">✓</div>
+        <h2>Thank You!</h2>
+        <p>Thank you for helping NexCura improve healthcare.</p>
+        <a href="/" class="btn-outline">Return to Home</a>
+        <button onclick="resetForm()" class="btn-outline" style="margin-left: 1rem;">Submit Another</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        const btnText = btn.querySelector('.btn-text');
+        const spinner = document.getElementById('btnSpinner');
+        
+        // Loading state
+        btn.disabled = true;
+        btnText.textContent = 'Submitting...';
+        spinner.style.display = 'block';
+
+        const formData = new FormData(this);
+        const payload = {
+            name: formData.get('name') || 'Anonymous',
+            email: formData.get('email') || '',
+            department: formData.get('department') || 'General',
+            type: formData.get('type') || 'feedback',
+            rating: parseInt(formData.get('rating') || '5'),
+            subject: formData.get('subject') || 'General Feedback',
+            message: formData.get('message') || ''
+        };
+
+        try {
+            await fetch('/api/v1/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } catch (err) {
+            console.warn('Feedback API call error, continuing locally', err);
+        }
+
+        setTimeout(() => {
+            document.getElementById('form-card').style.display = 'none';
+            document.getElementById('success-container').style.display = 'block';
+            
+            // Reset button state
+            btn.disabled = false;
+            btnText.textContent = 'Submit Feedback';
+            spinner.style.display = 'none';
+            
+            this.reset();
+        }, 600);
+    });
+
+    function resetForm() {
+        document.getElementById('success-container').style.display = 'none';
+        document.getElementById('form-card').style.display = 'block';
+    }
+</script>
+
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

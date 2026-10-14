@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | NexCura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #0b5d5e;
+            --deep: #123b3d;
+            --navy: #17324d;
+            --mint: #dff1e9;
+            --cream: #fafaf6;
+            --ink: #183537;
+            --muted: #657779;
+            --white: #ffffff;
+            --bg-color: var(--cream);
+            --transition-bounce: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            --transition-smooth: 0.4s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--ink);
+            line-height: 1.7;
+            font-size: 16px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6, .nav-logo {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+        }
+
+        h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.1; margin-bottom: 1.5rem; }
+        h2 { font-size: clamp(2rem, 4vw, 2.5rem); line-height: 1.2; margin-bottom: 1rem; }
+        h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); line-height: 1.3; }
+        p { font-size: 1rem; margin-bottom: 1.5rem; color: var(--muted); }
+        
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-padding {
+            padding: 6rem 0;
+        }
+
+        /* 1. NAVIGATION BAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(250, 250, 246, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            color: var(--deep);
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--teal), var(--deep));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(11, 93, 94, 0.3);
+            transform-style: preserve-3d;
+            transition: transform var(--transition-bounce);
+        }
+
+        .nav-logo:hover .logo-circle {
+            transform: rotateY(180deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            color: var(--navy);
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background-color: var(--teal);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--teal);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 30px;
+            height: 20px;
+            position: relative;
+        }
+
+        .mobile-menu-btn span {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: var(--ink);
+            left: 0;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn span:nth-child(1) { top: 0; }
+        .mobile-menu-btn span:nth-child(2) { top: 9px; }
+        .mobile-menu-btn span:nth-child(3) { bottom: 0; }
+
+        /* 2. HERO SECTION */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 5rem;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--deep), var(--navy));
+            color: var(--white);
+            perspective: 1200px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(223, 241, 233, 0.1) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            transform-style: preserve-3d;
+            animation: heroFadeIn 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes heroFadeIn {
+            0% { opacity: 0; transform: translateZ(-200px) translateY(50px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateZ(0) translateY(0) rotateX(0); }
+        }
+
+        .hero-content p {
+            color: var(--mint);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .hero-3d-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            transform-style: preserve-3d;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--mint);
+            font-size: 2rem;
+            transform-style: preserve-3d;
+        }
+
+        .shape-1 { width: 100px; height: 100px; top: 20%; right: 15%; animation: float 8s ease-in-out infinite; border-radius: 50%; } /* Pill */
+        .shape-2 { width: 120px; height: 120px; bottom: 20%; right: 25%; animation: float 10s ease-in-out infinite reverse; } /* Cross */
+        .shape-3 { width: 80px; height: 80px; top: 30%; left: 10%; animation: float 7s ease-in-out infinite 1s; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; } /* Organic */
+        .shape-4 { width: 150px; height: 60px; bottom: 30%; left: 15%; animation: float 9s ease-in-out infinite 0.5s; border-radius: 30px; } /* Capsule */
+
+        @keyframes float {
+            0% { transform: translateY(0) translateZ(0) rotateX(0) rotateY(0); }
+            33% { transform: translateY(-30px) translateZ(50px) rotateX(20deg) rotateY(10deg); }
+            66% { transform: translateY(10px) translateZ(-30px) rotateX(-10deg) rotateY(-20deg); }
+            100% { transform: translateY(0) translateZ(0) rotateX(0) rotateY(0); }
+        }
+
+        /* 3. OUR MISSION */
+        .mission-section {
+            background-color: var(--white);
+            overflow: hidden;
+            perspective: 1500px;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .mission-text {
+            transform-style: preserve-3d;
+        }
+
+        .mission-text h2 {
+            color: var(--teal);
+        }
+
+        .flip-card-container {
+            width: 100%;
+            height: 450px;
+            perspective: 1000px;
+        }
+
+        .flip-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 1s var(--transition-bounce);
+            transform-style: preserve-3d;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .flip-card-container:hover .flip-card {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, var(--teal), var(--deep));
+            color: var(--white);
+        }
+
+        .flip-card-front h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .flip-card-front p {
+            color: var(--mint);
+        }
+
+        .flip-card-back {
+            background: var(--mint);
+            color: var(--deep);
+            transform: rotateY(180deg);
+            border: 2px solid var(--teal);
+        }
+
+        .flip-card-back p {
+            color: var(--ink);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* 4. OUR VALUES */
+        .values-section {
+            background-color: var(--cream);
+            text-align: center;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-inline: auto;
+        }
+        
+        .section-header h2 {
+            color: var(--deep);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            perspective: 1200px;
+        }
+
+        .value-card {
+            background: var(--white);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            /* Will be manipulated by JS for 3D tilt */
+        }
+
+        .value-card-content {
+            transform: translateZ(50px);
+            pointer-events: none;
+        }
+
+        .value-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--mint);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--teal);
+            transform: translateZ(30px);
+            box-shadow: 0 10px 20px rgba(11, 93, 94, 0.15);
+        }
+
+        .value-card h3 {
+            margin-bottom: 1rem;
+            color: var(--navy);
+            transform: translateZ(20px);
+        }
+
+        .value-card p {
+            margin-bottom: 0;
+            transform: translateZ(10px);
+        }
+
+        /* 5. TIMELINE SECTION */
+        .timeline-section {
+            background-color: var(--white);
+            padding: 8rem 0;
+            position: relative;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            perspective: 1500px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: var(--mint);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 2rem 0;
+            width: 50%;
+            position: relative;
+            transform-style: preserve-3d;
+            opacity: 0; /* for observer */
+            transition: all 0.8s var(--transition-bounce);
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            padding-right: 3rem;
+            transform: translateZ(-100px) rotateY(-20deg);
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 3rem;
+            transform: translateZ(-100px) rotateY(20deg);
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateZ(0) rotateY(0);
+        }
+
+        .timeline-dot {
+            width: 24px;
+            height: 24px;
+            background: var(--teal);
+            border: 4px solid var(--white);
+            border-radius: 50%;
+            position: absolute;
+            top: 2.5rem;
+            box-shadow: 0 0 0 4px var(--mint);
+            z-index: 10;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -12px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -12px;
+        }
+
+        .timeline-content {
+            background: var(--cream);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .timeline-content:hover {
+            transform: translateZ(20px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .timeline-year {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--teal);
+            margin-bottom: 0.5rem;
+            font-family: 'Manrope', sans-serif;
+            transform: translateZ(30px);
+        }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--deep);
+            margin-bottom: 0.5rem;
+            transform: translateZ(20px);
+        }
+        
+        .timeline-content p {
+            margin-bottom: 0;
+            transform: translateZ(10px);
+        }
+
+        /* 6. TEAM SECTION */
+        .team-section {
+            background-color: var(--cream);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            perspective: 1200px;
+        }
+
+        .team-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            transition: transform 0.5s var(--transition-bounce), box-shadow 0.5s ease;
+            transform-style: preserve-3d;
+        }
+
+        .team-card:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(-5deg);
+            box-shadow: 0 25px 50px rgba(11, 93, 94, 0.15);
+        }
+
+        .team-image-wrapper {
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .team-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .team-card:hover .team-image {
+            transform: scale(1.1);
+        }
+
+        .team-info {
+            padding: 2rem;
+            text-align: center;
+            background: var(--white);
+            transform: translateZ(30px);
+            position: relative;
+            z-index: 2;
+        }
+
+        .team-info h3 {
+            color: var(--navy);
+            margin-bottom: 0.25rem;
+        }
+
+        .team-role {
+            color: var(--teal);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover .team-social {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .team-social a {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--mint);
+            color: var(--teal);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .team-social a:hover {
+            background: var(--teal);
+            color: var(--white);
+        }
+
+        /* 7. STATS SECTION */
+        .stats-section {
+            background: linear-gradient(135deg, var(--deep), var(--teal));
+            color: var(--white);
+            padding: 6rem 0;
+            perspective: 1000px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 2rem;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateZ(30px);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 0.5rem;
+            color: var(--mint);
+            text-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: inline-block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* 8. PARTNERS & CERTIFICATIONS */
+        .partners-section {
+            background: var(--white);
+            text-align: center;
+        }
+
+        .partners-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .partner-badge {
+            width: 180px;
+            height: 100px;
+            background: var(--cream);
+            border: 1px solid rgba(101, 119, 121, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--navy);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .partner-badge::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--teal);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .partner-badge:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            border-color: transparent;
+        }
+
+        .partner-badge:hover::before {
+            transform: scaleX(1);
+        }
+
+        .badge-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--teal);
+        }
+
+        /* 9. CTA SECTION */
+        .cta-section {
+            padding: 8rem 0;
+            background: var(--mint);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .cta-3d-bg {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(11, 93, 94, 0.1) 0%, transparent 50%);
+            transform: rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: rotateBg 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes rotateBg {
+            100% { transform: rotateX(60deg) translateY(-100px) translateZ(-200px) rotateZ(360deg); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+        }
+
+        .cta-content h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--deep);
+            margin-bottom: 2rem;
+            transform: translateZ(50px);
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            transform: translateZ(30px);
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-family: 'Manrope', sans-serif;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--teal);
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(11, 93, 94, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--deep);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(11, 93, 94, 0.4);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--deep);
+            border: 2px solid var(--deep);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--deep);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        /* 10. FOOTER */
+        .footer {
+            background-color: var(--deep);
+            color: var(--white);
+            padding: 5rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-logo .logo-circle {
+            background: var(--teal);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo p {
+            color: var(--mint);
+            opacity: 0.8;
+            max-width: 300px;
+        }
+
+        .footer h4 {
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer a {
+            color: var(--mint);
+            opacity: 0.8;
+            transition: opacity 0.3s, color 0.3s;
+        }
+
+        .footer a:hover {
+            opacity: 1;
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(223, 241, 233, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-bottom p {
+            margin-bottom: 0;
+            color: var(--mint);
+            opacity: 0.6;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(223, 241, 233, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer-social a:hover {
+            background: var(--teal);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 992px) {
+            .mission-grid, .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::before {
+                left: 0;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 3rem !important;
+                padding-right: 0 !important;
+                left: 0 !important;
+            }
+            
+            .timeline-item:nth-child(even) {
+                transform: translateZ(-100px) rotateY(-20deg);
+            }
+            
+            .timeline-dot {
+                left: -12px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                text-align: center;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+                transition: clip-path 0.4s ease;
+            }
+
+            .nav-links.active {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. NAVIGATION BAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo" aria-label="NexCura home">
+                <img src="logo.svg" alt="NexCura — Intelligent Care Platform" height="42" style="height:42px;width:auto;display:block;">
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="about.html" class="active">About</a>
+                <a href="index.html#hospitals">Hospitals</a>
+                <a href="specialties.html">Services</a>
+                <a href="clinical-trials.html">Clinical Trials</a>
+                <a href="ai-assistant.html">AI Assistant</a>
+                <a href="login.html" style="background:var(--teal);color:#fff;padding:6px 14px;border-radius:8px;font-weight:700;">Sign In</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 2. HERO SECTION -->
+    <section class="hero" id="hero">
+        <div class="hero-3d-elements">
+            <div class="floating-shape shape-1">💊</div>
+            <div class="floating-shape shape-2">❤️</div>
+            <div class="floating-shape shape-3">🩺</div>
+            <div class="floating-shape shape-4">🧬</div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Redefining Healthcare Through Innovation</h1>
+                <p>At NexCura, we believe everyone deserves access to thoughtful, connected, and compassionate healthcare. We bridge the gap between advanced technology and human-centric care.</p>
+                <a href="#mission" class="btn btn-primary" style="margin-top: 1rem;">Discover Our Journey</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. OUR MISSION -->
+    <section class="section-padding mission-section" id="mission">
+        <div class="container mission-grid">
+            <div class="flip-card-container">
+                <div class="flip-card">
+                    <div class="flip-card-front">
+                        <h3>Our Mission</h3>
+                        <p>Hover to flip &rarr;</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <p>"To revolutionize the healthcare experience by seamlessly connecting patients, world-class clinicians, and cutting-edge technology, ensuring equitable, transparent, and compassionate care for all."</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mission-text">
+                <h2>Bridging Technology and Humanity</h2>
+                <p>Founded on the principle that healthcare should be proactive rather than reactive, NexCura integrates artificial intelligence with deep clinical expertise.</p>
+                <p>We empower patients to take control of their health journeys while providing practitioners with the tools they need to deliver personalized, effective care.</p>
+                <p>Our ecosystem is built on a foundation of interoperability, meaning your health data works for you, securely and seamlessly across our entire network.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. OUR VALUES -->
+    <section class="section-padding values-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Core Values</h2>
+                <p>The guiding principles that shape every decision we make and every interaction we have.</p>
+            </div>
+            <div class="values-grid">
+                <!-- Value 1 -->
+                <div class="value-card js-tilt-card">
+                    <div class="value-card-content">
+                        <div class="value-icon">🤝</div>
+                        <h3>Compassion</h3>
+                        <p>Every patient is a person first. We lead with empathy and understanding.</p>
+                    </div>
+                </div>
+                <!-- Value 2 -->
+                <div class="value-card js-tilt-card">
+                    <div class="value-card-content">
+                        <div class="value-icon">💡</div>
+                        <h3>Innovation</h3>
+                        <p>Technology that serves humanity. We constantly push the boundaries of what's possible.</p>
+                    </div>
+                </div>
+                <!-- Value 3 -->
+                <div class="value-card js-tilt-card">
+                    <div class="value-card-content">
+                        <div class="value-icon">🔍</div>
+                        <h3>Transparency</h3>
+                        <p>Honest, clear communication always. No hidden fees, no confusing jargon.</p>
+                    </div>
+                </div>
+                <!-- Value 4 -->
+                <div class="value-card js-tilt-card">
+                    <div class="value-card-content">
+                        <div class="value-icon">🌐</div>
+                        <h3>Collaboration</h3>
+                        <p>Better outcomes through teamwork. We partner with the best in the industry.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. OUR STORY / TIMELINE -->
+    <section class="timeline-section">
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <h2>Our Journey</h2>
+                <p>A timeline of our relentless pursuit of better healthcare.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2020</div>
+                        <div class="timeline-title">Founded with a Vision</div>
+                        <p>NexCura was established to address the fragmented state of modern healthcare.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2021</div>
+                        <div class="timeline-title">AI Patient Navigation</div>
+                        <p>Launched our proprietary AI system to guide patients through complex care pathways.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2022</div>
+                        <div class="timeline-title">Network Expansion</div>
+                        <p>Expanded our integrated network to over 50 premier healthcare facilities.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2023</div>
+                        <div class="timeline-title">Clinical Trial Matching</div>
+                        <p>Introduced a revolutionary engine connecting patients to life-saving clinical trials.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2024</div>
+                        <div class="timeline-title">1 Million Lives Touched</div>
+                        <p>Reached a milestone of serving one million patients across our platform.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2025</div>
+                        <div class="timeline-title">Global Accessibility</div>
+                        <p>Rolled out comprehensive multilingual support across 4 distinct languages.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2026</div>
+                        <div class="timeline-title">Next-Gen Care</div>
+                        <p>Deploying our next-generation platform featuring fully integrated, end-to-end care pathways.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. TEAM SECTION -->
+    <section class="section-padding team-section">
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <h2>Leadership Team</h2>
+                <p>The visionaries driving the future of healthcare at NexCura.</p>
+            </div>
+            <div class="team-grid">
+                <!-- Team Member 1 -->
+                <div class="team-card">
+                    <div class="team-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=80" alt="Dr. Arjun Mehta" class="team-image">
+                    </div>
+                    <div class="team-info">
+                        <h3>Dr. Arjun Mehta</h3>
+                        <div class="team-role">Chief Medical Officer</div>
+                        <p>Former Head of Oncology at Metro General, pioneering patient-centric tech adoption.</p>
+                        <div class="team-social">
+                            <a href="#">in</a>
+                            <a href="#">tw</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Team Member 2 -->
+                <div class="team-card">
+                    <div class="team-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" alt="Priya Sharma" class="team-image">
+                    </div>
+                    <div class="team-info">
+                        <h3>Priya Sharma</h3>
+                        <div class="team-role">Chief Technology Officer</div>
+                        <p>20 years in scalable cloud architecture and compliant health-tech infrastructure.</p>
+                        <div class="team-social">
+                            <a href="#">in</a>
+                            <a href="#">tw</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Team Member 3 -->
+                <div class="team-card">
+                    <div class="team-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80" alt="Dr. Kavitha Rao" class="team-image">
+                    </div>
+                    <div class="team-info">
+                        <h3>Dr. Kavitha Rao</h3>
+                        <div class="team-role">Head of Clinical Research</div>
+                        <p>Leading our clinical trial matching initiatives and research partnerships globally.</p>
+                        <div class="team-social">
+                            <a href="#">in</a>
+                            <a href="#">tw</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Team Member 4 -->
+                <div class="team-card">
+                    <div class="team-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80" alt="Rajesh Kumar" class="team-image">
+                    </div>
+                    <div class="team-info">
+                        <h3>Rajesh Kumar</h3>
+                        <div class="team-role">Director of Patient Exp.</div>
+                        <p>Dedicated to ensuring every touchpoint on the NexCura platform is seamless.</p>
+                        <div class="team-social">
+                            <a href="#">in</a>
+                            <a href="#">tw</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Team Member 5 -->
+                <div class="team-card">
+                    <div class="team-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80" alt="Dr. Ananya Desai" class="team-image">
+                    </div>
+                    <div class="team-info">
+                        <h3>Dr. Ananya Desai</h3>
+                        <div class="team-role">Chief AI & Data Officer</div>
+                        <p>Bridging machine learning capabilities with rigorous clinical safety standards.</p>
+                        <div class="team-social">
+                            <a href="#">in</a>
+                            <a href="#">tw</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Team Member 6 -->
+                <div class="team-card">
+                    <div class="team-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80" alt="Vikram Patel" class="team-image">
+                    </div>
+                    <div class="team-info">
+                        <h3>Vikram Patel</h3>
+                        <div class="team-role">Head of Operations</div>
+                        <p>Scaling our infrastructure to support rapid growth while maintaining 99.9% uptime.</p>
+                        <div class="team-social">
+                            <a href="#">in</a>
+                            <a href="#">tw</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. STATS SECTION -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="1000000">0</div><span style="font-size:3.5rem;font-weight:700;color:var(--mint);">+</span>
+                    <div class="stat-label">Patients Served</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="500">0</div><span style="font-size:3.5rem;font-weight:700;color:var(--mint);">+</span>
+                    <div class="stat-label">Healthcare Providers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="50">0</div><span style="font-size:3.5rem;font-weight:700;color:var(--mint);">+</span>
+                    <div class="stat-label">Partner Hospitals</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="99.9" data-decimal="true">0</div><span style="font-size:3.5rem;font-weight:700;color:var(--mint);">%</span>
+                    <div class="stat-label">Uptime Reliability</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. PARTNERS & CERTIFICATIONS -->
+    <section class="section-padding partners-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Certifications & Standards</h2>
+                <p>We adhere to the highest international standards of security, privacy, and clinical efficacy.</p>
+            </div>
+            <div class="partners-grid">
+                <div class="partner-badge">
+                    <div class="badge-icon">🔒</div>
+                    HIPAA Compliant
+                </div>
+                <div class="partner-badge">
+                    <div class="badge-icon">🛡️</div>
+                    ISO 27001
+                </div>
+                <div class="partner-badge">
+                    <div class="badge-icon">🔗</div>
+                    HL7 FHIR
+                </div>
+                <div class="partner-badge">
+                    <div class="badge-icon">⭐</div>
+                    NABH Accredited
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. CTA SECTION -->
+    <section class="cta-section">
+        <div class="cta-3d-bg"></div>
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Experience Better Healthcare?</h2>
+                <p style="color:var(--deep); font-size:1.2rem; margin-bottom: 2.5rem;">Join thousands of patients and providers on the NexCura platform today.</p>
+                <div class="cta-buttons">
+                    <a href="index.html#portal" class="btn btn-primary">Get Started</a>
+                    <a href="pages.html?page=contact-and-support" class="btn btn-outline">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-logo">
+                    <a href="index.html" class="nav-logo" aria-label="NexCura home">
+                        <img src="logo-white.svg" alt="NexCura — Intelligent Care Platform" height="42" style="height:42px;width:auto;display:block;">
+                    </a>
+                    <p style="margin-top:1rem;">Redefining healthcare through innovation, compassion, and cutting-edge technology.</p>
+                </div>
+                <div>
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="specialties.html">Services</a></li>
+                        <li><a href="clinical-trials.html">Clinical Trials</a></li>
+                        <li><a href="ai-assistant.html">AI Assistant</a></li>
+                        <li><a href="index.html#portal">Patient Portal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="pages.html?page=contact-and-support">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 NexCura Healthcare. All rights reserved.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="LinkedIn">in</a>
+                    <a href="#" aria-label="Twitter">tw</a>
+                    <a href="#" aria-label="Instagram">ig</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '1rem 0';
+                navbar.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+            } else {
+                navbar.style.padding = '1.5rem 0';
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.05)';
+            }
+            
+            // Hero parallax
+            const heroContent = document.querySelector('.hero-content');
+            if(heroContent && window.scrollY < window.innerHeight) {
+                heroContent.style.transform = `translateY(${window.scrollY * 0.3}px) translateZ(0)`;
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // 3D Tilt Effect for Value Cards
+        const tiltCards = document.querySelectorAll('.js-tilt-card');
+        
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg rotation
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+                card.style.transition = `transform 0.5s ease`;
+            });
+            
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = `none`;
+            });
+        });
+
+        // Intersection Observer for Timeline and Stats
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('timeline-item')) {
+                        entry.target.classList.add('visible');
+                    } else if (entry.target.classList.contains('stats-section') && !entry.target.dataset.animated) {
+                        animateStats();
+                        entry.target.dataset.animated = 'true';
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe timeline items
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            observer.observe(item);
+        });
+        
+        // Observe stats section
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+
+        // Stats Counter Animation
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach(stat => {
+                const target = parseFloat(stat.getAttribute('data-target'));
+                const isDecimal = stat.getAttribute('data-decimal') === 'true';
+                const duration = 2000; // 2 seconds
+                const steps = 60;
+                const stepTime = duration / steps;
+                
+                let current = 0;
+                const increment = target / steps;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    
+                    if (current >= target) {
+                        clearInterval(timer);
+                        current = target;
+                        if (target === 1000000) {
+                            stat.innerText = "1M";
+                        } else {
+                            stat.innerText = isDecimal ? current.toFixed(1) : Math.floor(current);
+                        }
+                    } else {
+                        stat.innerText = isDecimal ? current.toFixed(1) : Math.floor(current);
+                    }
+                }, stepTime);
+            });
+        }
+    </script>
+<script src="static/js/i18n.js"></script>
+</body>
+</html>

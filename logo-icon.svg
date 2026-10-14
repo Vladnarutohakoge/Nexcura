@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="NexCura Icon">
+  <defs>
+    <linearGradient id="nci-grad-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b5d5e" />
+      <stop offset="100%" stop-color="#17324d" />
+    </linearGradient>
+
+    <linearGradient id="nci-grad-cross" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d2b4" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+
+    <linearGradient id="nci-grad-arc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#00d2b4" />
+    </linearGradient>
+
+    <filter id="nci-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="nci-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0b5d5e" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with Gradient Background -->
+  <rect x="2" y="2" width="60" height="60" rx="18" fill="url(#nci-grad-bg)" filter="url(#nci-shadow)" />
+  <rect x="2.5" y="2.5" width="59" height="59" rx="17.5" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+
+  <!-- Vertical Medical Cross Pillar -->
+  <path d="M 32 14 C 34.5 14 36.5 16 36.5 18.5 L 36.5 45.5 C 36.5 48 34.5 50 32 50 C 29.5 50 27.5 48 27.5 45.5 L 27.5 18.5 C 27.5 16 29.5 14 32 14 Z" 
+        fill="#ffffff" opacity="0.95" />
+
+  <!-- Horizontal Medical Cross Arm -->
+  <path d="M 16 32 C 16 29.5 18 27.5 20.5 27.5 L 43.5 27.5 C 46 27.5 48 29.5 48 32 C 48 34.5 46 36.5 43.5 36.5 L 20.5 36.5 C 18 36.5 16 34.5 16 32 Z" 
+        fill="url(#nci-grad-cross)" />
+
+  <!-- Dynamic Vital Pulse & Helix Flow Wave -->
+  <path d="M 20 40 C 17 32 25 20 37 20 C 44 20 49 25 49 32 C 49 40 40 44 31 44" 
+        stroke="url(#nci-grad-arc)" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.95" />
+
+  <!-- Precision Center Bio-Core -->
+  <circle cx="32" cy="32" r="5" fill="#ffffff" filter="url(#nci-glow)" />
+  <circle cx="32" cy="32" r="2.8" fill="#0b5d5e" />
+
+  <!-- Floating Spark Nodes -->
+  <circle cx="47" cy="18" r="2.2" fill="#34d399" filter="url(#nci-glow)" />
+  <circle cx="16" cy="45" r="1.8" fill="#38bdf8" />
+</svg>

@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b5d5e">
+  <meta name="description" content="NexCura connects patients, clinicians, and hospitals with intelligent, coordinated healthcare.">
+  <title>NexCura — Intelligent Healthcare Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════════════════════════
+       NEXCURA — 3D MODERN HEALTHCARE DESIGN SYSTEM
+    ══════════════════════════════════════════════════════════════ */
+    :root {
+      --teal: #0b5d5e;
+      --teal-light: #14b8a6;
+      --cyan: #00d2b4;
+      --deep: #123b3d;
+      --navy: #17324d;
+      --mint: #dff1e9;
+      --cream: #fafaf6;
+      --ink: #183537;
+      --muted: #657779;
+      --line: #e2ebe5;
+      --peach: #f8e8dc;
+      --lilac: #e9e7f3;
+      --gold: #d6a75b;
+      --radius: 18px;
+      --shadow-sm: 0 4px 14px rgba(11,93,94,0.06);
+      --shadow-md: 0 12px 36px rgba(11,93,94,0.08);
+      --shadow-3d: 0 24px 60px rgba(11,93,94,0.14), 0 8px 20px rgba(23,50,77,0.08);
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      perspective: 1200px;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Announcement Top Bar ──────────────────────────────────── */
+    .announcement {
+      height: 38px;
+      background: linear-gradient(135deg, var(--deep), var(--teal));
+      color: #d8f0e3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      position: relative;
+      z-index: 110;
+    }
+    .announcement a { color: #b9f0d5; font-weight: 700; transition: color 0.2s; }
+    .announcement a:hover { color: #fff; text-decoration: underline; }
+
+    /* ── Sticky Header ─────────────────────────────────────────── */
+    .site-header {
+      height: 74px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(250, 250, 246, 0.94);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(11,93,94,0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .main-nav {
+      display: flex;
+      gap: 28px;
+      margin-left: 36px;
+    }
+    .main-nav a {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #3b5657;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .main-nav a:hover, .main-nav a.active { color: var(--teal); }
+    .main-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--teal);
+      border-radius: 2px;
+      transition: width 0.3s var(--ease);
+    }
+    .main-nav a:hover::after { width: 100%; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s var(--ease);
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal) 0%, #14b8a6 100%);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(11,93,94,0.25);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(11,93,94,0.35);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--teal);
+      border: 1.5px solid var(--teal);
+    }
+    .btn-outline:hover {
+      background: var(--teal);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    .btn-sm { padding: 8px 16px; font-size: 12px; border-radius: 8px; }
+    .btn-light {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(8px);
+    }
+    .btn-light:hover {
+      background: rgba(255,255,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    .menu-toggle {
+      display: none;
+      border: none;
+      background: none;
+      font-size: 24px;
+      color: var(--teal);
+      cursor: pointer;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       HERO SECTION WITH 3D ANIMATIONS
+    ══════════════════════════════════════════════════════════════ */
+    .hero {
+      min-height: calc(100vh - 112px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      padding: 50px 8% 70px;
+      gap: 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 3D Ambient Lighting & Particle Canvas */
+    .hero-glow-1 {
+      position: absolute;
+      width: 650px; height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(20, 184, 166, 0.12), transparent 70%);
+      top: -150px; right: -100px;
+      pointer-events: none;
+      animation: ambientPulse 8s ease-in-out infinite alternate;
+    }
+    .hero-glow-2 {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(11, 93, 94, 0.09), transparent 70%);
+      bottom: -100px; left: -100px;
+      pointer-events: none;
+    }
+    @keyframes ambientPulse {
+      0% { transform: scale(1) translateY(0); opacity: 0.7; }
+      100% { transform: scale(1.15) translateY(30px); opacity: 1; }
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 5;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      background: var(--mint);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(11,93,94,0.08);
+    }
+    .pulse-dot {
+      width: 8px; height: 8px;
+      background: var(--teal-light);
+      border-radius: 50%;
+      animation: pulseAnim 2s infinite;
+    }
+    @keyframes pulseAnim {
+      0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+    }
+
+    .hero h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(40px, 4.8vw, 62px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      color: var(--deep);
+      margin-bottom: 20px;
+    }
+    .hero h1 .highlight-text {
+      background: linear-gradient(135deg, var(--teal) 0%, #14b8a6 50%, #0284c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 34px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 42px;
+    }
+
+    /* Trust Stats Strip */
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+    .stat-item { text-align: left; }
+    .stat-num {
+      font-family: 'Manrope', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--teal);
+      line-height: 1;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* ── 3D Hero Stage ─────────────────────────────────────────── */
+    .hero-stage {
+      position: relative;
+      height: 520px;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Main 3D Card with interactive mouse tilt */
+    .hero-3d-card {
+      width: 90%;
+      height: 460px;
+      background: #fff;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: var(--shadow-3d);
+      border: 1px solid rgba(255,255,255,0.8);
+      position: relative;
+      transform: rotateY(-6deg) rotateX(3deg);
+      transform-style: preserve-3d;
+      transition: transform 0.4s var(--ease);
+    }
+    .hero-3d-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 30%;
+      filter: saturate(0.9);
+      transition: transform 0.6s var(--ease);
+    }
+    .hero-3d-card:hover img {
+      transform: scale(1.04);
+    }
+    .hero-3d-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(18, 59, 61, 0.8) 100%);
+    }
+
+    .hero-card-content {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      z-index: 5;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hero-card-info h3 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .hero-card-info p {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    /* 3D Floating Interactive Medical Badges */
+    .badge-3d {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 16px 40px rgba(11, 93, 94, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+      animation: floatBadge 6s ease-in-out infinite alternate;
+      transform-style: preserve-3d;
+    }
+    @keyframes floatBadge {
+      0% { transform: translateY(0px) translateZ(30px); }
+      100% { transform: translateY(-16px) translateZ(50px); }
+    }
+    .badge-3d-1 {
+      top: 15px; left: -25px;
+      animation-delay: 0s;
+    }
+    .badge-3d-2 {
+      bottom: 25px; right: -25px;
+      animation-delay: -2s;
+    }
+    .badge-3d-3 {
+      top: 48%; right: -35px;
+      animation-delay: -4s;
+    }
+
+    .badge-icon-box {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .bg-icon-teal { background: #e3f5f0; color: var(--teal); }
+    .bg-icon-cyan { background: #e0f2fe; color: #0284c7; }
+    .bg-icon-amber { background: #fef3c7; color: #d97706; }
+
+    .badge-meta strong {
+      display: block;
+      font-size: 13px;
+      font-family: 'Manrope', sans-serif;
+      color: var(--deep);
+    }
+    .badge-meta span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* 3D Rotating DNA Helix Animation Canvas */
+    .dna-3d-container {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      width: 70px;
+      height: 120px;
+      pointer-events: none;
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      perspective: 400px;
+    }
+    .dna-bar {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #14b8a6, #38bdf8);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(20, 184, 166, 0.8);
+      animation: dnaRotate 3s linear infinite;
+    }
+    .dna-bar:nth-child(1) { animation-delay: 0.0s; }
+    .dna-bar:nth-child(2) { animation-delay: 0.3s; }
+    .dna-bar:nth-child(3) { animation-delay: 0.6s; }
+    .dna-bar:nth-child(4) { animation-delay: 0.9s; }
+    .dna-bar:nth-child(5) { animation-delay: 1.2s; }
+    .dna-bar:nth-child(6) { animation-delay: 1.5s; }
+    @keyframes dnaRotate {
+      0% { transform: rotateY(0deg) scaleX(1); opacity: 0.9; }
+      50% { transform: rotateY(90deg) scaleX(0.2); opacity: 0.4; }
+      100% { transform: rotateY(180deg) scaleX(1); opacity: 0.9; }
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       HOSPITALS & INTERACTIVE MAP SECTION
+    ══════════════════════════════════════════════════════════════ */
+    .hospitals-section {
+      background: #f4f8f6;
+      padding: 90px 8%;
+      position: relative;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .section-eyebrow::before {
+      content: '';
+      width: 20px; height: 2px;
+      background: var(--teal);
+    }
+    .section-heading {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(32px, 3.8vw, 44px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: var(--deep);
+      margin-bottom: 16px;
+    }
+    .section-lead {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    /* Filter & Search Bar */
+    .hospital-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 36px 0 28px;
+    }
+    .city-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .city-pill {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #d4e2db;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+      font-family: 'Manrope', sans-serif;
+    }
+    .city-pill:hover, .city-pill.active {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+      box-shadow: 0 4px 12px rgba(11, 93, 94, 0.2);
+    }
+
+    .hospital-search-box {
+      position: relative;
+      min-width: 260px;
+    }
+    .hospital-search-box input {
+      width: 100%;
+      padding: 10px 16px 10px 38px;
+      border-radius: 10px;
+      border: 1.5px solid #d4e2db;
+      outline: none;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    .hospital-search-box input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Layout Grid: Interactive Map + Cards */
+    .hospital-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    /* ── Interactive Medical Radar Map Component ─────────────────── */
+    .map-container {
+      background: linear-gradient(145deg, #0e2729 0%, #123b3d 60%, #17324d 100%);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--shadow-3d);
+      color: #fff;
+      position: sticky;
+      top: 100px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 12px;
+    }
+    .map-header h3 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .map-live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #34d399;
+      font-weight: 600;
+    }
+    .map-live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulseAnim 1.8s infinite;
+    }
+
+    .svg-map-wrapper {
+      position: relative;
+      height: 330px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .svg-map-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Map Beacon Pins */
+    .map-pin {
+      cursor: pointer;
+      transition: transform 0.3s var(--ease);
+    }
+    .map-pin:hover, .map-pin.active {
+      transform: scale(1.3);
+    }
+    .map-pin-ring {
+      animation: radarRing 3s ease-out infinite;
+      transform-origin: center;
+    }
+    @keyframes radarRing {
+      0% { r: 6; opacity: 0.9; }
+      100% { r: 24; opacity: 0; }
+    }
+
+    /* Selected Hospital Quick Spotlight Drawer */
+    .map-spotlight {
+      margin-top: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s var(--ease);
+    }
+    .spotlight-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .spotlight-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #14b8a6;
+      color: #fff;
+    }
+    .spotlight-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .spotlight-address {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin: 4px 0 10px;
+      line-height: 1.4;
+    }
+    .spotlight-contacts {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: #93c5fd;
+    }
+    .spotlight-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    /* ── Hospital Directory Cards ────────────────────────────────── */
+    .hospitals-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .hospital-card {
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      transition: all 0.3s var(--ease);
+      position: relative;
+      cursor: pointer;
+    }
+    .hospital-card:hover, .hospital-card.active {
+      border-color: var(--teal);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .hospital-card.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 5px;
+      background: var(--teal);
+      border-radius: 6px 0 0 6px;
+    }
+
+    .hosp-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .hosp-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--deep);
+      line-height: 1.3;
+    }
+    .hosp-city-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      background: var(--mint);
+      padding: 4px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .hosp-address {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .hosp-address-icon {
+      color: var(--teal);
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Key Specs Chips */
+    .hosp-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .spec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #334155;
+      background: #f1f5f9;
+      padding: 4px 9px;
+      border-radius: 6px;
+    }
+
+    /* Contact Details Row */
+    .hosp-contact-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      font-size: 12px;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .contact-item strong { color: var(--navy); }
+    .contact-item a { color: var(--teal); font-weight: 600; }
+    .contact-item a:hover { text-decoration: underline; }
+
+    .hosp-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .rating-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       PORTAL GATEWAY & OTHER SECTIONS
+    ══════════════════════════════════════════════════════════════ */
+    .section-pad { padding: 90px 8%; }
+
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 36px;
+    }
+    .portal-box {
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      padding: 28px 24px;
+      position: relative;
+      transition: all 0.3s var(--ease);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+    .portal-box:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-3d);
+      border-color: var(--teal);
+    }
+    .portal-box-icon {
+      width: 50px; height: 50px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+    .pbi-teal { background: #e3f5f0; color: var(--teal); }
+    .pbi-blue { background: #e0f2fe; color: var(--navy); }
+    .pbi-amber { background: #fef3c7; color: #b45309; }
+    .pbi-purple { background: var(--lilac); color: #6b21a8; }
+    .portal-box small {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .portal-box strong {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      color: var(--deep);
+      margin-top: 6px;
+      display: block;
+    }
+    .portal-box p {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 8px 0 16px;
+      line-height: 1.6;
+      flex: 1;
+    }
+    .portal-box .link-arrow {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── CTA Banner ────────────────────────────────────────────── */
+    .cta-banner {
+      margin: 0 8% 80px;
+      background: linear-gradient(135deg, var(--deep) 0%, var(--teal) 100%);
+      border-radius: 22px;
+      padding: 48px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      box-shadow: var(--shadow-3d);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner h2 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .cta-banner p {
+      font-size: 15px;
+      color: #d1fae5;
+      max-width: 500px;
+    }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    .footer {
+      background: #0f2a2c;
+      color: #e2e8e4;
+      padding: 60px 8% 24px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .footer-brand p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 14px;
+      line-height: 1.6;
+      max-width: 320px;
+    }
+    .footer-col h4 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 1080px) {
+      .hero { grid-template-columns: 1fr; padding: 40px 6%; }
+      .hero-stage { height: 420px; }
+      .hospital-showcase { grid-template-columns: 1fr; }
+      .map-container { position: static; }
+      .portal-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .site-header { padding: 0 5%; }
+      .main-nav { display: none; }
+      .menu-toggle { display: block; }
+      .hero h1 { font-size: 36px; }
+      .portal-grid { grid-template-columns: 1fr; }
+      .cta-banner { flex-direction: column; text-align: center; padding: 32px; }
+      .cta-banner p { margin: 0 auto; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement">
+    <span>✦ Experience NexCura 2026: Connected Healthcare &amp; Real-Time Hospital Network</span>
+    <a href="#hospitals">Explore Hospital Network ↗</a>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="site-header">
+    <a href="index.html" class="brand" aria-label="NexCura Home">
+      <img src="logo.svg" alt="NexCura — Intelligent Care Platform" height="42" style="height:42px;width:auto;display:block;">
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="specialties.html">Care &amp; Services</a>
+      <a href="#hospitals" class="active">Hospitals &amp; Network</a>
+      <a href="about.html">About Us</a>
+      <a href="clinical-trials.html">Clinical Trials</a>
+      <a href="ai-assistant.html">NexCura AI</a>
+      <a href="#portal">Workspaces</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="login.html" class="btn btn-outline btn-sm">Sign In</a>
+      <a href="login.html?role=patient" class="btn btn-primary btn-sm">Get Started ↗</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ══════════════════════════════════════════════════════════
+         HERO SECTION WITH 3D INTERACTIVE VISUALS
+    ══════════════════════════════════════════════════════════ -->
+    <section class="hero">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+
+      <div class="hero-copy">
+        <div class="hero-tag">
+          <span class="pulse-dot"></span>
+          INTELLIGENT HEALTHCARE NETWORK
+        </div>
+
+        <h1>Modern Care Starts with <span class="highlight-text">Unified Intelligence.</span></h1>
+
+        <p class="hero-desc">
+          NexCura connects patients, multi-specialty hospitals, and care providers into one seamless healthcare continuum. From appointment scheduling to ICU bed coordination, experience thoughtful medicine powered by modern technology.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#hospitals" class="btn btn-primary">Find Hospital Campus ↗</a>
+          <a href="login.html" class="btn btn-outline">Access Portals →</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">50+</div>
+            <div class="stat-lbl">Hospital Campuses</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1M+</div>
+            <div class="stat-lbl">Patients Treated</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1,200+</div>
+            <div class="stat-lbl">Specialist Doctors</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">99.8%</div>
+            <div class="stat-lbl">Care Reliability</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Interactive Stage -->
+      <div class="hero-stage" id="heroStage">
+        <!-- 3D Rotating DNA Helix Animation -->
+        <div class="dna-3d-container" aria-hidden="true">
+          <div class="dna-bar"></div>
+          <div class="dna-bar"></div>
+          <div class="dna-bar"></div>
+          <div class="dna-bar"></div>
+          <div class="dna-bar"></div>
+          <div class="dna-bar"></div>
+        </div>
+
+        <!-- 3D Main Perspective Card -->
+        <div class="hero-3d-card" id="heroCard">
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1200&q=85" alt="NexCura Clinical Care Team">
+          <div class="hero-card-content">
+            <div class="hero-card-info">
+              <h3>Central Super-Specialty Medical Pavilion</h3>
+              <p>Indiranagar, Bengaluru · 650 Beds · Level 1 Trauma Center</p>
+            </div>
+            <a href="#hospitals" class="btn btn-light btn-sm">Explore Campus ↗</a>
+          </div>
+        </div>
+
+        <!-- Floating 3D Badge 1: Real-Time ICU & Emergency -->
+        <div class="badge-3d badge-3d-1">
+          <div class="badge-icon-box bg-icon-teal">🏥</div>
+          <div class="badge-meta">
+            <strong>Emergency Status: Green</strong>
+            <span>14 ICU Beds Available Now</span>
+          </div>
+        </div>
+
+        <!-- Floating 3D Badge 2: AI Triage System -->
+        <div class="badge-3d badge-3d-2">
+          <div class="badge-icon-box bg-icon-cyan">⚡</div>
+          <div class="badge-meta">
+            <strong>NexCura AI Triage</strong>
+            <span>Average ER Wait: 12 Mins</span>
+          </div>
+        </div>
+
+        <!-- Floating 3D Badge 3: Patient Trust -->
+        <div class="badge-3d badge-3d-3">
+          <div class="badge-icon-box bg-icon-amber">⭐</div>
+          <div class="badge-meta">
+            <strong>4.92 / 5.0 Rating</strong>
+            <span>Verified Patient Reviews</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         HOSPITALS SECTION WITH INTERACTIVE MAP & LOCATIONS
+    ══════════════════════════════════════════════════════════ -->
+    <section class="hospitals-section" id="hospitals">
+      <div>
+        <div class="section-eyebrow">HOSPITAL NETWORK &amp; CAMPUSES</div>
+        <h2 class="section-heading">Locate Our World-Class Hospitals</h2>
+        <p class="section-lead">
+          NexCura operates state-of-the-art super-specialty hospitals and trauma centers across major metropolitan hubs. Explore facility addresses, emergency helplines, bed capacities, and direct routing.
+        </p>
+      </div>
+
+      <!-- Controls: City Filter Tabs + Search -->
+      <div class="hospital-controls">
+        <div class="city-filters" id="cityFilters">
+          <button class="city-pill active" onclick="filterHospitals('all')">All Locations (6)</button>
+          <button class="city-pill" onclick="filterHospitals('bengaluru')">Bengaluru</button>
+          <button class="city-pill" onclick="filterHospitals('mumbai')">Mumbai</button>
+          <button class="city-pill" onclick="filterHospitals('delhi')">New Delhi</button>
+          <button class="city-pill" onclick="filterHospitals('hyderabad')">Hyderabad</button>
+          <button class="city-pill" onclick="filterHospitals('chennai')">Chennai</button>
+          <button class="city-pill" onclick="filterHospitals('pune')">Pune</button>
+        </div>
+
+        <div class="hospital-search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="hospitalSearch" placeholder="Search hospital name or specialty..." onkeyup="searchHospitals()" />
+        </div>
+      </div>
+
+      <!-- Hospital Showcase: Interactive Map + Directory Cards -->
+      <div class="hospital-showcase">
+        
+        <!-- Left: Interactive Visual Radar Map -->
+        <div class="map-container">
+          <div class="map-header">
+            <h3><span>📍</span> Interactive Campus Radar Map</h3>
+            <div class="map-live-status">
+              <span class="map-live-dot"></span>
+              Live Geonav Active
+            </div>
+          </div>
+
+          <!-- SVG Geographic Radar Canvas -->
+          <div class="svg-map-wrapper">
+            <svg class="svg-map-canvas" viewBox="0 0 500 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Grid Radar Coordinate Rings -->
+              <circle cx="250" cy="180" r="140" stroke="rgba(20, 184, 166, 0.15)" stroke-dasharray="4 4" />
+              <circle cx="250" cy="180" r="90" stroke="rgba(20, 184, 166, 0.25)" />
+              <circle cx="250" cy="180" r="40" stroke="rgba(20, 184, 166, 0.35)" />
+              <line x1="250" y1="20" x2="250" y2="340" stroke="rgba(255,255,255,0.06)" />
+              <line x1="20" y1="180" x2="480" y2="180" stroke="rgba(255,255,255,0.06)" />
+
+              <!-- Interconnecting Geo Lines -->
+              <path d="M 180 80 L 140 170 L 220 270 L 270 290 L 310 210 L 180 80" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.5" stroke-dasharray="6 3" />
+
+              <!-- Beacon 1: New Delhi (Top) -->
+              <g class="map-pin" id="pin-delhi" onclick="selectHospital('hosp-delhi')">
+                <circle cx="180" cy="80" r="14" class="map-pin-ring" stroke="#38bdf8" fill="none" />
+                <circle cx="180" cy="80" r="7" fill="#38bdf8" />
+                <circle cx="180" cy="80" r="3" fill="#fff" />
+                <text x="195" y="85" fill="#e0f2fe" font-size="11" font-family="'Manrope', sans-serif" font-weight="700">New Delhi Metro</text>
+              </g>
+
+              <!-- Beacon 2: Mumbai (West) -->
+              <g class="map-pin" id="pin-mumbai" onclick="selectHospital('hosp-mumbai')">
+                <circle cx="140" cy="170" r="14" class="map-pin-ring" stroke="#00d2b4" fill="none" />
+                <circle cx="140" cy="170" r="7" fill="#00d2b4" />
+                <circle cx="140" cy="170" r="3" fill="#fff" />
+                <text x="75" y="174" fill="#dcfce7" font-size="11" font-family="'Manrope', sans-serif" font-weight="700">Mumbai Oncology</text>
+              </g>
+
+              <!-- Beacon 3: Pune (Mid-West) -->
+              <g class="map-pin" id="pin-pune" onclick="selectHospital('hosp-pune')">
+                <circle cx="170" cy="205" r="12" class="map-pin-ring" stroke="#a78bfa" fill="none" />
+                <circle cx="170" cy="205" r="6" fill="#a78bfa" />
+                <circle cx="170" cy="205" r="2.5" fill="#fff" />
+                <text x="185" y="210" fill="#ede9fe" font-size="11" font-family="'Manrope', sans-serif" font-weight="700">Pune Transplant</text>
+              </g>
+
+              <!-- Beacon 4: Hyderabad (Center) -->
+              <g class="map-pin" id="pin-hyderabad" onclick="selectHospital('hosp-hyderabad')">
+                <circle cx="310" cy="210" r="14" class="map-pin-ring" stroke="#fbbf24" fill="none" />
+                <circle cx="310" cy="210" r="7" fill="#fbbf24" />
+                <circle cx="310" cy="210" r="3" fill="#fff" />
+                <text x="325" y="215" fill="#fef3c7" font-size="11" font-family="'Manrope', sans-serif" font-weight="700">Hyderabad Children's</text>
+              </g>
+
+              <!-- Beacon 5: Bengaluru (South - Main Headquarters) -->
+              <g class="map-pin active" id="pin-bengaluru" onclick="selectHospital('hosp-bengaluru')">
+                <circle cx="220" cy="270" r="18" class="map-pin-ring" stroke="#14b8a6" fill="none" />
+                <circle cx="220" cy="270" r="9" fill="#14b8a6" />
+                <circle cx="220" cy="270" r="4" fill="#fff" />
+                <text x="135" y="295" fill="#5eead4" font-size="12" font-family="'Manrope', sans-serif" font-weight="800">Bengaluru HQ (Central)</text>
+              </g>
+
+              <!-- Beacon 6: Chennai (South East) -->
+              <g class="map-pin" id="pin-chennai" onclick="selectHospital('hosp-chennai')">
+                <circle cx="280" cy="300" r="14" class="map-pin-ring" stroke="#f472b6" fill="none" />
+                <circle cx="280" cy="300" r="7" fill="#f472b6" />
+                <circle cx="280" cy="300" r="3" fill="#fff" />
+                <text x="295" y="305" fill="#fce7f3" font-size="11" font-family="'Manrope', sans-serif" font-weight="700">Chennai Neuro-Spine</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Live Campus Spotlight Card -->
+          <div class="map-spotlight" id="mapSpotlight">
+            <div class="spotlight-top">
+              <span class="spotlight-badge" id="spotBadge">Central Flagship</span>
+              <span style="font-size:11px;color:#a7f3d0">Open 24/7 · Emergency Active</span>
+            </div>
+            <div class="spotlight-title" id="spotTitle">NexCura Central Super-Specialty Medical Institute</div>
+            <div class="spotlight-address" id="spotAddress">📍 104 100ft Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038</div>
+            <div class="spotlight-contacts" id="spotContact">
+              <span>📞 Helpline: +91 80 4912 3000</span>
+              <span>🚨 ER Trauma: 112 / +91 80 4912 9999</span>
+            </div>
+            <div class="spotlight-actions">
+              <a href="https://maps.google.com" target="_blank" class="btn btn-light btn-sm" id="spotDirBtn">Get Navigation ↗</a>
+              <a href="patient-portal.html" class="btn btn-primary btn-sm">Book Appointment</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Hospital Cards List -->
+        <div class="hospitals-list" id="hospitalList">
+
+          <!-- 1. Bengaluru Hospital -->
+          <article class="hospital-card active" id="hosp-bengaluru" data-city="bengaluru" onclick="selectHospital('hosp-bengaluru')">
+            <div class="hosp-head">
+              <div>
+                <h3 class="hosp-name">NexCura Central Super-Specialty Medical Institute</h3>
+                <span style="font-size:12px;color:var(--teal);font-weight:600;">Flagship Tertiary Research Campus</span>
+              </div>
+              <span class="hosp-city-tag">Bengaluru</span>
+            </div>
+
+            <div class="hosp-address">
+              <span class="hosp-address-icon">📍</span>
+              <div>
+                <strong>Address:</strong> 104, 100ft Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038<br>
+                <small style="color:#64748b;">Near CMH Road Metro Station (400m) · Multi-Level Valet Parking</small>
+              </div>
+            </div>
+
+            <div class="hosp-specs">
+              <span class="spec-badge">🛏 650 Inpatient Beds</span>
+              <span class="spec-badge">🩺 90 ICU &amp; CCU Units</span>
+              <span class="spec-badge">🚨 Level 1 Trauma Center (24/7)</span>
+              <span class="spec-badge">🏅 JCI &amp; NABH Accredited</span>
+              <span class="spec-badge">🤖 DaVinci Xi Robotic Surgery</span>
+            </div>
+
+            <div class="hosp-contact-row">
+              <div class="contact-item">📞 <strong>Phone:</strong> <a href="tel:+918049123000">+91 80 4912 3000</a></div>
+              <div class="contact-item">🚨 <strong>Emergency:</strong> <a href="tel:112" style="color:#dc2626;font-weight:700;">+91 80 4912 9999</a></div>
+              <div class="contact-item">✉️ <strong>Email:</strong> <a href="mailto:bengaluru@nexcura.health">bengaluru@nexcura.health</a></div>
+              <div class="contact-item">⏱ <strong>ER Wait:</strong> <span style="color:#16a34a;font-weight:700;">&lt; 8 Mins</span></div>
+            </div>
+
+            <div class="hosp-card-footer">
+              <div class="rating-badge">★ 4.95 (3,420 Patient Reviews)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.open('https://maps.google.com')">Directions</button>
+                <a href="patient-portal.html" class="btn btn-primary btn-sm">Consult Doctor ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 2. Mumbai Hospital -->
+          <article class="hospital-card" id="hosp-mumbai" data-city="mumbai" onclick="selectHospital('hosp-mumbai')">
+            <div class="hosp-head">
+              <div>
+                <h3 class="hosp-name">NexCura Oncology &amp; Genomic Precision Hospital</h3>
+                <span style="font-size:12px;color:var(--teal);font-weight:600;">Comprehensive Cancer Care &amp; Nuclear Medicine</span>
+              </div>
+              <span class="hosp-city-tag">Mumbai</span>
+            </div>
+
+            <div class="hosp-address">
+              <span class="hosp-address-icon">📍</span>
+              <div>
+                <strong>Address:</strong> Plot C-22, G-Block, Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051<br>
+                <small style="color:#64748b;">Adjacent to Diamond Bourse · Dedicated Helipad for Air Ambulance</small>
+              </div>
+            </div>
+
+            <div class="hosp-specs">
+              <span class="spec-badge">🛏 420 Oncology Beds</span>
+              <span class="spec-badge">☢️ Proton Beam &amp; CyberKnife</span>
+              <span class="spec-badge">🧬 CAR-T Cell Therapy Wing</span>
+              <span class="spec-badge">🏅 NABH Certified</span>
+              <span class="spec-badge">🔬 Genomic Sequencing Lab</span>
+            </div>
+
+            <div class="hosp-contact-row">
+              <div class="contact-item">📞 <strong>Phone:</strong> <a href="tel:+912267804000">+91 22 6780 4000</a></div>
+              <div class="contact-item">🚨 <strong>Emergency:</strong> <a href="tel:112" style="color:#dc2626;font-weight:700;">+91 22 6780 9999</a></div>
+              <div class="contact-item">✉️ <strong>Email:</strong> <a href="mailto:mumbai@nexcura.health">mumbai@nexcura.health</a></div>
+              <div class="contact-item">⏱ <strong>ER Wait:</strong> <span style="color:#16a34a;font-weight:700;">&lt; 10 Mins</span></div>
+            </div>
+
+            <div class="hosp-card-footer">
+              <div class="rating-badge">★ 4.91 (2,180 Patient Reviews)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.open('https://maps.google.com')">Directions</button>
+                <a href="patient-portal.html" class="btn btn-primary btn-sm">Consult Doctor ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 3. New Delhi Hospital -->
+          <article class="hospital-card" id="hosp-delhi" data-city="delhi" onclick="selectHospital('hosp-delhi')">
+            <div class="hosp-head">
+              <div>
+                <h3 class="hosp-name">NexCura Metro Emergency &amp; Cardiac Science Hub</h3>
+                <span style="font-size:12px;color:var(--teal);font-weight:600;">24/7 Primary Angioplasty &amp; Heart Failure Center</span>
+              </div>
+              <span class="hosp-city-tag">New Delhi</span>
+            </div>
+
+            <div class="hosp-address">
+              <span class="hosp-address-icon">📍</span>
+              <div>
+                <strong>Address:</strong> 18 Barakhamba Road, Connaught Place, New Delhi, Delhi 110001<br>
+                <small style="color:#64748b;">Direct Metro Subway Access (Barakhamba Metro Gate 3)</small>
+              </div>
+            </div>
+
+            <div class="hosp-specs">
+              <span class="spec-badge">🛏 500 Cardiac &amp; Acute Beds</span>
+              <span class="spec-badge">❤️ 4 Advanced Hybrid Cath Labs</span>
+              <span class="spec-badge">🚨 Rapid Chest Pain Clinic</span>
+              <span class="spec-badge">🏅 JCI Accredited</span>
+              <span class="spec-badge">🫀 ECMO &amp; LVAD Center</span>
+            </div>
+
+            <div class="hosp-contact-row">
+              <div class="contact-item">📞 <strong>Phone:</strong> <a href="tel:+911145208000">+91 11 4520 8000</a></div>
+              <div class="contact-item">🚨 <strong>Emergency:</strong> <a href="tel:112" style="color:#dc2626;font-weight:700;">+91 11 4520 9999</a></div>
+              <div class="contact-item">✉️ <strong>Email:</strong> <a href="mailto:delhi@nexcura.health">delhi@nexcura.health</a></div>
+              <div class="contact-item">⏱ <strong>Door-to-Balloon:</strong> <span style="color:#16a34a;font-weight:700;">42 Mins</span></div>
+            </div>
+
+            <div class="hosp-card-footer">
+              <div class="rating-badge">★ 4.94 (4,150 Patient Reviews)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.open('https://maps.google.com')">Directions</button>
+                <a href="patient-portal.html" class="btn btn-primary btn-sm">Consult Doctor ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 4. Hyderabad Hospital -->
+          <article class="hospital-card" id="hosp-hyderabad" data-city="hyderabad" onclick="selectHospital('hosp-hyderabad')">
+            <div class="hosp-head">
+              <div>
+                <h3 class="hosp-name">NexCura Children's &amp; Women's Advanced Pavilion</h3>
+                <span style="font-size:12px;color:var(--teal);font-weight:600;">Maternal-Fetal Medicine &amp; Pediatric Super-Specialties</span>
+              </div>
+              <span class="hosp-city-tag">Hyderabad</span>
+            </div>
+
+            <div class="hosp-address">
+              <span class="hosp-address-icon">📍</span>
+              <div>
+                <strong>Address:</strong> Phase 2, HITEC City, Madhapur, Hyderabad, Telangana 500081<br>
+                <small style="color:#64748b;">Opposite Cyber Towers · Pediatric Emergency Drive-Through</small>
+              </div>
+            </div>
+
+            <div class="hosp-specs">
+              <span class="spec-badge">🛏 380 Mother &amp; Child Beds</span>
+              <span class="spec-badge">🍼 Level 4 Quaternary NICU</span>
+              <span class="spec-badge">🧸 Pediatric Cardiac Surgery</span>
+              <span class="spec-badge">🏅 NABH Accredited</span>
+              <span class="spec-badge">🌸 Family-Centered Suites</span>
+            </div>
+
+            <div class="hosp-contact-row">
+              <div class="contact-item">📞 <strong>Phone:</strong> <a href="tel:+914066901000">+91 40 6690 1000</a></div>
+              <div class="contact-item">🚨 <strong>Emergency:</strong> <a href="tel:112" style="color:#dc2626;font-weight:700;">+91 40 6690 9999</a></div>
+              <div class="contact-item">✉️ <strong>Email:</strong> <a href="mailto:hyderabad@nexcura.health">hyderabad@nexcura.health</a></div>
+              <div class="contact-item">⏱ <strong>NICU Availability:</strong> <span style="color:#16a34a;font-weight:700;">Available</span></div>
+            </div>
+
+            <div class="hosp-card-footer">
+              <div class="rating-badge">★ 4.96 (1,920 Patient Reviews)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.open('https://maps.google.com')">Directions</button>
+                <a href="patient-portal.html" class="btn btn-primary btn-sm">Consult Doctor ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 5. Chennai Hospital -->
+          <article class="hospital-card" id="hosp-chennai" data-city="chennai" onclick="selectHospital('hosp-chennai')">
+            <div class="hosp-head">
+              <div>
+                <h3 class="hosp-name">NexCura Neuro-Spine &amp; Robotic Surgery Center</h3>
+                <span style="font-size:12px;color:var(--teal);font-weight:600;">Brain, Spine &amp; Advanced Neuro-Rehabilitation</span>
+              </div>
+              <span class="hosp-city-tag">Chennai</span>
+            </div>
+
+            <div class="hosp-address">
+              <span class="hosp-address-icon">📍</span>
+              <div>
+                <strong>Address:</strong> 45 TTK Road, Alwarpet, Chennai, Tamil Nadu 600018<br>
+                <small style="color:#64748b;">Close to Music Academy · Multi-Tier Neuro-ICU Facility</small>
+              </div>
+            </div>
+
+            <div class="hosp-specs">
+              <span class="spec-badge">🛏 350 Neuro Beds</span>
+              <span class="spec-badge">🧠 3T Intraoperative MRI Suite</span>
+              <span class="spec-badge">⚡ Comprehensive Stroke Unit</span>
+              <span class="spec-badge">🏅 NABH &amp; JCI Certified</span>
+              <span class="spec-badge">🦽 Robotic Exoskeleton Rehab</span>
+            </div>
+
+            <div class="hosp-contact-row">
+              <div class="contact-item">📞 <strong>Phone:</strong> <a href="tel:+914442105000">+91 44 4210 5000</a></div>
+              <div class="contact-item">🚨 <strong>Stroke Code:</strong> <a href="tel:112" style="color:#dc2626;font-weight:700;">+91 44 4210 9999</a></div>
+              <div class="contact-item">✉️ <strong>Email:</strong> <a href="mailto:chennai@nexcura.health">chennai@nexcura.health</a></div>
+              <div class="contact-item">⏱ <strong>Door-to-Needle:</strong> <span style="color:#16a34a;font-weight:700;">28 Mins</span></div>
+            </div>
+
+            <div class="hosp-card-footer">
+              <div class="rating-badge">★ 4.93 (2,890 Patient Reviews)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.open('https://maps.google.com')">Directions</button>
+                <a href="patient-portal.html" class="btn btn-primary btn-sm">Consult Doctor ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- 6. Pune Hospital -->
+          <article class="hospital-card" id="hosp-pune" data-city="pune" onclick="selectHospital('hosp-pune')">
+            <div class="hosp-head">
+              <div>
+                <h3 class="hosp-name">NexCura Global Organ Transplant &amp; Research Hospital</h3>
+                <span style="font-size:12px;color:var(--teal);font-weight:600;">Liver, Kidney, Lung &amp; Bone Marrow Transplantation</span>
+              </div>
+              <span class="hosp-city-tag">Pune</span>
+            </div>
+
+            <div class="hosp-address">
+              <span class="hosp-address-icon">📍</span>
+              <div>
+                <strong>Address:</strong> 1205/4 Shivaji Nagar, FC Road Junction, Pune, Maharashtra 411004<br>
+                <small style="color:#64748b;">Near Agricultural College Grounds · Dedicated Green Corridor Protocol</small>
+              </div>
+            </div>
+
+            <div class="hosp-specs">
+              <span class="spec-badge">🛏 480 Transplant &amp; Surgical Beds</span>
+              <span class="spec-badge">🔬 Multiorgan Isolation Units</span>
+              <span class="spec-badge">🩸 24/7 Advanced Blood &amp; Apheresis Bank</span>
+              <span class="spec-badge">🏅 NABH Accredited</span>
+            </div>
+
+            <div class="hosp-contact-row">
+              <div class="contact-item">📞 <strong>Phone:</strong> <a href="tel:+912069112000">+91 20 6911 2000</a></div>
+              <div class="contact-item">🚨 <strong>Emergency:</strong> <a href="tel:112" style="color:#dc2626;font-weight:700;">+91 20 6911 9999</a></div>
+              <div class="contact-item">✉️ <strong>Email:</strong> <a href="mailto:pune@nexcura.health">pune@nexcura.health</a></div>
+              <div class="contact-item">⏱ <strong>Transplant Team:</strong> <span style="color:#16a34a;font-weight:700;">24/7 Standby</span></div>
+            </div>
+
+            <div class="hosp-card-footer">
+              <div class="rating-badge">★ 4.90 (1,670 Patient Reviews)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.open('https://maps.google.com')">Directions</button>
+                <a href="patient-portal.html" class="btn btn-primary btn-sm">Consult Doctor ↗</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         ROLE-BASED WORKSPACES GATEWAY (#portal)
+    ══════════════════════════════════════════════════════════ -->
+    <section class="section-pad" id="portal">
+      <div style="text-align:center;max-width:680px;margin:0 auto 20px;">
+        <div class="section-eyebrow" style="justify-content:center;">UNIFIED PLATFORM ACCESS</div>
+        <h2 class="section-heading">Dedicated Healthcare Workspaces</h2>
+        <p class="section-lead" style="margin:0 auto;">
+          Experience role-customized workspaces with built-in credential protection, clinical dashboards, and real-time collaboration.
+        </p>
+      </div>
+
+      <div class="portal-grid">
+        <!-- Patient Portal -->
+        <a href="patient-portal.html" class="portal-box">
+          <div class="portal-box-icon pbi-teal">👤</div>
+          <small>PATIENTS &amp; FAMILIES</small>
+          <strong>Patient Portal</strong>
+          <p>Book specialty appointments, access lab diagnostics, and chat securely with your attending doctors.</p>
+          <span class="link-arrow">Enter Portal ↗</span>
+        </a>
+
+        <!-- Clinician Workspace -->
+        <a href="clinician-portal.html" class="portal-box">
+          <div class="portal-box-icon pbi-blue">🩺</div>
+          <small>DOCTORS &amp; SPECIALISTS</small>
+          <strong>Clinical Workspace</strong>
+          <p>Review SOAP notes, inspect electronic patient charts, order diagnostic panels, and evaluate clinical trials.</p>
+          <span class="link-arrow">Enter Workspace ↗</span>
+        </a>
+
+        <!-- Staff Workspace -->
+        <a href="staff-portal.html" class="portal-box">
+          <div class="portal-box-icon pbi-amber">🏥</div>
+          <small>HOSPITAL WARD STAFF</small>
+          <strong>Staff Workspace</strong>
+          <p>Manage real-time ICU &amp; ward bed occupancy, coordinate emergency triage queues, and oversee pharmacy dispatch.</p>
+          <span class="link-arrow">Enter Workspace ↗</span>
+        </a>
+
+        <!-- Admin Console -->
+        <a href="admin-portal.html" class="portal-box">
+          <div class="portal-box-icon pbi-purple">🛡️</div>
+          <small>SYSTEM ADMINISTRATORS</small>
+          <strong>Admin Console</strong>
+          <p>Manage enterprise RBAC security policies, audit tamper-evident logs, and configure hospital network facilities.</p>
+          <span class="link-arrow">Enter Console ↗</span>
+        </a>
+      </div>
+
+      <!-- Quick Unified Login Button -->
+      <div style="text-align:center;margin-top:36px;">
+        <a href="login.html" class="btn btn-outline" style="padding:12px 28px;">
+          <span>Go to Unified Role Login Page</span> →
+        </a>
+      </div>
+    </section>
+
+    <!-- ── Call to Action Banner ─────────────────────────────────── -->
+    <div class="cta-banner">
+      <div>
+        <h2>Care Feels Better When It's Connected.</h2>
+        <p>Experience the next generation of patient care, intelligent triage, and hospital coordination today.</p>
+      </div>
+      <a href="login.html" class="btn btn-light" style="flex-shrink:0;">Join NexCura Platform ↗</a>
+    </div>
+  </main>
+
+  <!-- ── Footer ────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html">
+          <img src="logo-white.svg" alt="NexCura" height="40" style="height:40px;width:auto;display:block;">
+        </a>
+        <p>
+          Thoughtful, connected, and intelligent healthcare for every patient, clinician, and hospital campus worldwide.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Healthcare Network</h4>
+        <a href="#hospitals">Find Hospital Locations</a>
+        <a href="specialties.html">Clinical Specialties</a>
+        <a href="specialties.html#doctors">Find a Doctor</a>
+        <a href="clinical-trials.html">Clinical Trials Registry</a>
+        <a href="ai-assistant.html">NexCura AI Helper</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Workspaces</h4>
+        <a href="patient-portal.html">Patient &amp; Family Portal</a>
+        <a href="clinician-portal.html">Clinician Workspace</a>
+        <a href="staff-portal.html">Hospital Staff Operations</a>
+        <a href="admin-portal.html">Administrator Console</a>
+        <a href="login.html">Unified Sign In</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Platform &amp; Legal</h4>
+        <a href="about.html">About NexCura</a>
+        <a href="pages.html?page=privacy-notice">Privacy Policy</a>
+        <a href="pages.html?page=terms-of-use">Terms of Service</a>
+        <a href="pages.html?page=accessibility-information">Accessibility (WCAG 2.2)</a>
+        <a href="pages.html?page=contact-and-support">24/7 Support Desk</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 NexCura Health Technologies Inc. All rights reserved.</span>
+      <span>Emergency: Call 112 immediately. NexCura is not an emergency hotline.</span>
+    </div>
+  </footer>
+
+  <!-- ── JavaScript: 3D Interactions & Hospital Map Logic ───────── -->
+  <script>
+    // ── 1. 3D Card Perspective Tilt on Mouse Movement ───────────
+    const stage = document.getElementById('heroStage');
+    const card = document.getElementById('heroCard');
+    if (stage && card && window.innerWidth > 900) {
+      stage.addEventListener('mousemove', (e) => {
+        const rect = stage.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `rotateY(${x * 16}deg) rotateX(${-y * 16}deg) translateZ(10px)`;
+      });
+      stage.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateY(-6deg) rotateX(3deg) translateZ(0)';
+      });
+    }
+
+    // ── 2. Hospital Facility Dataset for Map & Spotlight ────────
+    const HOSPITAL_DATA = {
+      'hosp-bengaluru': {
+        badge: 'Flagship Tertiary Campus',
+        title: 'NexCura Central Super-Specialty Medical Institute',
+        address: '📍 104 100ft Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038',
+        phone: '+91 80 4912 3000',
+        emergency: '+91 80 4912 9999',
+        city: 'bengaluru',
+        pinId: 'pin-bengaluru'
+      },
+      'hosp-mumbai': {
+        badge: 'Comprehensive Cancer Center',
+        title: 'NexCura Oncology & Genomic Precision Hospital',
+        address: '📍 Plot C-22, G-Block, Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051',
+        phone: '+91 22 6780 4000',
+        emergency: '+91 22 6780 9999',
+        city: 'mumbai',
+        pinId: 'pin-mumbai'
+      },
+      'hosp-delhi': {
+        badge: '24/7 Primary Cardiac Hub',
+        title: 'NexCura Metro Emergency & Cardiac Science Hub',
+        address: '📍 18 Barakhamba Road, Connaught Place, New Delhi, Delhi 110001',
+        phone: '+91 11 4520 8000',
+        emergency: '+91 11 4520 9999',
+        city: 'delhi',
+        pinId: 'pin-delhi'
+      },
+      'hosp-hyderabad': {
+        badge: 'Maternal-Fetal & Pediatric Center',
+        title: 'NexCura Children\'s & Women\'s Advanced Pavilion',
+        address: '📍 Phase 2, HITEC City, Madhapur, Hyderabad, Telangana 500081',
+        phone: '+91 40 6690 1000',
+        emergency: '+91 40 6690 9999',
+        city: 'hyderabad',
+        pinId: 'pin-hyderabad'
+      },
+      'hosp-chennai': {
+        badge: 'Brain & Spine Institute',
+        title: 'NexCura Neuro-Spine & Robotic Surgery Center',
+        address: '📍 45 TTK Road, Alwarpet, Chennai, Tamil Nadu 600018',
+        phone: '+91 44 4210 5000',
+        emergency: '+91 44 4210 9999',
+        city: 'chennai',
+        pinId: 'pin-chennai'
+      },
+      'hosp-pune': {
+        badge: 'Multiorgan Transplant Wing',
+        title: 'NexCura Global Organ Transplant & Research Hospital',
+        address: '📍 1205/4 Shivaji Nagar, FC Road Junction, Pune, Maharashtra 411004',
+        phone: '+91 20 6911 2000',
+        emergency: '+91 20 6911 9999',
+        city: 'pune',
+        pinId: 'pin-pune'
+      }
+    };
+
+    function selectHospital(hospId) {
+      const data = HOSPITAL_DATA[hospId];
+      if (!data) return;
+
+      // Highlight card in list
+      document.querySelectorAll('.hospital-card').forEach(card => {
+        card.classList.toggle('active', card.id === hospId);
+      });
+
+      // Highlight pin on map
+      document.querySelectorAll('.map-pin').forEach(pin => {
+        pin.classList.toggle('active', pin.id === data.pinId);
+      });
+
+      // Update Radar Spotlight Card
+      document.getElementById('spotBadge').textContent = data.badge;
+      document.getElementById('spotTitle').textContent = data.title;
+      document.getElementById('spotAddress').textContent = data.address;
+      document.getElementById('spotContact').innerHTML = `
+        <span>📞 Helpline: ${data.phone}</span>
+        <span>🚨 ER Trauma: ${data.emergency}</span>
+      `;
+    }
+
+    // ── 3. City Filtering Logic ─────────────────────────────────
+    function filterHospitals(cityKey) {
+      // Update pills
+      document.querySelectorAll('.city-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.textContent.toLowerCase().includes(cityKey) || (cityKey === 'all' && pill.textContent.includes('All')));
+      });
+
+      // Filter cards
+      let firstVisible = null;
+      document.querySelectorAll('.hospital-card').forEach(card => {
+        const cardCity = card.getAttribute('data-city');
+        const show = (cityKey === 'all' || cardCity === cityKey);
+        card.style.display = show ? 'block' : 'none';
+        if (show && !firstVisible) firstVisible = card.id;
+      });
+
+      if (firstVisible) {
+        selectHospital(firstVisible);
+      }
+    }
+
+    // ── 4. Hospital Search Function ─────────────────────────────
+    function searchHospitals() {
+      const query = document.getElementById('hospitalSearch').value.toLowerCase().trim();
+      let firstMatch = null;
+
+      document.querySelectorAll('.hospital-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const match = text.includes(query);
+        card.style.display = match ? 'block' : 'none';
+        if (match && !firstMatch) firstMatch = card.id;
+      });
+
+      if (firstMatch) {
+        selectHospital(firstMatch);
+      }
+    }
+
+    // ── 5. Mobile Menu Toggle ───────────────────────────────────
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    if (menuToggle && mainNav) {
+      menuToggle.addEventListener('click', () => {
+        const isShown = mainNav.style.display === 'flex';
+        mainNav.style.display = isShown ? 'none' : 'flex';
+        mainNav.style.flexDirection = 'column';
+        mainNav.style.position = 'absolute';
+        mainNav.style.top = '74px';
+        mainNav.style.left = '0';
+        mainNav.style.right = '0';
+        mainNav.style.background = '#fafaf6';
+        mainNav.style.padding = '20px';
+        mainNav.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+      });
+    }
+  </script>
+<script src="static/js/i18n.js"></script>
+</body>
+</html>
